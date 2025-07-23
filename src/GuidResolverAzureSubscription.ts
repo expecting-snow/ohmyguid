@@ -11,9 +11,9 @@ export class GuidResolverAzureSubscription {
         this.client = new SubscriptionClient(this.tokenCredential);
     }
 
-    async resolve(guid: string, abortController : AbortController, abortSignal : AbortSignal): Promise<GuidResolverResponse | undefined> {
+    async resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            for await (const subscription of this.client.subscriptions.list({ abortSignal })) {
+            for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal })) {
                 if (subscription.subscriptionId === guid && subscription.displayName) {
                     
                     abortController.abort();

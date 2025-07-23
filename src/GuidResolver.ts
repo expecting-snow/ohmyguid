@@ -19,8 +19,8 @@ export class GuidResolver {
         const abortController = new AbortController();
         const abortSignal     = abortController.signal;
 
-        const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid, abortController, abortSignal);
-        const promiseAzure            = this.guidResolverAzure           .resolve(guid, abortController, abortSignal);
+        const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid, abortController);
+        const promiseAzure            = this.guidResolverAzure           .resolve(guid, abortController);
 
         return await promiseMicrosoftEntraId
             ?? await promiseAzure;

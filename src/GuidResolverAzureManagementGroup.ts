@@ -12,20 +12,9 @@ export class GuidResolverAzureManagementGroup {
         this.client = new ManagementGroupsAPI(this.tokenCredential);
     }
 
-    async resolve(guid: string, abortController : AbortController, abortSignal : AbortSignal): Promise<GuidResolverResponse | undefined> {
+    async resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response = await Promise.any([
-                this.client.managementGroups.get(guid, { abortSignal }),
-                new Promise<undefined>((resolve, reject) => {
-                    abortSignal.addEventListener(
-                        'abort',
-                        () => {
-                            return resolve(undefined);
-                        },
-                        { once: true }
-                    );
-                })
-            ]);
+            const response = await this.client.managementGroups.get(guid, { abortSignal: abortController.signal });
 
             if (response && response.displayName) {
 

@@ -6,12 +6,12 @@ export class GuidResolverMicrosoftEntraIdTenant {
         readonly client: Client
     ) { }
 
-    async resolve(guid: string, abortController: AbortController, abortSignal: AbortSignal): Promise<GuidResolverResponse | undefined> {
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response = await Promise.any([
                 this.client.api(`/tenantRelationships/findTenantInformationByTenantId(tenantId='${guid}')`).get(),
                 new Promise<undefined>((resolve, reject) => {
-                    abortSignal.addEventListener(
+                    abortController.signal.addEventListener(
                         'abort',
                         () => {
                             return resolve(undefined);

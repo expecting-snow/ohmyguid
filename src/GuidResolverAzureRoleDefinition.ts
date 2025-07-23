@@ -9,9 +9,9 @@ export class GuidResolverAzureRoleDefinition {
 
     }
 
-    resolve(guid: string, abortController : AbortController, abortSignal : AbortSignal): Promise<GuidResolverResponse | undefined> {
+    resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
 
-        if(abortSignal.aborted){
+        if(abortController.signal.aborted){
             return Promise.resolve(undefined);
         }
 
