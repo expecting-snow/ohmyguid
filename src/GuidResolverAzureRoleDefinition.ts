@@ -9,13 +9,19 @@ export class GuidResolverAzureRoleDefinition {
 
     }
 
-    resolve(guid: string): Promise<GuidResolverResponse | undefined> {
+    resolve(guid: string, abortController : AbortController, abortSignal : AbortSignal): Promise<GuidResolverResponse | undefined> {
+
+        if(abortSignal.aborted){
+            return Promise.resolve(undefined);
+        }
 
         var role = this.builtInRoles.find(role => role.name === guid);
 
         if (role === undefined) {
             return Promise.resolve(undefined);
         }
+        
+        abortController.abort();
 
         return Promise.resolve(
             new GuidResolverResponse(

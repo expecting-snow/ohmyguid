@@ -6,10 +6,25 @@ export class GuidResolverMicrosoftEntraIdAppRegistration {
         readonly client: Client
     ) { }
 
-    async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
+    async resolve(guid: string, abortController : AbortController, abortSignal: AbortSignal): Promise<GuidResolverResponse | undefined> {
         try {
-            const response = await this.client.api(`/applications/${guid}`).get();
+            const response = await Promise.any([
+                this.client.api(`/applications/${guid}`).get(),
+                new Promise<undefined>((resolve, reject) => {
+                    abortSignal.addEventListener(
+                        'abort',
+                        () => {
+                            return resolve(undefined);
+                        },
+                        { once: true }
+                    );
+                })
+            ]);
+
             if (response && response.displayName) {
+                
+                abortController.abort();
+
                 return new GuidResolverResponse(
                     guid,
                     response.displayName,

@@ -48,15 +48,15 @@ export class GuidResolverMicrosoftEntraId {
         this.microsoftEntraIdTenantGuidResolver                   = new GuidResolverMicrosoftEntraIdTenant                  (microsoftGraphClient);
     }
 
-    public async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
+    public async resolve(guid: string, abortController : AbortController, abortSignal : AbortSignal): Promise<GuidResolverResponse | undefined> {
 
-        const promiseAppRegistration          = this.microsoftEntraIdAppRegistrationGuidResolver         .resolve(guid);
-        const promiseAppRegistrationClientId  = this.microsoftEntraIdAppRegistrationClientIdGuidResolver .resolve(guid);
-        const promiseServicePrincipal         = this.microsoftEntraIdServicePrincipalGuidResolver        .resolve(guid);
-        const promiseServicePrincipalClientId = this.microsoftEntraIdServicePrincipalClientIdGuidResolver.resolve(guid);
-        const promiseGroup                    = this.microsoftEntraIdGroupGuidResolver                   .resolve(guid);
-        const promiseUser                     = this.microsoftEntraIdUserGuidResolver                    .resolve(guid);
-        const promiseTenant                   = this.microsoftEntraIdTenantGuidResolver                  .resolve(guid);
+        const promiseAppRegistration          = this.microsoftEntraIdAppRegistrationGuidResolver         .resolve(guid, abortController, abortSignal);
+        const promiseAppRegistrationClientId  = this.microsoftEntraIdAppRegistrationClientIdGuidResolver .resolve(guid, abortController, abortSignal);
+        const promiseServicePrincipal         = this.microsoftEntraIdServicePrincipalGuidResolver        .resolve(guid, abortController, abortSignal);
+        const promiseServicePrincipalClientId = this.microsoftEntraIdServicePrincipalClientIdGuidResolver.resolve(guid, abortController, abortSignal);
+        const promiseGroup                    = this.microsoftEntraIdGroupGuidResolver                   .resolve(guid, abortController, abortSignal);
+        const promiseUser                     = this.microsoftEntraIdUserGuidResolver                    .resolve(guid, abortController, abortSignal);
+        const promiseTenant                   = this.microsoftEntraIdTenantGuidResolver                  .resolve(guid, abortController, abortSignal);
 
         return await promiseAppRegistration
             ?? await promiseAppRegistrationClientId

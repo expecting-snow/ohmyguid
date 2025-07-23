@@ -18,10 +18,10 @@ export class GuidResolverAzure {
         this.guidResolverAzureRoleDefinition  = new GuidResolverAzureRoleDefinition (tokenCredential);
     }
 
-    async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
-        const promiseAzureSubscription    = this.guidResolverAzureSubscription   .resolve(guid);
-        const promiseAzureManagementGroup = this.guidResolverAzureManagementGroup.resolve(guid);
-        const promiseAzureRoleDefinition  = this.guidResolverAzureRoleDefinition .resolve(guid);
+    async resolve(guid: string, abortController : AbortController, abortSignal : AbortSignal): Promise<GuidResolverResponse | undefined> {
+        const promiseAzureSubscription    = this.guidResolverAzureSubscription   .resolve(guid, abortController, abortSignal);
+        const promiseAzureManagementGroup = this.guidResolverAzureManagementGroup.resolve(guid, abortController, abortSignal);
+        const promiseAzureRoleDefinition  = this.guidResolverAzureRoleDefinition .resolve(guid, abortController, abortSignal);
 
         return await promiseAzureSubscription
             ?? await promiseAzureManagementGroup
