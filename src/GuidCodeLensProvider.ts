@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { GuidCache } from './GuidCache';
-import { UuidTester } from './UuidTester';
 import { GuidResolverResponseRenderer } from "./GuidResolverResponseRenderer";
 
 export class GuidCodeLensProvider implements vscode.CodeLensProvider {
@@ -12,11 +11,15 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
         readonly renderer: GuidResolverResponseRenderer
     ) { }
 
-    provideCodeLenses(document: vscode.TextDocument): vscode.CodeLens[] {
-        const codeLenses: vscode.CodeLens[] = [];
+    provideCodeLenses(document: vscode.TextDocument): GuidCodeLens[] {
+        const codeLenses: GuidCodeLens[] = [];
         const text = document.getText();
-        let match: RegExpExecArray | null;
-        while ((match = this.guidRegex.exec(text)) !== null) {
+
+        while (true) {
+            const match = this.guidRegex.exec(text);
+
+            if (!match) { break; }
+
             const guid = match[0];
 
             this.guidCache.set(guid);
@@ -31,13 +34,12 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
                 )
             );
         }
+
         return codeLenses;
     }
 
-    resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): vscode.CodeLens | Thenable<vscode.CodeLens> {
-        const guid = (codeLens as GuidCodeLens).guid;
-
-        const promise = this.guidCache.get(guid);
+    resolveCodeLens(codeLens: GuidCodeLens, token: vscode.CancellationToken): vscode.ProviderResult<GuidCodeLens> {
+        const promise = this.guidCache.get(codeLens.guid);
         if (promise) {
             return promise.then(resolvedValue => {
                 codeLens.command = {
@@ -50,7 +52,7 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
         }
 
         codeLens.command = {
-            title: '',
+            title: 'No information available',
             command: '',
             arguments: []
         };

@@ -1,4 +1,4 @@
-import { Client                                               } from "@microsoft/microsoft-graph-client";
+import { AuthProvider, Client                                               } from "@microsoft/microsoft-graph-client";
 import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration";
 import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId";
 import { GuidResolverMicrosoftEntraIdGroup                    } from "./GuidResolverMicrosoftEntraIdGroup";
@@ -18,7 +18,7 @@ export class GuidResolverMicrosoftEntraId {
     private readonly microsoftEntraIdGroupGuidResolver                   : GuidResolverMicrosoftEntraIdGroup;
     private readonly microsoftEntraIdUserGuidResolver                    : GuidResolverMicrosoftEntraIdUser;
     private readonly microsoftEntraIdTenantGuidResolver                  : GuidResolverMicrosoftEntraIdTenant;
-
+    
     constructor(
         readonly tokenCredential: TokenCredential
     ) {

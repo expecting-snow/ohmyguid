@@ -10,6 +10,11 @@ export class GuidCache {
         readonly guidResolver: GuidResolver
     ) { }
 
+    dispose(): any {
+        console.log('ohmyguid - cache - dispose');
+        this.clear();
+    }
+
     async get(guid: string): Promise<GuidResolverResponse | undefined> {
         if (this.cacheResolved.has(guid)) {
 
@@ -47,8 +52,8 @@ export class GuidCache {
         try {
             this.cache.clear();
             this.cacheResolved.clear();
-        } catch {
-
+        } catch (e: any) {
+            console.log(`ohmyguid - clear - error ${e}`);
         }
     }
 }

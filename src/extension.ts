@@ -1,17 +1,17 @@
 import * as vscode from 'vscode';
-import { AzureCliCredential           } from '@azure/identity';
 import { GuidCache                    } from './GuidCache';
 import { GuidCodeLensProvider         } from './GuidCodeLensProvider';
 import { GuidResolver                 } from './GuidResolver';
 import { GuidResolverResponseRenderer } from './GuidResolverResponseRenderer';
 import { GuidResolverResponse         } from './Models/GuidResolverResponse';
 import { GuidLinkProvider             } from './GuidLinkProvider';
+import { CachingAzureCliCredential    } from './CachingAzureCliCredential';
 
 export function activate(context: vscode.ExtensionContext) {
 
     console.log('Extension "ohmyguid" - activate');
 
-    const guidCache = new GuidCache(new GuidResolver(new AzureCliCredential()));
+    const guidCache = new GuidCache(new GuidResolver(new CachingAzureCliCredential()));
 
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider(
@@ -44,6 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
             }
         )
     );
+
+    context.subscriptions.push(guidCache);
 
     console.log('Extension "ohmyguid" - activated');
 }
