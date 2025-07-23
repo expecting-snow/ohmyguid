@@ -21,30 +21,32 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
 
             this.guidCache.set(guid);
 
-            const start = document.positionAt(match.index);
-            const end = document.positionAt(match.index + guid.length);
-
-            const codeLens = new vscode.CodeLens(new vscode.Range(start, end));
-            (codeLens as any).guid = guid;
-            codeLenses.push(codeLens);
+            codeLenses.push(
+                new GuidCodeLens(
+                    guid,
+                    new vscode.Range(
+                        document.positionAt(match.index),
+                        document.positionAt(match.index + guid.length)
+                    )
+                )
+            );
         }
         return codeLenses;
     }
 
     resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): vscode.CodeLens | Thenable<vscode.CodeLens> {
-        const guid = (codeLens as any).guid;
-        if (UuidTester.isGuid(guid)) {
-            const promise = this.guidCache.get(guid);
-            if (promise) {
-                return promise.then(resolvedValue => {
-                    codeLens.command = {
-                        title: this.renderer.render(resolvedValue) || 'No information available',
-                        command: 'ohmyguid.openLink',
-                        arguments: [ resolvedValue ]
-                    };
-                    return codeLens;
-                });
-            }
+        const guid = (codeLens as GuidCodeLens).guid;
+
+        const promise = this.guidCache.get(guid);
+        if (promise) {
+            return promise.then(resolvedValue => {
+                codeLens.command = {
+                    title: this.renderer.render(resolvedValue) || 'No information available',
+                    command: 'ohmyguid.openLink',
+                    arguments: [ resolvedValue ]
+                };
+                return codeLens;
+            });
         }
 
         codeLens.command = {
@@ -53,5 +55,14 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
             arguments: []
         };
         return codeLens;
+    }
+}
+
+class GuidCodeLens extends vscode.CodeLens {
+    guid: string;
+
+    constructor(guid: string, range: vscode.Range, command?: vscode.Command) {
+        super(range, command);
+        this.guid = guid;
     }
 }

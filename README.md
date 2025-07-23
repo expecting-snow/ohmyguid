@@ -8,7 +8,7 @@ This extension provides CodeLens support for guids within text files by looking 
 - Microsoft Entra Id Group Ids
 - Microsoft Entra Id User Ids
 - Azure Subscription Ids
-- Azure Management Group Idss
+- Azure Management Group Ids
 
 in
 
