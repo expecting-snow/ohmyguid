@@ -1,7 +1,7 @@
-import { TokenCredential } from "@azure/identity";
 import { GuidResolverResponse } from "./Models/GuidResolverResponse";
+import { TokenCredential      } from "@azure/identity";
 
-export class GuidResolverAzureRoleDefinition {
+export class GuidResolverAzureRoleDefinitionBuiltInRoles {
 
     constructor(
         readonly tokenCredential: TokenCredential,
