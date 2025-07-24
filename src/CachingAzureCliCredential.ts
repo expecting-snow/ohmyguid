@@ -14,14 +14,21 @@ export class CachingAzureCliCredential implements TokenCredential {
     private readonly cache     : Map<string, AccessToken>;
     private readonly mutex     : Mutex                   ;
 
-    constructor() {
+    // this is used to prevent multiple calls to getToken when getToken fails due to authentication issues.
+    // If an error occurs, it will wait 5 seconds before allowing another attempt to authenticate
+    private tryToAuthenticate: boolean = true;
+
+    constructor(
+        readonly callbackInfo: (value: any) => void,
+        readonly callbackError: (error: any) => void
+    ) {
         this.credential = new AzureCliCredential      ();
         this.cache      = new Map<string, AccessToken>();
         this.mutex      = new Mutex                   ();
     }
 
-    async getToken(scopes: string | string[], options?: GetTokenOptions): Promise<AccessToken> {
-        return await this.mutex.runExclusive(async () => {
+    getToken(scopes: string | string[], options?: GetTokenOptions): Promise<AccessToken> {
+        return this.mutex.runExclusive(async () => {
 
             const key = (Array.isArray(scopes) ? scopes.join(' ') : scopes) + ` | ${options?.tenantId ?? ''}`;
 
@@ -32,12 +39,29 @@ export class CachingAzureCliCredential implements TokenCredential {
                 }
             }
 
-            console.log(`CachingAzureCliCredential getToken - cache miss - ${key}`);
-            const accessToken = await this.credential.getToken(scopes, options);
+            if (!this.tryToAuthenticate) {
+                return Promise.reject(new Error('Not trying to authenticate, waiting for next try.'));
+            }
 
-            this.cache.set(key, accessToken);
+            this.callbackInfo(`CachingAzureCliCredential getToken - ${key}`);
+            try{
 
-            return accessToken;
+                const accessToken = await this.credential.getToken(scopes, options);
+                
+                this.cache.set(key, accessToken);
+                
+                return accessToken;
+            }
+            catch (e: any) {
+                this.tryToAuthenticate = false;
+
+                setTimeout(() => {
+                    this.tryToAuthenticate = true;
+                }, 5000);
+
+                this.callbackError('Authentication error: please run "az login" in your terminal.');
+                throw e;
+            }
         });
     }
 }

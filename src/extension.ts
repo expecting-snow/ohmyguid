@@ -11,7 +11,19 @@ export function activate(context: vscode.ExtensionContext) {
 
     console.log('Extension "ohmyguid" - activate');
 
-    const guidCache = new GuidCache(new GuidResolver(new CachingAzureCliCredential()));
+    const outputChannel = vscode.window.createOutputChannel('ohmyguid');
+    context.subscriptions.push(outputChannel);
+
+    const guidCache = new GuidCache(
+        new GuidResolver(
+            new CachingAzureCliCredential(
+                value => outputChannel.appendLine(`Authentication info: ${value}`),
+                error =>  vscode.window.showInformationMessage(`Authentication error: ${error}`)
+            )
+        )
+    );
+
+    context.subscriptions.push(guidCache);
 
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider(
@@ -45,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
-    context.subscriptions.push(guidCache);
+ 
 
     console.log('Extension "ohmyguid" - activated');
 }
