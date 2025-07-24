@@ -1,23 +1,19 @@
-import { TokenCredential } from "@azure/identity";
-import { GuidResolverAzure } from "./GuidResolverAzure";
-import { GuidResolverMicrosoftEntraId } from "./GuidResolverMicrosoftEntraId";
+import { GuidResolverAzure            } from "./GuidResolverAzure/GuidResolverAzure";
+import { GuidResolverMicrosoftEntraId } from "./GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraId";
 import { GuidResolverResponse         } from "./Models/GuidResolverResponse";
- 
-export class GuidResolver {
+import { TokenCredential              } from "@azure/identity";
 
-    readonly guidResolverMicrosoftEntraId: GuidResolverMicrosoftEntraId;
-    readonly guidResolverAzure: GuidResolverAzure;
+export class GuidResolver {
 
     constructor(
         readonly tokenCredential: TokenCredential,
-    ) {
-        this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(tokenCredential);
-        this.guidResolverAzure            = new GuidResolverAzure           (tokenCredential);
-    }
+    ) { }
 
     async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
-        const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid);
-        const promiseAzure            = this.guidResolverAzure           .resolve(guid);
+        const abortController = new AbortController();
+
+        const promiseMicrosoftEntraId = GuidResolverMicrosoftEntraId.resolve(guid, this.tokenCredential, abortController);
+        const promiseAzure            = GuidResolverAzure           .resolve(guid, this.tokenCredential, abortController);
 
         return await promiseMicrosoftEntraId
             ?? await promiseAzure;
