@@ -2,20 +2,8 @@ import { GuidResolverResponse } from "./Models/GuidResolverResponse";
 import { TokenCredential      } from "@azure/identity";
 
 export class GuidResolverAzureRoleDefinitionBuiltInRoles {
-
-    constructor(
-        readonly tokenCredential: TokenCredential,
-    ) {
-
-    }
-
-    resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
-
-        if(abortController.signal.aborted){
-            return Promise.resolve(undefined);
-        }
-
-        var role = this.builtInRoles.find(role => role.name === guid);
+    static resolve(guid: string, tokenCredential: TokenCredential, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+        var role = GuidResolverAzureRoleDefinitionBuiltInRoles.builtInRoles.find(role => role.name === guid);
 
         if (role === undefined) {
             return Promise.resolve(undefined);
@@ -34,7 +22,7 @@ export class GuidResolverAzureRoleDefinitionBuiltInRoles {
         );
     }
 
-    private readonly builtInRoles = [
+    private static readonly builtInRoles = [
         {
             name: "8311e382-0749-4cb8-b61a-304f252e45ec",
             roleName: "AcrPush"

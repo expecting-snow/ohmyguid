@@ -3,17 +3,9 @@ import { SubscriptionClient   } from "@azure/arm-subscriptions";
 import { TokenCredential      } from "@azure/identity";
 
 export class GuidResolverAzureSubscription {
-    private readonly client: SubscriptionClient;
-
-    constructor(
-        readonly tokenCredential: TokenCredential,
-    ) {
-        this.client = new SubscriptionClient(this.tokenCredential);
-    }
-
-    async resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+    static async resolve(guid: string, tokenCredential: TokenCredential, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal })) {
+            for await (const subscription of new SubscriptionClient(tokenCredential).subscriptions.list({ abortSignal: abortController.signal })) {
                 if (subscription.subscriptionId === guid && subscription.displayName) {
                     
                     abortController.abort();

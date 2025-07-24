@@ -11,18 +11,14 @@ import { TokenCredential                                      } from "@azure/ide
 import { TokenCredentialAuthenticationProvider                } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
 export class GuidResolverMicrosoftEntraId {
-    constructor(
-        readonly tokenCredential: TokenCredential
-    ) { }
-
-    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+    static async resolve(guid: string, tokenCredential: TokenCredential, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
 
         const client = Client.initWithMiddleware({
             fetchOptions: {
                 signal: abortController.signal
             },
             authProvider: new TokenCredentialAuthenticationProvider(
-                this.tokenCredential, {
+                tokenCredential, {
                     getTokenOptions: {
                         abortSignal: abortController.signal
                     },

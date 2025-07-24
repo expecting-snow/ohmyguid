@@ -4,20 +4,9 @@ import { GuidResolverResponse                        } from "./Models/GuidResolv
 import { TokenCredential                             } from "@azure/identity";
 
 export class GuidResolverAzureRoleDefinition {
-
-    readonly guidResolverAzureRoleDefinitionCustomRoles : GuidResolverAzureRoleDefinitionCustomRoles ;
-    readonly guidResolverAzureRoleDefinitionBuiltInRoles: GuidResolverAzureRoleDefinitionBuiltInRoles;
-
-    constructor(
-        readonly tokenCredential: TokenCredential,
-    ) {
-        this.guidResolverAzureRoleDefinitionCustomRoles  = new GuidResolverAzureRoleDefinitionCustomRoles (tokenCredential);
-        this.guidResolverAzureRoleDefinitionBuiltInRoles = new GuidResolverAzureRoleDefinitionBuiltInRoles(tokenCredential);
-    }
-
-    async resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
-        const promiseCustomRoles  = this.guidResolverAzureRoleDefinitionCustomRoles .resolve(guid, abortController);
-        const promiseBuiltInRoles = this.guidResolverAzureRoleDefinitionBuiltInRoles.resolve(guid, abortController);
+    static async resolve(guid: string, tokenCredential: TokenCredential, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+        const promiseCustomRoles  = GuidResolverAzureRoleDefinitionCustomRoles .resolve(guid, tokenCredential, abortController);
+        const promiseBuiltInRoles = GuidResolverAzureRoleDefinitionBuiltInRoles.resolve(guid, tokenCredential, abortController);
 
         return await promiseBuiltInRoles
             ?? await promiseCustomRoles;
