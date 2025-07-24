@@ -1,37 +1,37 @@
 import { GuidResolverResponse } from "./Models/GuidResolverResponse";
 import { TokenCredential      } from "@azure/identity";
+import { AuthorizationManagementClient } from "@azure/arm-authorization";
 
-export class GuidResolverAzureRoleDefinitionBuiltInRoles {
+export class GuidResolverAzureRoleDefinitionCustomRoles {
+
+    readonly client : AuthorizationManagementClient;
 
     constructor(
-        readonly tokenCredential: TokenCredential,
+        readonly credentials: TokenCredential
     ) {
-
+        this.client = new AuthorizationManagementClient(credentials,'/subscriptions');
     }
 
-    resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+    async resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+        try {
+            for await (const item of this.client.roleDefinitions.list('', { abortSignal: abortController.signal })) {
+                if (item.name === guid && item.roleName) {
+                    
+                    abortController.abort();
 
-        if(abortController.signal.aborted){
-            return Promise.resolve(undefined);
+                    return new GuidResolverResponse(
+                        guid,
+                        item.roleName,
+                        "Azure RoleDefinition CustomRole",
+                        item,
+                        new Date()
+                    );
+                }
+            }
         }
+        catch { }
 
-        var role = this.builtInRoles.find(role => role.name === guid);
-
-        if (role === undefined) {
-            return Promise.resolve(undefined);
-        }
-        
-        abortController.abort();
-
-        return Promise.resolve(
-            new GuidResolverResponse(
-                role.name,
-                role.roleName,
-                "Azure RoleDefinition BuiltInRole",
-                role,
-                new Date()
-            )
-        );
+        return undefined;
     }
 
     private readonly builtInRoles = [

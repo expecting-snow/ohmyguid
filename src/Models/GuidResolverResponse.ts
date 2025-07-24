@@ -5,7 +5,8 @@ export class GuidResolverResponse {
         readonly type       : 'Azure ManagementGroup' 
                             | 'Azure Subscription' 
                             | 'Azure ManagementGroup'
-                            | "Azure RoleDefinition"
+                            | 'Azure RoleDefinition BuiltInRole'
+                            | 'Azure RoleDefinition CustomRole'
                             | 'Microsoft Entra ID AppRegistration'
                             | 'Microsoft Entra ID Group'
                             | 'Microsoft Entra ID ServicePrincipal'

@@ -25,7 +25,10 @@ export class GuidResolverMicrosoftEntraId {
                 this.tokenCredential, {
                     getTokenOptions: {
                         abortSignal: abortController.signal
-                    }
+                    },
+                    scopes: [
+                        'https://graph.microsoft.com/.default'
+                    ]
                 }
             )
         });
