@@ -2,10 +2,11 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Look up all these guids",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "engines": {
     "vscode": "^1.102.0"
   },
+  "icon": "icon.png",
   "publisher": "expecting-snow",
   "categories": [
     "Other"
