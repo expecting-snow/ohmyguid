@@ -1,4 +1,4 @@
-import { GuidResolverResponse } from "./Models/GuidResolverResponse";
+import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 import { ManagementGroupsAPI  } from "@azure/arm-managementgroups";
 import { TokenCredential      } from "@azure/identity";
 

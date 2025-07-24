@@ -1,6 +1,6 @@
 import { GuidResolverAzureRoleDefinitionBuiltInRoles } from "./GuidResolverAzureRoleDefinitionBuiltInRoles";
 import { GuidResolverAzureRoleDefinitionCustomRoles  } from "./GuidResolverAzureRoleDefinitionCustomRoles";
-import { GuidResolverResponse                        } from "./Models/GuidResolverResponse";
+import { GuidResolverResponse                        } from "../Models/GuidResolverResponse";
 import { TokenCredential                             } from "@azure/identity";
 
 export class GuidResolverAzureRoleDefinition {

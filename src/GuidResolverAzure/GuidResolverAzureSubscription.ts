@@ -1,4 +1,4 @@
-import { GuidResolverResponse } from "./Models/GuidResolverResponse";
+import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 import { SubscriptionClient   } from "@azure/arm-subscriptions";
 import { TokenCredential      } from "@azure/identity";
 

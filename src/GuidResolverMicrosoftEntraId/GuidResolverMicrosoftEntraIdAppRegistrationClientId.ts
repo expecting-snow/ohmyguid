@@ -1,5 +1,5 @@
 import { Client               } from "@microsoft/microsoft-graph-client";
-import { GuidResolverResponse } from "./Models/GuidResolverResponse";
+import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 
 export class GuidResolverMicrosoftEntraIdAppRegistrationClientId {
     static async resolve(client: Client, guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {

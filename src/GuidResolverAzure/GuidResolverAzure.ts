@@ -1,7 +1,7 @@
 import { GuidResolverAzureManagementGroup } from "./GuidResolverAzureManagementGroup";
 import { GuidResolverAzureRoleDefinition  } from "./GuidResolverAzureRoleDefinition";
 import { GuidResolverAzureSubscription    } from "./GuidResolverAzureSubscription";
-import { GuidResolverResponse             } from "./Models/GuidResolverResponse";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
 import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverAzure {

@@ -1,5 +1,5 @@
-import { GuidResolverAzure            } from "./GuidResolverAzure";
-import { GuidResolverMicrosoftEntraId } from "./GuidResolverMicrosoftEntraId";
+import { GuidResolverAzure            } from "./GuidResolverAzure/GuidResolverAzure";
+import { GuidResolverMicrosoftEntraId } from "./GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraId";
 import { GuidResolverResponse         } from "./Models/GuidResolverResponse";
 import { TokenCredential              } from "@azure/identity";
 

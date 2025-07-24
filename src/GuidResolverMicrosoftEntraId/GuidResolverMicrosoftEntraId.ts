@@ -6,7 +6,7 @@ import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidReso
 import { GuidResolverMicrosoftEntraIdServicePrincipalClientId } from "./GuidResolverMicrosoftEntraIdServicePrincipalClientId";
 import { GuidResolverMicrosoftEntraIdTenant                   } from "./GuidResolverMicrosoftEntraIdTenant";
 import { GuidResolverMicrosoftEntraIdUser                     } from "./GuidResolverMicrosoftEntraIdUser";
-import { GuidResolverResponse                                 } from "./Models/GuidResolverResponse";
+import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse";
 import { TokenCredential                                      } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
