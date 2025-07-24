@@ -17,7 +17,6 @@ export class GuidResolver {
 
     async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
         const abortController = new AbortController();
-        const abortSignal     = abortController.signal;
 
         const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid, abortController);
         const promiseAzure            = this.guidResolverAzure           .resolve(guid, abortController);

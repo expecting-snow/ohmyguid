@@ -1,4 +1,4 @@
-import { AuthProvider, Client                                               } from "@microsoft/microsoft-graph-client";
+import { Client                                               } from "@microsoft/microsoft-graph-client";
 import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration";
 import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId";
 import { GuidResolverMicrosoftEntraIdGroup                    } from "./GuidResolverMicrosoftEntraIdGroup";
@@ -8,55 +8,35 @@ import { GuidResolverMicrosoftEntraIdTenant                   } from "./GuidReso
 import { GuidResolverMicrosoftEntraIdUser                     } from "./GuidResolverMicrosoftEntraIdUser";
 import { GuidResolverResponse                                 } from "./Models/GuidResolverResponse";
 import { TokenCredential                                      } from "@azure/identity";
+import { TokenCredentialAuthenticationProvider                } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
 export class GuidResolverMicrosoftEntraId {
-
-    private readonly microsoftEntraIdAppRegistrationGuidResolver         : GuidResolverMicrosoftEntraIdAppRegistration;
-    private readonly microsoftEntraIdServicePrincipalClientIdGuidResolver: GuidResolverMicrosoftEntraIdServicePrincipalClientId;
-    private readonly microsoftEntraIdServicePrincipalGuidResolver        : GuidResolverMicrosoftEntraIdServicePrincipal;
-    private readonly microsoftEntraIdAppRegistrationClientIdGuidResolver : GuidResolverMicrosoftEntraIdAppRegistrationClientId;
-    private readonly microsoftEntraIdGroupGuidResolver                   : GuidResolverMicrosoftEntraIdGroup;
-    private readonly microsoftEntraIdUserGuidResolver                    : GuidResolverMicrosoftEntraIdUser;
-    private readonly microsoftEntraIdTenantGuidResolver                  : GuidResolverMicrosoftEntraIdTenant;
-    
     constructor(
         readonly tokenCredential: TokenCredential
-    ) {
+    ) { }
 
-        const microsoftGraphClient = Client.init({
-            authProvider: async (done) => {
-                const token = await this.tokenCredential.getToken("https://graph.microsoft.com/.default");
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
 
-                if (!token) {
-                    return done(new Error("Failed to acquire token"), null);
+        const client = Client.initWithMiddleware({
+            fetchOptions: {
+                signal: abortController.signal
+            },
+            authProvider: new TokenCredentialAuthenticationProvider(
+                this.tokenCredential, {
+                    getTokenOptions: {
+                        abortSignal: abortController.signal
+                    }
                 }
-                if (!token.token) {
-                    return done(new Error("Failed to acquire token"), null);
-                }
-
-                done(null, token.token);
-
-            }
+            )
         });
 
-        this.microsoftEntraIdAppRegistrationGuidResolver          = new GuidResolverMicrosoftEntraIdAppRegistration         (microsoftGraphClient);
-        this.microsoftEntraIdServicePrincipalGuidResolver         = new GuidResolverMicrosoftEntraIdServicePrincipal        (microsoftGraphClient);
-        this.microsoftEntraIdAppRegistrationClientIdGuidResolver  = new GuidResolverMicrosoftEntraIdAppRegistrationClientId (microsoftGraphClient);
-        this.microsoftEntraIdServicePrincipalClientIdGuidResolver = new GuidResolverMicrosoftEntraIdServicePrincipalClientId(microsoftGraphClient);
-        this.microsoftEntraIdGroupGuidResolver                    = new GuidResolverMicrosoftEntraIdGroup                   (microsoftGraphClient);
-        this.microsoftEntraIdUserGuidResolver                     = new GuidResolverMicrosoftEntraIdUser                    (microsoftGraphClient);
-        this.microsoftEntraIdTenantGuidResolver                   = new GuidResolverMicrosoftEntraIdTenant                  (microsoftGraphClient);
-    }
-
-    public async resolve(guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
-
-        const promiseAppRegistration          = this.microsoftEntraIdAppRegistrationGuidResolver         .resolve(guid, abortController);
-        const promiseAppRegistrationClientId  = this.microsoftEntraIdAppRegistrationClientIdGuidResolver .resolve(guid, abortController);
-        const promiseServicePrincipal         = this.microsoftEntraIdServicePrincipalGuidResolver        .resolve(guid, abortController);
-        const promiseServicePrincipalClientId = this.microsoftEntraIdServicePrincipalClientIdGuidResolver.resolve(guid, abortController);
-        const promiseGroup                    = this.microsoftEntraIdGroupGuidResolver                   .resolve(guid, abortController);
-        const promiseUser                     = this.microsoftEntraIdUserGuidResolver                    .resolve(guid, abortController);
-        const promiseTenant                   = this.microsoftEntraIdTenantGuidResolver                  .resolve(guid, abortController);
+        const promiseAppRegistration          = GuidResolverMicrosoftEntraIdAppRegistration         .resolve(client, guid, abortController);
+        const promiseAppRegistrationClientId  = GuidResolverMicrosoftEntraIdAppRegistrationClientId .resolve(client, guid, abortController);
+        const promiseServicePrincipal         = GuidResolverMicrosoftEntraIdServicePrincipal        .resolve(client, guid, abortController);
+        const promiseServicePrincipalClientId = GuidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(client, guid, abortController);
+        const promiseGroup                    = GuidResolverMicrosoftEntraIdGroup                   .resolve(client, guid, abortController);
+        const promiseUser                     = GuidResolverMicrosoftEntraIdUser                    .resolve(client, guid, abortController);
+        const promiseTenant                   = GuidResolverMicrosoftEntraIdTenant                  .resolve(client, guid, abortController);
 
         return await promiseAppRegistration
             ?? await promiseAppRegistrationClientId

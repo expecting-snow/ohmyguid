@@ -1,5 +1,5 @@
-import { TokenCredential, AzureCliCredential, AccessToken } from '@azure/identity';
-import { Mutex, Semaphore } from 'async-mutex';
+import { Mutex                                                             } from 'async-mutex';
+import { TokenCredential, AccessToken, AzureCliCredential, GetTokenOptions } from '@azure/identity';
 
 /**
  * A wrapper around {@link AzureCliCredential} that adds in-memory caching for access tokens per unique combination
@@ -20,10 +20,10 @@ export class CachingAzureCliCredential implements TokenCredential {
         this.mutex      = new Mutex                   ();
     }
 
-    async getToken(scopes: string | string[], options?: { tenantId?: string; }): Promise<AccessToken> {
+    async getToken(scopes: string | string[], options?: GetTokenOptions): Promise<AccessToken> {
         return await this.mutex.runExclusive(async () => {
 
-            const key = (Array.isArray(scopes) ? scopes.join(' ') : scopes) + `| ${options?.tenantId ?? ''}`;
+            const key = (Array.isArray(scopes) ? scopes.join(' ') : scopes) + ` | ${options?.tenantId ?? ''}`;
 
             if (this.cache.has(key)) {
                 const accessToken = this.cache.get(key);
