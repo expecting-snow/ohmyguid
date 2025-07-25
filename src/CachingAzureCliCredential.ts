@@ -30,7 +30,7 @@ export class CachingAzureCliCredential implements TokenCredential {
     getToken(scopes: string | string[], options?: GetTokenOptions): Promise<AccessToken> {
         return this.mutex.runExclusive(async () => {
 
-            const key = (Array.isArray(scopes) ? scopes.join(' ') : scopes) + ` | ${options?.tenantId ?? ''}`;
+            const key = ((Array.isArray(scopes) ? scopes.join(' ') : scopes) + ` ${options?.tenantId ?? ''}`).trim();
 
             if (this.cache.has(key)) {
                 const accessToken = this.cache.get(key);

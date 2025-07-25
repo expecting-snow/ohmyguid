@@ -1,38 +1,44 @@
+import { Memento } from "vscode";
 import { GuidResolver } from "./GuidResolver";
 import { GuidResolverResponse } from "./Models/GuidResolverResponse";
 
 export class GuidCache {
 
     private cache: Map<string, Promise<GuidResolverResponse | undefined>> = new Map();
-    private cacheResolved: Map<string, GuidResolverResponse | undefined> = new Map();
 
     constructor(
-        readonly guidResolver: GuidResolver
+        private readonly guidResolver: GuidResolver,
+        private readonly memento: Memento,
+        private readonly callbackInfo: (value: any) => void
     ) { }
 
     dispose(): any {
-        console.log('ohmyguid - cache - dispose');
+        this.callbackInfo('cache - dispose');
         this.clear();
     }
 
     async get(guid: string): Promise<GuidResolverResponse | undefined> {
-        if (this.cacheResolved.has(guid)) {
 
-            const response = this.cacheResolved.get(guid);
+        const response = this.memento.get<GuidResolverResponse>(guid);
 
-            if (response) {
-                console.log(`ohmyguid ${guid} - ${response.displayName}`);
+        if (response) {
+            this.callbackInfo(`${guid} - ${response.displayName}`);
 
-                return response;
-            }
+            return response;
         }
 
-        const resolvedValue = await this.cache.get(guid);
+        const promise = this.cache.get(guid);
+
+        if(!promise){
+            return undefined;
+        }
+
+        const resolvedValue = await promise;
 
         if (resolvedValue) {
-            this.cacheResolved.set(guid, resolvedValue);
+            this.memento.update(guid, resolvedValue);
 
-            console.log(`ohmyguid ${guid} - NEW - ${resolvedValue.displayName}`);
+            this.callbackInfo(`${guid} - NEW - ${resolvedValue.displayName}`);
 
             return resolvedValue;
         }
@@ -42,7 +48,7 @@ export class GuidCache {
 
     set(guid: string): void {
         if (!this.cache.has(guid)) {
-            console.log(`ohmyguid ${guid} - set`);
+            this.callbackInfo(`${guid} - set`);
 
             this.cache.set(guid, this.guidResolver.resolve(guid));
         }
@@ -51,9 +57,8 @@ export class GuidCache {
     clear() {
         try {
             this.cache.clear();
-            this.cacheResolved.clear();
         } catch (e: any) {
-            console.log(`ohmyguid - clear - error ${e}`);
+            this.callbackInfo(`clear - error ${e}`);
         }
     }
 }

@@ -12,7 +12,7 @@ export class GuidResolverResponse {
                             | 'Microsoft Entra ID ServicePrincipal'
                             | 'Microsoft Entra ID Tenant'
                             | 'Microsoft Entra ID User',
-        readonly object     : object,
+        readonly object     : any,
         readonly dateTime   : Date
     ) { }
 }

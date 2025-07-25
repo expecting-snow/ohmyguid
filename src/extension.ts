@@ -8,19 +8,23 @@ import { GuidLinkProvider             } from './GuidLinkProvider';
 import { CachingAzureCliCredential    } from './CachingAzureCliCredential';
 
 export function activate(context: vscode.ExtensionContext) {
-
-    console.log('Extension "ohmyguid" - activate');
-
     const outputChannel = vscode.window.createOutputChannel('ohmyguid');
     context.subscriptions.push(outputChannel);
+
+    outputChannel.appendLine('activate');
 
     const guidCache = new GuidCache(
         new GuidResolver(
             new CachingAzureCliCredential(
-                value => outputChannel.appendLine(`Authentication info: ${value}`),
-                error =>  vscode.window.showInformationMessage(`Authentication error: ${error}`)
+                value => outputChannel.appendLine(`Authenticate : ${value}`),
+                error =>  {
+                    outputChannel.appendLine            (`Authenticate : ${error}`);
+                    vscode.window.showInformationMessage(`Authenticate : ${error}`);
+                }
             )
-        )
+        ),
+        context.workspaceState,
+        value => outputChannel.appendLine(`Cache : ${value}`)
     );
 
     context.subscriptions.push(guidCache);
@@ -57,12 +61,9 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
- 
-
-    console.log('Extension "ohmyguid" - activated');
+    outputChannel.appendLine('activated');
 }
 
 export function deactivate() {
-    console.log('Extension "ohmyguid" - deactivate');
-    console.log('Extension "ohmyguid" - deactivated');
+    vscode.window.createOutputChannel('ohmyguid').appendLine('Extension "ohmyguid" - deactivate');
 }

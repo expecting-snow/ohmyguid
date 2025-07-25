@@ -6,6 +6,10 @@ export class GuidResolverResponseRenderer {
             return '';
         }
 
+        if (response.type === 'Microsoft Entra ID Tenant') {
+            return `${response.type}${response.object.displayName ? ` | ${response.object.displayName}` : ''}${response.object.defaultDomainName ? ` | ${response.object.defaultDomainName}` : ''}`;
+        }
+
         return `${response.type} | ${response.displayName}`;
     }
 }
