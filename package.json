@@ -6,7 +6,7 @@
   "engines": {
     "vscode": "^1.102.0"
   },
-  "icon": "icon.png",
+  "icon": "images/icon.png",
   "publisher": "expecting-snow",
   "categories": [
     "Other"

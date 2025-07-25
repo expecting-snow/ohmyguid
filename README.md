@@ -1,10 +1,12 @@
 # ohmyguid
 
+![Sample](images/sample.png)
+
 This extension provides CodeLens support for guids within text files by looking up
 - Microsoft Entra Id AppRegistrations Ids
 - Microsoft Entra Id AppRegistrations ClientIds / AppIds
-- Microsoft Entra Id ServicePrinncipal Ids
-- Microsoft Entra Id ServicePrinncipal ClientIds / AppIds
+- Microsoft Entra Id ServicePrincipal Ids
+- Microsoft Entra Id ServicePrincipal ClientIds / AppIds
 - Microsoft Entra Id Group Ids
 - Microsoft Entra Id User Ids
 - Azure Subscription Ids
