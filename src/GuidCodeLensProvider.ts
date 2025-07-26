@@ -22,17 +22,25 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
 
             const guid = match[0];
 
-            this.guidCache.set(guid);
+            const response = this.guidCache.set(guid);
 
-            codeLenses.push(
-                new GuidCodeLens(
-                    guid,
-                    new vscode.Range(
-                        document.positionAt(match.index),
-                        document.positionAt(match.index + guid.length)
-                    )
+            const codeLens = new GuidCodeLens(
+                guid,
+                new vscode.Range(
+                    document.positionAt(match.index),
+                    document.positionAt(match.index + guid.length)
                 )
             );
+
+            if (response) {
+                codeLens.command = {
+                    title: this.renderer.render(response) || 'No information available',
+                    command: 'ohmyguid.openLink',
+                    arguments: [ response ]
+                };
+            }
+
+            codeLenses.push(codeLens);
         }
 
         return codeLenses;
