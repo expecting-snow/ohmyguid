@@ -2,7 +2,7 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Look up all these guids",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "engines": {
     "vscode": "^1.102.0"
   },
@@ -25,13 +25,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "ohmyguid.clearCache",
-        "title": "Clear Cache",
-        "category": "OhMyGuid"
-      },
-      {
-        "command": "ohmyguid.openLink",
-        "title": "Open Link",
+        "command": "ohmyguid.refresh",
+        "title": "Refresh",
         "category": "OhMyGuid"
       }
     ],
@@ -71,6 +66,7 @@
   "devDependencies": {
     "@azure/arm-authorization": "^9.0.0",
     "@azure/arm-managementgroups": "^2.0.2",
+    "@azure/arm-policy": "^6.0.0",
     "@azure/arm-resources": "^6.1.0",
     "@azure/arm-subscriptions": "^5.1.0",
     "@azure/identity": "^4.10.2",
@@ -80,6 +76,7 @@
     "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
+    "@vscode/extension-telemetry": "^1.0.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.25.3",

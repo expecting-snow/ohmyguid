@@ -9,11 +9,11 @@ export class GuidResolver {
         readonly tokenCredential: TokenCredential,
     ) { }
 
-    async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
+    async resolve(guid: string, azureSubscriptionIds: string[]): Promise<GuidResolverResponse | undefined> {
         const abortController = new AbortController();
 
-        const promiseMicrosoftEntraId = GuidResolverMicrosoftEntraId.resolve(guid, this.tokenCredential, abortController);
-        const promiseAzure            = GuidResolverAzure           .resolve(guid, this.tokenCredential, abortController);
+        const promiseMicrosoftEntraId = GuidResolverMicrosoftEntraId.resolve(guid,                       this.tokenCredential, abortController);
+        const promiseAzure            = GuidResolverAzure           .resolve(guid, azureSubscriptionIds, this.tokenCredential, abortController);
 
         return await promiseMicrosoftEntraId
             ?? await promiseAzure;

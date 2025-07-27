@@ -11,7 +11,8 @@ This extension provides CodeLens support for guids within text files by looking 
 - Microsoft Entra Id User Ids
 - Azure Subscription Ids
 - Azure Management Group Ids
-- Azure RoleDefinition Ids
+- Azure Policy Definition Ids
+- Azure Role Definition Ids
 
 in
 
@@ -26,6 +27,16 @@ files.
 
 stay tuned...
 
+## Telemetry
+
+Telemetry collecting follows guidelines in [Telemetry extension authors guide](https://code.visualstudio.com/api/extension-guides/telemetry) using [@vscode/extension-telemetry](https://www.npmjs.com/package/@vscode/extension-telemetry).
+
+Configure the `telemetry.telemetryLevel` in [user settings](vscode://settings/telemetry.telemetryLevel).
+ 
+
+Dump of all Visual Studio Code telemetry on the command line with `code --telemetry`.
+
+
 ## Requirements
 
 please log in with the Azure CLI
@@ -36,7 +47,7 @@ no settings are currently supported
 
 ## Known Issues
 
-none
+all feedback is welcome and appreciated at https://github.com/expecting-snow/ohmyguid/issues
 
 ## Release Notes
 
@@ -44,4 +55,4 @@ none
 
 all is beta before 1.0
 
-**Enjoy!**
+**Happy hacking!**

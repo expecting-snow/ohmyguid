@@ -10,8 +10,18 @@ export class GuidLinkProvider {
         }
 
         switch (item.type) {
-            case "Azure Subscription":
+            case 'Azure Subscription':
                 return `https://portal.azure.com/#@${(item.object as MicrosoftEntraIdTenantInformation).tenantId}/resource/subscriptions/${item.guid}`;
+            case 'Azure ManagementGroup':
+                return 'https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagementGroupBrowseBlade/~/MGBrowse_overview';
+            case 'Microsoft Entra ID AppRegistration':
+                return `https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/${item.object.appId}/isMSAApp~/false`;
+            case 'Microsoft Entra ID ServicePrincipal':
+                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/ManagedAppMenuBlade/~/Overview/objectId/${item.object.id}/appId/${item.object.appId}`;
+            case 'Microsoft Entra ID Group':
+                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.guid}/menuId/`;
+            case 'Microsoft Entra ID User':
+                return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.guid}/hidePreviewBanner~/true`;
             default:
                 console.log(`No link available for type: ${item.type}`);
                 return undefined;
