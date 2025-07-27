@@ -2,7 +2,7 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Look up all these guids",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "engines": {
     "vscode": "^1.102.0"
   },
