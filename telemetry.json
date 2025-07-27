@@ -1,0 +1,20 @@
+{
+  "aiKey": "7518373b-73d3-46c0-9a47-2a7496797e89",
+  "applicationInsightsEndpoint": "https://dc.services.visualstudio.com/v2/track",
+  "commonProperties": {
+    "extensionVersion": "0.0.1",
+    "environment": "production"
+  },
+  "sendErrorTelemetry": true,
+  "sendFirstPartyTelemetry": false,
+  "sendInternalUserTelemetry": false,
+  "sendPII": false,
+  "sendDefaultPii": false,
+  "sendUserId": false,
+  "sendMachineId": false,
+  "sendSessionId": true,
+  "sendTelemetry": true,
+  "useDisksForStorage": false,
+  "useConsoleForDebug": true,
+  "useLegacyCommonProperties": false
+}
