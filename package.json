@@ -28,11 +28,6 @@
         "command": "ohmyguid.clearCache",
         "title": "Clear Cache",
         "category": "OhMyGuid"
-      },
-      {
-        "command": "ohmyguid.openLink",
-        "title": "Open Link",
-        "category": "OhMyGuid"
       }
     ],
     "codeLens": [
