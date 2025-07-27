@@ -20,10 +20,10 @@ export class GuidCache {
     async get(guid: string): Promise<GuidResolverResponse | undefined> {
 
         const response = this.memento.get<GuidResolverResponse>(guid);
-        
+
         if (response) {
             this.callbackInfo(`${guid} - ${response.displayName}`);
-            
+
             return response;
         }
 
