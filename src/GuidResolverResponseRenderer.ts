@@ -20,16 +20,6 @@ export class GuidResolverResponseRenderer {
              return `${response.type}${response.object.userPrincipalName ? ` ${this.separator} ${response.object.userPrincipalName}` : ` ${this.separator} ${response.displayName}`}`;
         }
 
-        // '' 
-        // | 'Azure Subscription' 
-        // | 'Azure ManagementGroup'
-        // | 'Azure RoleDefinition BuiltInRole'
-        // | 'Azure RoleDefinition CustomRole'
-        // | 'Microsoft Entra ID AppRegistration'
-        // | 'Microsoft Entra ID Group'
-        // | 'Microsoft Entra ID ServicePrincipal'
-        // | 'Microsoft Entra ID Tenant'
-        // | 'Microsoft Entra ID User'
         return `${response.type} ${this.separator} ${response.displayName}`;
     }
 }
