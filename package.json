@@ -25,8 +25,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "ohmyguid.clearCache",
-        "title": "Clear Cache",
+        "command": "ohmyguid.refresh",
+        "title": "Refresh",
         "category": "OhMyGuid"
       }
     ],

@@ -81,10 +81,10 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('ohmyguid.clearCache',
+        vscode.commands.registerCommand('ohmyguid.refresh',
             () => {
                 guidCache.clear();
-                vscode.window.showInformationMessage('Extension "ohmyguid"- cache cleared.');
+                vscode.window.showInformationMessage('Extension "ohmyguid" - refresh');
             }
         )
     );
