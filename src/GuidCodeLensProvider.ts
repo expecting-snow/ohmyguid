@@ -22,7 +22,7 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
 
             const guid = match[0];
 
-            const response = this.guidCache.set(guid);
+            const response = this.guidCache.getResolvedOrEnqueue(guid);
 
             const codeLens = new GuidCodeLens(
                 guid,
@@ -46,17 +46,20 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
         return codeLenses;
     }
 
-    resolveCodeLens(codeLens: GuidCodeLens, token: vscode.CancellationToken): vscode.ProviderResult<GuidCodeLens> {
-        const promise = this.guidCache.get(codeLens.guid);
+    async resolveCodeLens(codeLens: GuidCodeLens, token: vscode.CancellationToken) : Promise<GuidCodeLens> {
+        const promise = this.guidCache.getResolved(codeLens.guid);
         if (promise) {
-            return promise.then(resolvedValue => {
+            const resolvedValue = await promise;
+
+            if (resolvedValue) {
                 codeLens.command = {
                     title: this.renderer.render(resolvedValue) || 'No information available',
                     command: 'ohmyguid.openLink',
-                    arguments: [ resolvedValue ]
+                    arguments: [resolvedValue]
                 };
+
                 return codeLens;
-            });
+            }
         }
 
         codeLens.command = {

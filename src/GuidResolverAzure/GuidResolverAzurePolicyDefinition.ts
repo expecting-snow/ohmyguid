@@ -7,6 +7,8 @@ export class GuidResolverAzurePolicyDefinition {
         for (const subscriptionId of subscriptionIds) {
             const response = await this.resolveInternal(guid, subscriptionId, tokenCredential, abortController);
             if (response) {
+                abortController.abort();
+
                 return response;
             }
         }

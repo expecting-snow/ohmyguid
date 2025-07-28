@@ -40,6 +40,8 @@ export function activate(context: vscode.ExtensionContext) {
         value => outputChannel.appendLine(`Cache : ${value}`)
     );
 
+    // context.workspaceState.keys().forEach(key => { context.workspaceState.update(key, undefined); });
+
     (azurePoliciesBuiltin as any[])
     .forEach(policy => guidCache.update(policy.name, new GuidResolverResponse(
         policy.name,
