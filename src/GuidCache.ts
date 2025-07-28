@@ -17,8 +17,7 @@ export class GuidCache {
         this.clear();
     }
 
-    async get(guid: string): Promise<GuidResolverResponse | undefined> {
-
+    async getResolved(guid: string): Promise<GuidResolverResponse | undefined> {
         const response = this.memento.get<GuidResolverResponse>(guid);
 
         if (response) {
@@ -48,6 +47,24 @@ export class GuidCache {
         return undefined;
     }
 
+    getResolvedOrEnqueue(guid: string): GuidResolverResponse | undefined {
+        const response = this.memento.get<GuidResolverResponse>(guid);
+
+        if (response) {
+            return response;
+        }
+
+        if (!this.cache.has(guid)) {
+            this.callbackInfo(`${guid} - set`);
+
+            const azureSubscriptionIds = this.getAzureSubscriptions().map(p => p.guid);
+
+            this.cache.set(guid, this.guidResolver.resolve(guid, azureSubscriptionIds));
+        }
+
+        return undefined;
+    }
+
     private trySetAzureSubscription(guidResolverResponse: GuidResolverResponse): void {
         if (guidResolverResponse.type === 'Azure Subscription') {
             this.memento.update(`Azure Subscription ${guidResolverResponse.guid}`, guidResolverResponse);
@@ -69,23 +86,7 @@ export class GuidCache {
         return subscriptions;
     }
 
-    set(guid: string): GuidResolverResponse | undefined {
-        const response = this.memento.get<GuidResolverResponse>(guid);
 
-        if (response) {
-            return response;
-        }
-
-        if (!this.cache.has(guid)) {
-            this.callbackInfo(`${guid} - set`);
-
-            const azureSubscriptionIds = this.getAzureSubscriptions().map(p => p.guid);
-
-            this.cache.set(guid, this.guidResolver.resolve(guid, azureSubscriptionIds));
-        }
-
-        return undefined;
-    }
 
     update(guid: string, guidResolverResponse: GuidResolverResponse): void {
         this.memento.update(guid, guidResolverResponse);

@@ -1,8 +1,8 @@
 {
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
-  "description": "Look up all these guids",
-  "version": "0.0.14",
+  "description": "Azure and Microsoft Entra ID guids look up",
+  "version": "0.0.15",
   "engines": {
     "vscode": "^1.102.0"
   },

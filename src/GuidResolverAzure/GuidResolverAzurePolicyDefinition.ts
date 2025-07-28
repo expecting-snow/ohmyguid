@@ -1,12 +1,14 @@
-import { GuidResolverResponse                     } from "../Models/GuidResolverResponse";
-import { PolicyClient                             } from "@azure/arm-policy";
-import { TokenCredential                          } from "@azure/identity";
+import { GuidResolverResponse } from "../Models/GuidResolverResponse";
+import { PolicyClient         } from "@azure/arm-policy";
+import { TokenCredential      } from "@azure/identity";
 
 export class GuidResolverAzurePolicyDefinition {
     static async resolve(guid: string, subscriptionIds: string[], tokenCredential: TokenCredential, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         for (const subscriptionId of subscriptionIds) {
             const response = await this.resolveInternal(guid, subscriptionId, tokenCredential, abortController);
             if (response) {
+                abortController.abort();
+
                 return response;
             }
         }
