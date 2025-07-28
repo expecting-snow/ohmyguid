@@ -10,6 +10,7 @@ import { GuidResolverResponse         } from './Models/GuidResolverResponse';
 import { GuidResolverResponseRenderer } from './GuidResolverResponseRenderer';
 import { TelemetryReporter            } from '@vscode/extension-telemetry';
 import { TelemetryReporterEvents      } from './TelemetryReporterEvents';
+import   azureAdvisorRecommendations    from "../static/azure-advisor-recommendations.json";
 import   azurePoliciesBuiltin           from "../static/azure-policies-builtin.json";
 import   azurePoliciesStatic            from "../static/azure-policies-static.json";
 import   azureRoleDefinitionsBuiltin    from "../static/azure-role-definitions-builtin.json";
@@ -63,6 +64,15 @@ export function activate(context: vscode.ExtensionContext) {
         roleDefinition.roleName,
         'Azure RoleDefinition BuiltInRole',
         roleDefinition,
+        new Date()
+    )));
+
+    (azureAdvisorRecommendations as any[])
+    .forEach(advsr => guidCache.update(advsr.recommendationTypeId, new GuidResolverResponse(
+        advsr.recommendationTypeId,
+        `${advsr.category} - ${advsr.impact} - ${advsr.impactedField} - ${advsr.shortDescription?.solution}`,
+        'Azure Advisor Recommendation',
+        advsr,
         new Date()
     )));
 

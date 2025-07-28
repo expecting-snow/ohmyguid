@@ -1,0 +1,1562 @@
+[
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "4a3d7cd3-f17c-637a-1ffc-614a01dd03cf",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Managed identity should be enabled on web apps",
+      "solution": "Managed identity should be enabled on web apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "4a3d7cd3-f17c-637a-1ffc-614a01dd03cf",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Managed identity should be enabled on web apps",
+      "solution": "Managed identity should be enabled on web apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.CDN/PROFILES",
+    "recommendationTypeId": "600a3187-48dd-495b-a9e8-320f83571b01",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Switch from managed certificates to BYOC by August 15, 2025 or migrate to AFD Standard/Premium",
+      "solution": "Switch from managed certificates to BYOC by August 15, 2025 or migrate to AFD Standard/Premium"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.CDN/PROFILES",
+    "recommendationTypeId": "600a3187-48dd-495b-a9e8-320f83571b01",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Switch from managed certificates to BYOC by August 15, 2025 or migrate to AFD Standard/Premium",
+      "solution": "Switch from managed certificates to BYOC by August 15, 2025 or migrate to AFD Standard/Premium"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "972a6579-f38f-c0b9-1b4b-a5bbeba3ab5b",
+    "risk": null,
+    "shortDescription": {
+      "problem": "FTPS should be required in function apps",
+      "solution": "FTPS should be required in function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "15be5f3c-e0a4-c0fa-fbff-8e50339b4b22",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for function apps",
+      "solution": "TLS should be updated to the latest version for function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "15be5f3c-e0a4-c0fa-fbff-8e50339b4b22",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for function apps",
+      "solution": "TLS should be updated to the latest version for function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "15be5f3c-e0a4-c0fa-fbff-8e50339b4b22",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for function apps",
+      "solution": "TLS should be updated to the latest version for function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "15be5f3c-e0a4-c0fa-fbff-8e50339b4b22",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for function apps",
+      "solution": "TLS should be updated to the latest version for function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "15be5f3c-e0a4-c0fa-fbff-8e50339b4b22",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for function apps",
+      "solution": "TLS should be updated to the latest version for function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "15be5f3c-e0a4-c0fa-fbff-8e50339b4b22",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for function apps",
+      "solution": "TLS should be updated to the latest version for function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "dc298556-8232-4aa8-bfe0-5204c5017be0",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use Standard or Premium tier",
+      "solution": "Use Standard or Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Subscriptions/subscriptions",
+    "recommendationTypeId": "0876ef51-fee7-449d-ba1e-f2662c7e43c6",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Microsoft Defender for App Service should be enabled",
+      "solution": "Microsoft Defender for App Service should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "2a54c352-7ca4-4bae-ad46-47ecd9595bd2",
+    "risk": null,
+    "shortDescription": {
+      "problem": "TLS should be updated to the latest version for web apps",
+      "solution": "TLS should be updated to the latest version for web apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "55ed2823-a834-42bd-96ec-d3d5c97d9c6b",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Role-Based Access Control should be used on Azure Keyvault Services (AKV)",
+      "solution": "Role-Based Access Control should be used on Azure Keyvault Services (AKV)"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "72063b96-92fa-4b74-9457-b84b662155f9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Health check for App Service",
+      "solution": "Enable Health check for App Service"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "72063b96-92fa-4b74-9457-b84b662155f9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Health check for App Service",
+      "solution": "Enable Health check for App Service"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "72063b96-92fa-4b74-9457-b84b662155f9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Health check for App Service",
+      "solution": "Enable Health check for App Service"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "72063b96-92fa-4b74-9457-b84b662155f9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Health check for App Service",
+      "solution": "Enable Health check for App Service"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SITES",
+    "recommendationTypeId": "e987dcce-fd2c-4683-8abf-f1a34bbad737",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Set minimum instance count for App Service to 2",
+      "solution": "Set minimum instance count for App Service to 2"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Subscriptions/subscriptions",
+    "recommendationTypeId": "26f0d5bb-1398-49be-83c5-7161c2e39d8b",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Microsoft Defender for Storage plan should be enabled with Malware Scanning and Sensitive Data Threat Detection",
+      "solution": "Microsoft Defender for Storage plan should be enabled with Malware Scanning and Sensitive Data Threat Detection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.WEB/SERVERFARMS",
+    "recommendationTypeId": "fac3022a-eda5-44b9-b54d-cb500d1d01dd",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Use zone-supported App Service Plan",
+      "solution": "Use zone-supported App Service Plan"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "MICROSOFT.STORAGE/STORAGEACCOUNTS",
+    "recommendationTypeId": "4c10f447-fc3d-48b5-931d-23cea8486023",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable zone redundancy for storage accounts to improve high availability and resiliency",
+      "solution": "Enable zone redundancy for storage accounts to improve high availability and resiliency"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Subscriptions/subscriptions",
+    "recommendationTypeId": "b1af52e4-e968-4e2b-b6d0-6736c9651f0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Microsoft Defender for Key Vault should be enabled",
+      "solution": "Microsoft Defender for Key Vault should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "High",
+    "impactedField": "Microsoft.Subscriptions/subscriptions",
+    "recommendationTypeId": "242639fd-cd73-4be2-8f55-70478db8d1a5",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Create an Azure Service Health alert",
+      "solution": "Create an Azure Service Health alert"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "High",
+    "impactedField": "Microsoft.Subscriptions/subscriptions",
+    "recommendationTypeId": "e0e431eb-22b3-4f34-ae0d-5ec229fc28e7",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Microsoft Defender CSPM should be enabled",
+      "solution": "Microsoft Defender CSPM should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "cdc78c07-02b0-4af0-1cb2-cb7c672a8b0a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account should use a private link connection",
+      "solution": "Storage account should use a private link connection"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "42dbf883-9e4b-4f84-9da4-232b87c4b5e9",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Enable Soft Delete to protect your blob data",
+      "solution": "Enable Soft Delete to protect your blob data"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.CognitiveServices/accounts",
+    "recommendationTypeId": "f738efb8-005f-680d-3d43-b3db762d6243",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure AI Services resources should restrict network access",
+      "solution": "Azure AI Services resources should restrict network access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "40394a2c-60fb-7cc5-1944-065772e94f05",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in App Service should be enabled",
+      "solution": "Diagnostic logs in App Service should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "40394a2c-60fb-7cc5-1944-065772e94f05",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in App Service should be enabled",
+      "solution": "Diagnostic logs in App Service should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "40394a2c-60fb-7cc5-1944-065772e94f05",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in App Service should be enabled",
+      "solution": "Diagnostic logs in App Service should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "40394a2c-60fb-7cc5-1944-065772e94f05",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in App Service should be enabled",
+      "solution": "Diagnostic logs in App Service should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "cb0acdc6-0846-fd48-debe-9905af151b6d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Function App should only be accessible over HTTPS",
+      "solution": "Function App should only be accessible over HTTPS"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "cb0acdc6-0846-fd48-debe-9905af151b6d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Function App should only be accessible over HTTPS",
+      "solution": "Function App should only be accessible over HTTPS"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.CognitiveServices/accounts",
+    "recommendationTypeId": "13b10b36-aa99-4db6-b00c-dcf87c4761e6",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure AI Services resources should have key access disabled (disable local authentication)",
+      "solution": "Azure AI Services resources should have key access disabled (disable local authentication)"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "ad4f3ff1-30eb-5042-16ed-27198f640b8d",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should restrict network access using virtual network rules",
+      "solution": "Storage accounts should restrict network access using virtual network rules"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "MICROSOFT.CDN/PROFILES",
+    "recommendationTypeId": "52ff3019-62b0-4905-b016-da35fa6bbddc",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure CDN Standard from Microsoft (classic) is being retired.",
+      "solution": "Azure CDN Standard from Microsoft (classic) is being retired."
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "HighAvailability",
+    "impact": "Medium",
+    "impactedField": "MICROSOFT.CDN/PROFILES",
+    "recommendationTypeId": "52ff3019-62b0-4905-b016-da35fa6bbddc",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure CDN Standard from Microsoft (classic) is being retired.",
+      "solution": "Azure CDN Standard from Microsoft (classic) is being retired."
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.CognitiveServices/accounts",
+    "recommendationTypeId": "67279c29-fa4c-4f09-ae59-cb1491565995",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure AI Services resources should use Azure Private Link",
+      "solution": "Azure AI Services resources should use Azure Private Link"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "23aa9cbe-c2fb-6a2f-6c97-885a6d48c4d1",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Managed identity should be enabled on function apps",
+      "solution": "Managed identity should be enabled on function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "23aa9cbe-c2fb-6a2f-6c97-885a6d48c4d1",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Managed identity should be enabled on function apps",
+      "solution": "Managed identity should be enabled on function apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "4ed62ae4-5072-f9e7-8d94-51c76c48159a",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Key vaults should have deletion protection enabled",
+      "solution": "Key vaults should have deletion protection enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "f6b59724-4a05-aa38-33e2-25f15eecf00b",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure Key Vaults should use private link",
+      "solution": "Azure Key Vaults should use private link"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "f6b59724-4a05-aa38-33e2-25f15eecf00b",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Azure Key Vaults should use private link",
+      "solution": "Azure Key Vaults should use private link"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "OperationalExcellence",
+    "impact": "Medium",
+    "impactedField": "MICROSOFT.CDN/PROFILES",
+    "recommendationTypeId": "062d41f2-0dfa-48e0-a9b8-fb40fa5b001f",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Migrate Azure CDN Standard from Microsoft (Classic) to Azure Front Door Standard/Premium tier",
+      "solution": "Migrate Azure CDN Standard from Microsoft (Classic) to Azure Front Door Standard/Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "OperationalExcellence",
+    "impact": "Medium",
+    "impactedField": "MICROSOFT.CDN/PROFILES",
+    "recommendationTypeId": "062d41f2-0dfa-48e0-a9b8-fb40fa5b001f",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Migrate Azure CDN Standard from Microsoft (Classic) to Azure Front Door Standard/Premium tier",
+      "solution": "Migrate Azure CDN Standard from Microsoft (Classic) to Azure Front Door Standard/Premium tier"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "3b363842-30f5-4056-980d-3a40fa5de8b3",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage accounts should prevent shared key access",
+      "solution": "Storage accounts should prevent shared key access"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account public access should be disallowed",
+      "solution": "Storage account public access should be disallowed"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account public access should be disallowed",
+      "solution": "Storage account public access should be disallowed"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.Storage/storageAccounts",
+    "recommendationTypeId": "51fd8bb1-0db4-bbf1-7e2b-cfcba7eb66a6",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Storage account public access should be disallowed",
+      "solution": "Storage account public access should be disallowed"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "52f7826a-ace7-3107-dd0d-4875853c1576",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Firewall should be enabled on Key Vault",
+      "solution": "Firewall should be enabled on Key Vault"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Medium",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "52f7826a-ace7-3107-dd0d-4875853c1576",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Firewall should be enabled on Key Vault",
+      "solution": "Firewall should be enabled on Key Vault"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Low",
+    "impactedField": "Microsoft.CognitiveServices/accounts",
+    "recommendationTypeId": "dea5192e-1bb3-101b-b70c-4646546f5e1e",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in Azure AI services resources should be enabled",
+      "solution": "Diagnostic logs in Azure AI services resources should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Low",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "88bbc99c-e5af-ddd7-6105-6150b2bfa519",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in Key Vault should be enabled",
+      "solution": "Diagnostic logs in Key Vault should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Low",
+    "impactedField": "Microsoft.KeyVault/vaults",
+    "recommendationTypeId": "88bbc99c-e5af-ddd7-6105-6150b2bfa519",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Diagnostic logs in Key Vault should be enabled",
+      "solution": "Diagnostic logs in Key Vault should be enabled"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Low",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "7b3d4796-9400-2904-692b-4a5ede7f0a1e",
+    "risk": null,
+    "shortDescription": {
+      "problem": "CORS should not allow every resource to access Function Apps",
+      "solution": "CORS should not allow every resource to access Function Apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Low",
+    "impactedField": "Microsoft.Web/sites",
+    "recommendationTypeId": "7b3d4796-9400-2904-692b-4a5ede7f0a1e",
+    "risk": null,
+    "shortDescription": {
+      "problem": "CORS should not allow every resource to access Function Apps",
+      "solution": "CORS should not allow every resource to access Function Apps"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  },
+  {
+    "category": "Security",
+    "impact": "Low",
+    "impactedField": "Microsoft.Subscriptions/subscriptions",
+    "recommendationTypeId": "77758c9d-8a56-5f54-6ff7-69a762ca6004",
+    "risk": null,
+    "shortDescription": {
+      "problem": "Subscriptions should have a contact email address for security issues",
+      "solution": "Subscriptions should have a contact email address for security issues"
+    },
+    "type": "Microsoft.Advisor/recommendations"
+  }
+]
