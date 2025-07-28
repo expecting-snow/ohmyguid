@@ -67,7 +67,7 @@
     "@azure/arm-authorization": "^9.0.0",
     "@azure/arm-managementgroups": "^2.0.2",
     "@azure/arm-policy": "^6.0.0",
-    "@azure/arm-resources": "^6.1.0",
+    "@azure/arm-resources": "^7.0.0",
     "@azure/arm-subscriptions": "^5.1.0",
     "@azure/identity": "^4.10.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
