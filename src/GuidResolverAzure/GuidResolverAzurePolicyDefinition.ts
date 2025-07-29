@@ -3,9 +3,14 @@ import { PolicyClient         } from "@azure/arm-policy";
 import { TokenCredential      } from "@azure/identity";
 
 export class GuidResolverAzurePolicyDefinition {
-    static async resolve(guid: string, subscriptionIds: string[], tokenCredential: TokenCredential, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+
+    constructor(
+        private readonly tokenCredential: TokenCredential
+    ) { }
+    
+    async resolve(guid: string, subscriptionIds: string[], abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         for (const subscriptionId of subscriptionIds) {
-            const response = await this.resolveInternal(guid, subscriptionId, tokenCredential, abortController);
+            const response = await this.resolveInternal(guid, subscriptionId, this.tokenCredential, abortController);
             if (response) {
                 abortController.abort();
 
@@ -16,7 +21,7 @@ export class GuidResolverAzurePolicyDefinition {
         return undefined;
     }
 
-    private static async resolveInternal(guid: string, subscriptionId: string, tokenCredential: TokenCredential, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+    private async resolveInternal(guid: string, subscriptionId: string, tokenCredential: TokenCredential, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         console.log('resolveInternal');
         try {
             for await (const policyDefinition of new PolicyClient(tokenCredential, subscriptionId).policyDefinitions.list({ abortSignal: abortController.signal })) {

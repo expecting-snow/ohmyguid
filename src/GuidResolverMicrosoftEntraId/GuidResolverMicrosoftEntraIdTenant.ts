@@ -1,10 +1,15 @@
-import { Client               } from "@microsoft/microsoft-graph-client";
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
+import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
+import { TokenCredential                  } from "@azure/identity";
 
-export class GuidResolverMicrosoftEntraIdTenant {
-    static async resolve(client: Client, guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+export class GuidResolverMicrosoftEntraIdTenant extends GuidResolverMicrosoftEntraIdBase {
+    constructor(
+        tokenCredential: TokenCredential
+    ) { super(tokenCredential); }
+
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response = await client.api(`/tenantRelationships/findTenantInformationByTenantId(tenantId='${guid}')`).get();
+            const response = await this.getClient(abortController).api(`/tenantRelationships/findTenantInformationByTenantId(tenantId='${guid}')`).get();
 
             if (response && response.displayName) {
 

@@ -1,11 +1,19 @@
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { TokenCredential      } from "@azure/identity";
 import { AuthorizationManagementClient } from "@azure/arm-authorization";
+import { GuidResolverResponse          } from "../Models/GuidResolverResponse";
+import { TokenCredential               } from "@azure/identity";
 
 export class GuidResolverAzureRoleDefinitionCustomRoles {
-    static async resolve(guid: string, tokenCredential: TokenCredential, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+    private readonly client: AuthorizationManagementClient;
+
+    constructor(
+        tokenCredential: TokenCredential
+    ) {
+        this.client = new AuthorizationManagementClient(tokenCredential, '/subscriptions');
+    }
+
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            for await (const item of new AuthorizationManagementClient(tokenCredential, '/subscriptions').roleDefinitions.list('', { abortSignal: abortController.signal })) {
+            for await (const item of this.client.roleDefinitions.list('', { abortSignal: abortController.signal })) {
                 if (item.name === guid && item.roleName) {
 
                     abortController.abort();

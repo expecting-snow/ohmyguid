@@ -28,26 +28,18 @@ export function activate(context: vscode.ExtensionContext) {
 
     // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
-    const tokenCredential : TokenCredential = new CachingAzureCliCredential(
-    value => outputChannel.appendLine(`Authenticate : ${value}`),
-    error =>  {
-        outputChannel.appendLine            (`Authenticate : ${error}`);
-        vscode.window.showInformationMessage(`Authenticate : ${error}`);
-    }
-);
+    const tokenCredential: TokenCredential = new CachingAzureCliCredential(
+        value => outputChannel.appendLine(`Authenticate : ${value}`),
+        error => {
+            outputChannel.appendLine(`Authenticate : ${error}`);
+            vscode.window.showInformationMessage(`Authenticate : ${error}`);
+        }
+    );
 
     const guidResolver = new GuidResolver(tokenCredential);
 
     const guidCache = new GuidCache(
-        new GuidResolver(
-            new CachingAzureCliCredential(
-                value => outputChannel.appendLine(`Authenticate : ${value}`),
-                error =>  {
-                    outputChannel.appendLine            (`Authenticate : ${error}`);
-                    vscode.window.showInformationMessage(`Authenticate : ${error}`);
-                }
-            )
-        ),
+        guidResolver,
         context.workspaceState,
         value => outputChannel.appendLine(`Cache : ${value}`)
     );

@@ -1,10 +1,15 @@
-import { Client               } from "@microsoft/microsoft-graph-client";
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
+import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
+import { TokenCredential                  } from "@azure/identity";
 
-export class GuidResolverMicrosoftEntraIdServicePrincipal {
-    static async resolve(client: Client, guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+export class GuidResolverMicrosoftEntraIdServicePrincipal extends GuidResolverMicrosoftEntraIdBase {
+    constructor(
+        tokenCredential: TokenCredential
+    ) { super(tokenCredential); }
+
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response = await client.api(`/servicePrincipals/${guid}`).get();
+            const response = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
 
             if (response && response.displayName) {
 
