@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
     const telemetryReporter = createTelemetryReporter(context);
     context.subscriptions.push(telemetryReporter);
 
-    context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
+    // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
     const tokenCredential: TokenCredential = new CachingAzureCliCredential(
         value => outputChannel.appendLine(`Authenticate : ${value}`),
@@ -43,8 +43,6 @@ export function activate(context: vscode.ExtensionContext) {
         context.workspaceState,
         value => outputChannel.appendLine(`Cache : ${value}`)
     );
-
-    // context.workspaceState.keys().forEach(key => { context.workspaceState.update(key, undefined); });
 
     (azurePoliciesBuiltin as any[])
     .forEach(policy => guidCache.update(policy.name, new GuidResolverResponse(
