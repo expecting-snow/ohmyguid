@@ -57,9 +57,7 @@ export class GuidCache {
         if (!this.cache.has(guid)) {
             this.callbackInfo(`${guid} - set`);
 
-            const azureSubscriptionIds = this.getAzureSubscriptions().map(p => p.guid);
-
-            this.cache.set(guid, this.guidResolver.resolve(guid, azureSubscriptionIds));
+            this.cache.set(guid, this.guidResolver.resolve(guid));
         }
 
         return undefined;
@@ -85,8 +83,6 @@ export class GuidCache {
 
         return subscriptions;
     }
-
-
 
     update(guid: string, guidResolverResponse: GuidResolverResponse): void {
         this.memento.update(guid, guidResolverResponse);
