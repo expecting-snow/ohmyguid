@@ -1,31 +1,33 @@
 import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { SubscriptionClient   } from "@azure/arm-subscriptions";
+import { ResourceGraphClient } from "@azure/arm-resourcegraph";
 import { TokenCredential      } from "@azure/identity";
 
 export class GuidResolverAzureSubscription {
-    private readonly client: SubscriptionClient;
+    private readonly client: ResourceGraphClient;
 
     constructor(
         tokenCredential: TokenCredential
     ) {
-        this.client = new SubscriptionClient(tokenCredential);
+        this.client = new ResourceGraphClient(tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal })) {
-                if (subscription.subscriptionId === guid && subscription.displayName) {
+            const query = `resourcecontainers | where type == 'microsoft.resources/subscriptions' and subscriptionId == '${guid}'`;
 
-                    abortController.abort();
+            const result = await this.client.resources({ query, subscriptions: [] });
 
-                    return new GuidResolverResponse(
-                        guid,
-                        subscription.displayName,
-                        "Azure Subscription",
-                        subscription,
-                        new Date()
-                    );
-                }
+            if (result.count > 0 && result.data[0].subscriptionId === guid && result.data[0].name) {
+
+                abortController.abort();
+
+                return new GuidResolverResponse(
+                    guid,
+                    result.data[0].name,
+                    "Azure Subscription",
+                    result.data[0],
+                    new Date()
+                );
             }
         }
         catch { }

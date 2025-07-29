@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
     const telemetryReporter = createTelemetryReporter(context);
     context.subscriptions.push(telemetryReporter);
 
-    // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
+    context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
     const tokenCredential: TokenCredential = new CachingAzureCliCredential(
         value => outputChannel.appendLine(`Authenticate : ${value}`),
