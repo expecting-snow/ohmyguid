@@ -1,13 +1,18 @@
-import { Client               } from "@microsoft/microsoft-graph-client";
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
+import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
+import { TokenCredential                  } from "@azure/identity";
 
-export class GuidResolverMicrosoftEntraIdAppRegistration {
-    static async resolve(client: Client, guid: string, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
+export class GuidResolverMicrosoftEntraIdAppRegistration extends GuidResolverMicrosoftEntraIdBase {
+    constructor(
+        tokenCredential: TokenCredential
+    ) { super(tokenCredential); }
+
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response = await client.api(`/applications/${guid}`).get();
+            const response = await this.getClient(abortController).api(`/applications/${guid}`).get();
 
             if (response && response.displayName) {
-                
+
                 abortController.abort();
 
                 return new GuidResolverResponse(
@@ -19,7 +24,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistration {
                 );
             }
         } catch { }
-        
+
         return undefined;
     }
 }

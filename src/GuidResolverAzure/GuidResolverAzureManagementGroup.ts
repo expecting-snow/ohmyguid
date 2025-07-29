@@ -1,21 +1,31 @@
 import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { ManagementGroupsAPI  } from "@azure/arm-managementgroups";
+import { ResourceGraphClient } from "@azure/arm-resourcegraph";
 import { TokenCredential      } from "@azure/identity";
 
 export class GuidResolverAzureManagementGroup {
-    static async resolve(guid: string, tokenCredential: TokenCredential, abortController : AbortController): Promise<GuidResolverResponse | undefined> {
-        try {
-            const response = await new ManagementGroupsAPI(tokenCredential).managementGroups.get(guid, { abortSignal: abortController.signal });
+    private readonly client: ResourceGraphClient;
 
-            if (response && response.displayName) {
+    constructor(
+        tokenCredential: TokenCredential
+    ) {
+        this.client = new ResourceGraphClient(tokenCredential);
+    }
+
+    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+        try {
+            const query = `resourcecontainers | where type == 'microsoft.management/managementgroups' and name == '${guid}'`;
+
+            const result = await this.client.resources({ query, subscriptions: [] });
+
+            if (result.count > 0 && result.data[0].name === guid && result.data[0].properties.displayName) {
 
                 abortController.abort();
 
                 return new GuidResolverResponse(
                     guid,
-                    response.displayName,
+                    result.data[0].properties.displayName,
                     'Azure ManagementGroup',
-                    response,
+                    result.data[0],
                     new Date()
                 );
             }

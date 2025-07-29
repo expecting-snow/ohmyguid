@@ -1,19 +1,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { CachingAzureCliCredential    } from './CachingAzureCliCredential';
-import { GuidCache                    } from './GuidCache';
-import { GuidCodeLensProvider         } from './GuidCodeLensProvider';
-import { GuidLinkProvider             } from './GuidLinkProvider';
-import { GuidResolver                 } from './GuidResolver';
-import { GuidResolverResponse         } from './Models/GuidResolverResponse';
-import { GuidResolverResponseRenderer } from './GuidResolverResponseRenderer';
-import { TelemetryReporter            } from '@vscode/extension-telemetry';
-import { TelemetryReporterEvents      } from './TelemetryReporterEvents';
+import { CachingAzureCliCredential      } from './CachingAzureCliCredential';
+import { GuidCache                      } from './GuidCache';
+import { GuidCodeLensProvider           } from './GuidCodeLensProvider';
+import { GuidLinkProvider               } from './GuidLinkProvider';
+import { GuidResolver                   } from './GuidResolver';
+import { GuidResolverResponse           } from './Models/GuidResolverResponse';
+import { GuidResolverResponseRenderer   } from './GuidResolverResponseRenderer';
+import { TelemetryReporter              } from '@vscode/extension-telemetry';
+import { TelemetryReporterEvents        } from './TelemetryReporterEvents';
 import   azureAdvisorRecommendations    from "../static/azure-advisor-recommendations.json";
 import   azurePoliciesBuiltin           from "../static/azure-policies-builtin.json";
 import   azurePoliciesStatic            from "../static/azure-policies-static.json";
 import   azureRoleDefinitionsBuiltin    from "../static/azure-role-definitions-builtin.json";
+import { GuidResolverResponseToTempFile } from './GuidResolverResponseToTempFile';
+import { TokenCredential                } from '@azure/identity';
 
 export function activate(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel('ohmyguid');
@@ -26,21 +28,21 @@ export function activate(context: vscode.ExtensionContext) {
 
     // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
+    const tokenCredential: TokenCredential = new CachingAzureCliCredential(
+        value => outputChannel.appendLine(`Authenticate : ${value}`),
+        error => {
+            outputChannel.appendLine(`Authenticate : ${error}`);
+            vscode.window.showInformationMessage(`Authenticate : ${error}`);
+        }
+    );
+
+    const guidResolver = new GuidResolver(tokenCredential);
+
     const guidCache = new GuidCache(
-        new GuidResolver(
-            new CachingAzureCliCredential(
-                value => outputChannel.appendLine(`Authenticate : ${value}`),
-                error =>  {
-                    outputChannel.appendLine            (`Authenticate : ${error}`);
-                    vscode.window.showInformationMessage(`Authenticate : ${error}`);
-                }
-            )
-        ),
+        guidResolver,
         context.workspaceState,
         value => outputChannel.appendLine(`Cache : ${value}`)
     );
-
-    // context.workspaceState.keys().forEach(key => { context.workspaceState.update(key, undefined); });
 
     (azurePoliciesBuiltin as any[])
     .forEach(policy => guidCache.update(policy.name, new GuidResolverResponse(
@@ -103,10 +105,25 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('ohmyguid.openLink',
-            (value: GuidResolverResponse) => {
-                var link = GuidLinkProvider.resolveLink(value);
-                if (link) {
-                    vscode.env.openExternal(vscode.Uri.parse(link));
+            async (value: GuidResolverResponse) => {
+                const { filePath, error } = await new GuidResolverResponseToTempFile(GuidLinkProvider.resolveLink).toTempFile(value, tokenCredential);
+
+                if (error) {
+                    outputChannel.appendLine(`Export : ${error}`);
+                    vscode.window.showInformationMessage(`Export : ${error}`);
+                }
+                else if (filePath) {
+                    outputChannel.appendLine(`Export : ${filePath}`);
+                    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
+                    await vscode.window.showTextDocument(doc, { preview: false });
+                }
+                else {
+                    telemetryReporter.sendTelemetryErrorEvent(
+                        TelemetryReporterEvents.export,
+                        {
+                            error: 'filepath and error are undefined.'
+                        }
+                    );
                 }
             }
         )
