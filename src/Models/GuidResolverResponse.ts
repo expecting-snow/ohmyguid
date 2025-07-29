@@ -3,7 +3,6 @@ export class GuidResolverResponse {
         readonly guid       : string,
         readonly displayName: string,
         readonly type       : 'Azure Advisor Recommendation'
-                            | 'Azure ManagementGroup'
                             | 'Azure ManagementGroup' 
                             | 'Azure Policy Definition BuiltIn'
                             | 'Azure Policy Definition Custom'

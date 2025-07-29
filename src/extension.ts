@@ -1,20 +1,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { CachingAzureCliCredential    } from './CachingAzureCliCredential';
-import { GuidCache                    } from './GuidCache';
-import { GuidCodeLensProvider         } from './GuidCodeLensProvider';
-import { GuidLinkProvider             } from './GuidLinkProvider';
-import { GuidResolver                 } from './GuidResolver';
-import { GuidResolverResponse         } from './Models/GuidResolverResponse';
-import { GuidResolverResponseRenderer } from './GuidResolverResponseRenderer';
-import { TelemetryReporter            } from '@vscode/extension-telemetry';
-import { TelemetryReporterEvents      } from './TelemetryReporterEvents';
+import { CachingAzureCliCredential      } from './CachingAzureCliCredential';
+import { GuidCache                      } from './GuidCache';
+import { GuidCodeLensProvider           } from './GuidCodeLensProvider';
+import { GuidLinkProvider               } from './GuidLinkProvider';
+import { GuidResolver                   } from './GuidResolver';
+import { GuidResolverResponse           } from './Models/GuidResolverResponse';
+import { GuidResolverResponseRenderer   } from './GuidResolverResponseRenderer';
+import { TelemetryReporter              } from '@vscode/extension-telemetry';
+import { TelemetryReporterEvents        } from './TelemetryReporterEvents';
 import   azureAdvisorRecommendations    from "../static/azure-advisor-recommendations.json";
 import   azurePoliciesBuiltin           from "../static/azure-policies-builtin.json";
 import   azurePoliciesStatic            from "../static/azure-policies-static.json";
 import   azureRoleDefinitionsBuiltin    from "../static/azure-role-definitions-builtin.json";
 import { GuidResolverResponseToTempFile } from './GuidResolverResponseToTempFile';
+import { TokenCredential                } from '@azure/identity';
 
 export function activate(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel('ohmyguid');
@@ -27,15 +28,15 @@ export function activate(context: vscode.ExtensionContext) {
 
     // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
-    const guidResolver = new GuidResolver(
-        new CachingAzureCliCredential(
-            value => outputChannel.appendLine(`Authenticate : ${value}`),
-            error =>  {
-                outputChannel.appendLine            (`Authenticate : ${error}`);
-                vscode.window.showInformationMessage(`Authenticate : ${error}`);
-            }
-        )
-    );    
+    const tokenCredential : TokenCredential = new CachingAzureCliCredential(
+    value => outputChannel.appendLine(`Authenticate : ${value}`),
+    error =>  {
+        outputChannel.appendLine            (`Authenticate : ${error}`);
+        vscode.window.showInformationMessage(`Authenticate : ${error}`);
+    }
+);
+
+    const guidResolver = new GuidResolver(tokenCredential);
 
     const guidCache = new GuidCache(
         new GuidResolver(
@@ -115,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('ohmyguid.openLink',
             async (value: GuidResolverResponse) => {
-                const { filePath, error } = await new GuidResolverResponseToTempFile(GuidLinkProvider.resolveLink).toTempFile(value);
+                const { filePath, error } = await new GuidResolverResponseToTempFile(GuidLinkProvider.resolveLink).toTempFile(value, tokenCredential);
 
                 if (error) {
                     outputChannel.appendLine(`Export : ${error}`);
