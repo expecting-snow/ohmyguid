@@ -14,6 +14,7 @@ import   azureAdvisorRecommendations    from "../static/azure-advisor-recommenda
 import   azurePoliciesBuiltin           from "../static/azure-policies-builtin.json";
 import   azurePoliciesStatic            from "../static/azure-policies-static.json";
 import   azureRoleDefinitionsBuiltin    from "../static/azure-role-definitions-builtin.json";
+import { GuidResolverResponseToTempFile } from './GuidResolverResponseToTempFile';
 
 export function activate(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel('ohmyguid');
@@ -25,6 +26,16 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(telemetryReporter);
 
     // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
+
+    const guidResolver = new GuidResolver(
+        new CachingAzureCliCredential(
+            value => outputChannel.appendLine(`Authenticate : ${value}`),
+            error =>  {
+                outputChannel.appendLine            (`Authenticate : ${error}`);
+                vscode.window.showInformationMessage(`Authenticate : ${error}`);
+            }
+        )
+    );    
 
     const guidCache = new GuidCache(
         new GuidResolver(
@@ -103,10 +114,25 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('ohmyguid.openLink',
-            (value: GuidResolverResponse) => {
-                var link = GuidLinkProvider.resolveLink(value);
-                if (link) {
-                    vscode.env.openExternal(vscode.Uri.parse(link));
+            async (value: GuidResolverResponse) => {
+                const { filePath, error } = await new GuidResolverResponseToTempFile(GuidLinkProvider.resolveLink).toTempFile(value);
+
+                if (error) {
+                    outputChannel.appendLine(`Export : ${error}`);
+                    vscode.window.showInformationMessage(`Export : ${error}`);
+                }
+                else if (filePath) {
+                    outputChannel.appendLine(`Export : ${filePath}`);
+                    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
+                    await vscode.window.showTextDocument(doc, { preview: false });
+                }
+                else {
+                    telemetryReporter.sendTelemetryErrorEvent(
+                        TelemetryReporterEvents.export,
+                        {
+                            error: 'filepath and error are undefined.'
+                        }
+                    );
                 }
             }
         )
