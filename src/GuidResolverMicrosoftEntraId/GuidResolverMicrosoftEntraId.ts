@@ -1,12 +1,12 @@
-import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration";
-import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId";
-import { GuidResolverMicrosoftEntraIdGroup                    } from "./GuidResolverMicrosoftEntraIdGroup";
-import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidResolverMicrosoftEntraIdServicePrincipal";
+import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration"         ;
+import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId" ;
+import { GuidResolverMicrosoftEntraIdGroup                    } from "./GuidResolverMicrosoftEntraIdGroup"                   ;
+import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidResolverMicrosoftEntraIdServicePrincipal"        ;
 import { GuidResolverMicrosoftEntraIdServicePrincipalClientId } from "./GuidResolverMicrosoftEntraIdServicePrincipalClientId";
-import { GuidResolverMicrosoftEntraIdTenant                   } from "./GuidResolverMicrosoftEntraIdTenant";
-import { GuidResolverMicrosoftEntraIdUser                     } from "./GuidResolverMicrosoftEntraIdUser";
-import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse";
-import { TokenCredential                                      } from "@azure/identity";
+import { GuidResolverMicrosoftEntraIdTenant                   } from "./GuidResolverMicrosoftEntraIdTenant"                  ;
+import { GuidResolverMicrosoftEntraIdUser                     } from "./GuidResolverMicrosoftEntraIdUser"                    ;
+import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse"                        ;
+import { TokenCredential                                      } from "@azure/identity"                                       ;
 
 export class GuidResolverMicrosoftEntraId {
     private readonly guidResolverMicrosoftEntraIdAppRegistration         : GuidResolverMicrosoftEntraIdAppRegistration         ;
@@ -30,20 +30,12 @@ export class GuidResolverMicrosoftEntraId {
      }
    
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
-        const promiseAppRegistration          = this.guidResolverMicrosoftEntraIdAppRegistration         .resolve(guid, abortController);
-        const promiseAppRegistrationClientId  = this.guidResolverMicrosoftEntraIdAppRegistrationClientId .resolve(guid, abortController);
-        const promiseServicePrincipal         = this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, abortController);
-        const promiseServicePrincipalClientId = this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, abortController);
-        const promiseGroup                    = this.guidResolverMicrosoftEntraIdGroup                   .resolve(guid, abortController);
-        const promiseUser                     = this.guidResolverMicrosoftEntraIdUser                    .resolve(guid, abortController);
-        const promiseTenant                   = this.guidResolverMicrosoftEntraIdTenant                  .resolve(guid, abortController);
-
-        return await promiseTenant
-            ?? await promiseAppRegistration
-            ?? await promiseAppRegistrationClientId
-            ?? await promiseServicePrincipal
-            ?? await promiseServicePrincipalClientId
-            ?? await promiseGroup
-            ?? await promiseUser;
+        return await this.guidResolverMicrosoftEntraIdAppRegistration         .resolve(guid, abortController)
+            ?? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId .resolve(guid, abortController)
+            ?? await this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, abortController)
+            ?? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, abortController)
+            ?? await this.guidResolverMicrosoftEntraIdGroup                   .resolve(guid, abortController)
+            ?? await this.guidResolverMicrosoftEntraIdUser                    .resolve(guid, abortController)
+            ?? await this.guidResolverMicrosoftEntraIdTenant                  .resolve(guid, abortController);
     }
 }

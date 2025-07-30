@@ -1,30 +1,26 @@
 import { GuidResolverAzureManagementGroup  } from "./GuidResolverAzureManagementGroup";
-import { GuidResolverAzureRoleDefinition   } from "./GuidResolverAzureRoleDefinition";
-import { GuidResolverAzureSubscription     } from "./GuidResolverAzureSubscription";
-import { GuidResolverResponse              } from "../Models/GuidResolverResponse";
-import { TokenCredential                   } from "@azure/identity";
+import { GuidResolverAzureRoleDefinition   } from "./GuidResolverAzureRoleDefinition" ;
+import { GuidResolverAzureSubscription     } from "./GuidResolverAzureSubscription"   ;
+import { GuidResolverResponse              } from "../Models/GuidResolverResponse"    ;
+import { TokenCredential                   } from "@azure/identity"                   ;
 
 export class GuidResolverAzure {
 
-    private readonly guidResolverAzureSubscription    : GuidResolverAzureSubscription;
+    private readonly guidResolverAzureSubscription    : GuidResolverAzureSubscription   ;
     private readonly guidResolverAzureManagementGroup : GuidResolverAzureManagementGroup;
-    private readonly guidResolverAzureRoleDefinition  : GuidResolverAzureRoleDefinition;
+    private readonly guidResolverAzureRoleDefinition  : GuidResolverAzureRoleDefinition ;
     
     constructor(
-        private readonly tokenCredential: TokenCredential
+        tokenCredential: TokenCredential
     ) {
-        this.guidResolverAzureSubscription     = new GuidResolverAzureSubscription    (this.tokenCredential);
-        this.guidResolverAzureManagementGroup  = new GuidResolverAzureManagementGroup (this.tokenCredential);
-        this.guidResolverAzureRoleDefinition   = new GuidResolverAzureRoleDefinition  (this.tokenCredential);
+        this.guidResolverAzureSubscription    = new GuidResolverAzureSubscription   (tokenCredential);
+        this.guidResolverAzureManagementGroup = new GuidResolverAzureManagementGroup(tokenCredential);
+        this.guidResolverAzureRoleDefinition  = new GuidResolverAzureRoleDefinition (tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
-        const promiseAzureSubscription    = this.guidResolverAzureSubscription   .resolve(guid, abortController);
-        const promiseAzureManagementGroup = this.guidResolverAzureManagementGroup.resolve(guid, abortController);
-        const promiseAzureRoleDefinition  = this.guidResolverAzureRoleDefinition .resolve(guid, abortController);
-
-        return await promiseAzureSubscription
-            ?? await promiseAzureManagementGroup
-            ?? await promiseAzureRoleDefinition;
+        return await this.guidResolverAzureSubscription   .resolve(guid, abortController)
+            ?? await this.guidResolverAzureManagementGroup.resolve(guid, abortController)
+            ?? await this.guidResolverAzureRoleDefinition .resolve(guid, abortController);
     }
 }
