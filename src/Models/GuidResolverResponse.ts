@@ -12,9 +12,11 @@ export class GuidResolverResponse {
                             | 'Azure Subscription' 
                             | 'Microsoft Entra ID AppRegistration'
                             | 'Microsoft Entra ID Group'
+                            | 'Microsoft Entra ID Group Details'
                             | 'Microsoft Entra ID ServicePrincipal'
                             | 'Microsoft Entra ID Tenant'
-                            | 'Microsoft Entra ID User',
+                            | 'Microsoft Entra ID User'
+                            | 'Microsoft Entra ID User Details',
         readonly object     : any,
         readonly dateTime   : Date
     ) { }

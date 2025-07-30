@@ -3,10 +3,10 @@ import { GuidResolverAzureManagementGroup             } from './GuidResolverAzur
 import { GuidResolverAzureRoleDefinitionCustomRoles   } from './GuidResolverAzure/GuidResolverAzureRoleDefinitionCustomRoles'             ;
 import { GuidResolverAzureSubscription                } from './GuidResolverAzure/GuidResolverAzureSubscription'                          ;
 import { GuidResolverMicrosoftEntraIdAppRegistration  } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdAppRegistration' ;
-import { GuidResolverMicrosoftEntraIdGroup            } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdGroup'           ;
+import { GuidResolverMicrosoftEntraIdGroupWithDetails } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdGroupWithDetails';
 import { GuidResolverMicrosoftEntraIdServicePrincipal } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdServicePrincipal';
 import { GuidResolverMicrosoftEntraIdTenant           } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdTenant'          ;
-import { GuidResolverMicrosoftEntraIdUser             } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdUser'            ;
+import { GuidResolverMicrosoftEntraIdUserWithDetails  } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdUserWithDetails' ;
 import { GuidResolverResponse                         } from "./Models/GuidResolverResponse"                                              ;
 import { TokenCredential                              } from '@azure/identity'                                                            ;
 import * as os   from 'os';
@@ -35,10 +35,10 @@ export class GuidResolverResponseToTempFile {
             case 'Azure RoleDefinition CustomRole'    : return this.toTempFileInternal(await new GuidResolverAzureRoleDefinitionCustomRoles  (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             case 'Azure Subscription'                 : return this.toTempFileInternal(await new GuidResolverAzureSubscription               (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID AppRegistration' : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdAppRegistration (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID Group'           : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdGroup           (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
+            case 'Microsoft Entra ID Group'           : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdGroupWithDetails           (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID ServicePrincipal': return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdServicePrincipal(tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID Tenant'          : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdTenant          (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID User'            : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdUser            (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
+            case 'Microsoft Entra ID User'            : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdUserWithDetails (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             default:                                    return this.toTempFileInternal(guidResolverResponse);
         }
     }
