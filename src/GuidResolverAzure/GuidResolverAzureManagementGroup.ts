@@ -1,6 +1,6 @@
 import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { ResourceGraphClient } from "@azure/arm-resourcegraph";
-import { TokenCredential      } from "@azure/identity";
+import { ResourceGraphClient  } from "@azure/arm-resourcegraph"      ;
+import { TokenCredential      } from "@azure/identity"               ;
 
 export class GuidResolverAzureManagementGroup {
     private readonly client: ResourceGraphClient;
