@@ -14,6 +14,7 @@ export class GuidResolverResponse {
                             | 'Microsoft Entra ID Group'
                             | 'Microsoft Entra ID Group Details'
                             | 'Microsoft Entra ID ServicePrincipal'
+                            | 'Microsoft Entra ID ServicePrincipal Details'
                             | 'Microsoft Entra ID Tenant'
                             | 'Microsoft Entra ID User'
                             | 'Microsoft Entra ID User Details',
