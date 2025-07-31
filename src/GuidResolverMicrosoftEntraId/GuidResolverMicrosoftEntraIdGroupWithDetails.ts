@@ -4,6 +4,7 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMicrosoftEntraIdBase {
     constructor(
+        private readonly onResponse: (guidResolverResponse: GuidResolverResponse) => void,
         tokenCredential: TokenCredential,
     ) { super(tokenCredential); }
 
@@ -15,6 +16,9 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
             const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, abortController);
 
             if (response && response.displayName) {
+                this.processResponses(owners            , this.onResponse);
+                this.processResponses(members           , this.onResponse);
+                this.processResponses(appRoleAssignments, this.onResponse);
 
                 abortController.abort();
 

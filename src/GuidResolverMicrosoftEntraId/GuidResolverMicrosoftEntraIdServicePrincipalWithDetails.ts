@@ -4,6 +4,7 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends GuidResolverMicrosoftEntraIdBase {
     constructor(
+        private readonly onResponse: (guidResolverResponse: GuidResolverResponse) => void,
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
@@ -16,6 +17,10 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
             const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , abortController);
 
             if (response && response.displayName) {
+                this.processResponses(owners            , this.onResponse);
+                this.processResponses(appRoleAssignedTo , this.onResponse);
+                this.processResponses(ownedObjects      , this.onResponse);
+                this.processResponses(appRoleAssignments, this.onResponse);
 
                 abortController.abort();
 
@@ -27,7 +32,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                         servicePrincipal   : response,
                         owners             : (owners            as any[])?.map(this.mapIdDisplayName),
                         appRoleAssignments : appRoleAssignments,
-                        appRoleAssignedTo  : (appRoleAssignedTo as any[])?.map(this.mapIdDisplayName),
+                        appRoleAssignedTo  : appRoleAssignedTo,
                         ownedObjects       : (ownedObjects      as any[])?.map(this.mapIdDisplayName)
                     },
                     new Date()

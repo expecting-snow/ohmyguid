@@ -1,6 +1,7 @@
 import { Client, PageCollection, PageIterator, PageIteratorCallback } from "@microsoft/microsoft-graph-client";
 import { TokenCredential                                            } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                      } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
+import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 
 export class GuidResolverMicrosoftEntraIdBase {
     constructor(
@@ -48,5 +49,36 @@ export class GuidResolverMicrosoftEntraIdBase {
             displayName: p?.displayName,
             id         : p?.id
         };
+    }
+
+    protected processResponses(responses: any, onResponse: (guidResolverResponse: any) => void): void {
+        const collection = responses as any[];
+        if (collection) {
+            for (const response of collection) {
+                if (response && response.id && response.displayName && response["@odata.type"]) {
+                    if (response["@odata.type"] === '#microsoft.graph.group') {
+                        onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID Group', response, new Date()));
+                    }
+                    else if (response["@odata.type"] === '#microsoft.graph.user') {
+                        onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID User', response, new Date()));
+                    }
+                    else if (response["@odata.type"] === '#microsoft.graph.servicePrincipal') {
+                        onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ServicePrincipal', response, new Date()));
+                    }
+                    else if (response["@odata.type"] === '#microsoft.graph.application') {
+                        onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID AppRegistration', response, new Date()));
+                    }
+                    else if (response["@odata.type"] === '#microsoft.graph.tokenLifetimePolicy') {
+                        onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID TokenLifetimePolicy', response, new Date()));
+                    }
+                    else if (response["@odata.type"] === '#microsoft.graph.directoryRole') {
+                        onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID DirectoryRole', response, new Date()));
+                    }
+                    else{
+                        console.warn(`Unknown response type: ${response["@odata.type"]} for id: ${response.id}`);
+                    }
+                }
+            }
+        }
     }
 }
