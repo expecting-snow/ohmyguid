@@ -4,16 +4,19 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends GuidResolverMicrosoftEntraIdBase {
     constructor(
+        private readonly onResponse: (guidResolverResponse: GuidResolverResponse) => void,
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response       = await this.getClient(abortController).api(`/applications/${guid}`)                  .get();
-            const responseOwners = await this.getClient(abortController).api(`/applications/${guid}`).expand('owners' ).get();
+            const response = await this.getClient(abortController).api(`/applications/${guid}`).get();
+            const owners   = await this.resolveAll(`/applications/${guid}/owners`, abortController);
             
             if (response && response.displayName) {
 
+
+                this.processResponses(owners , this.onResponse);
                 abortController.abort();
 
                 return new GuidResolverResponse(
@@ -22,7 +25,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                     'Microsoft Entra ID AppRegistration Details',
                     {
                         appRegistration: response,
-                        owners         : responseOwners ?.owners .map((p: any) => p.id)
+                        owners         : (owners as any[])?.map(this.mapIdDisplayName)
                     },
                     new Date()
                 );
