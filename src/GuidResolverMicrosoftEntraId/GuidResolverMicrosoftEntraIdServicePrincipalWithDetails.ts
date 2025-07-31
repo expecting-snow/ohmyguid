@@ -17,6 +17,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
             const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , abortController);
 
             if (response && response.displayName) {
+                this.processResponses([response]        , this.onResponse);
                 this.processResponses(owners            , this.onResponse);
                 this.processResponses(appRoleAssignedTo , this.onResponse);
                 this.processResponses(ownedObjects      , this.onResponse);

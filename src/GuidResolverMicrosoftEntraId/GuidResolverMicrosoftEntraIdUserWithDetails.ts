@@ -17,6 +17,7 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
             const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , abortController);
 
             if (response && response.displayName) {
+                this.processResponses([response]        , this.onResponse);
                 this.processResponses(transitiveMemberOf, this.onResponse);
                 this.processResponses(createdObjects    , this.onResponse);
                 this.processResponses(ownedObjects      , this.onResponse);

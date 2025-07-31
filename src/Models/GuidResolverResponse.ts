@@ -12,6 +12,7 @@ export class GuidResolverResponse {
                             | 'Azure Subscription' 
                             | 'Microsoft Entra ID AppRegistration'
                             | 'Microsoft Entra ID AppRegistration Details'
+                            | 'Microsoft Entra ID AppRoleDefinition'
                             | 'Microsoft Entra ID DirectoryRole'
                             | 'Microsoft Entra ID Group'
                             | 'Microsoft Entra ID Group Details'

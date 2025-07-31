@@ -15,7 +15,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
             
             if (response && response.displayName) {
 
-
+                this.processResponses([response] , this.onResponse);
                 this.processResponses(owners , this.onResponse);
                 abortController.abort();
 

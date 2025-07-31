@@ -16,6 +16,7 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
             const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, abortController);
 
             if (response && response.displayName) {
+                this.processResponses([response]        , this.onResponse);
                 this.processResponses(owners            , this.onResponse);
                 this.processResponses(members           , this.onResponse);
                 this.processResponses(appRoleAssignments, this.onResponse);
