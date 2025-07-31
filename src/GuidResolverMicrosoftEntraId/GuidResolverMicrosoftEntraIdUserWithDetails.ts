@@ -9,8 +9,11 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response       = await this.getClient(abortController).api(`/users/${guid}`).get();
-            const responseGroups = await this.getClient(abortController).api(`/users/${guid}`).expand('transitiveMemberOf').get();
+            const response           = await this.getClient(abortController).api(`/users/${guid}`).get();
+            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, abortController);
+            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , abortController);
+            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, abortController);
+            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , abortController);
 
             if (response && response.displayName) {
 
@@ -21,8 +24,11 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
                     response.displayName,
                     'Microsoft Entra ID User Details',
                     {
-                        user: response,
-                        transitiveMemberOf: responseGroups?.transitiveMemberOf.map((p: any) => p.id)
+                        user              : response,
+                        transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName),
+                        ownedObjects      : (ownedObjects       as any[])?.map(this.mapIdDisplayName),
+                        appRoleAssignments: appRoleAssignments,
+                        createdObjects    : (createdObjects     as any[])?.map(this.mapIdDisplayName)
                     },
                     new Date()
                 );

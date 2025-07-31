@@ -9,11 +9,12 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response                      = await this.getClient(abortController).api(`/servicePrincipals/${guid}`                      ).get();
-            const responseAppRoleAssignments    = await this.getClient(abortController).api(`/servicePrincipals/${guid}/appRoleAssignments`   ).get();
-            const responseAssignedTo            = await this.getClient(abortController).api(`/servicePrincipals/${guid}/appRoleAssignedTo`    ).get();
-            const responseOwnedObjects          = await this.getClient(abortController).api(`/servicePrincipals/${guid}/ownedObjects`         ).get();
- 
+            const response           = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
+            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, abortController);
+            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , abortController);
+            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , abortController);
+            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , abortController);
+
             if (response && response.displayName) {
 
                 abortController.abort();
@@ -23,10 +24,11 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                     response.displayName,
                     'Microsoft Entra ID ServicePrincipal Details',
                     {
-                        servicePrincipal     : response,
-                        appRoleAssignments   : responseAppRoleAssignments.value,
-                        appRoleAssignedTo    : responseAssignedTo.value,
-                        ownedObjects         : responseOwnedObjects.value
+                        servicePrincipal   : response,
+                        owners             : (owners            as any[])?.map(this.mapIdDisplayName),
+                        appRoleAssignments : appRoleAssignments,
+                        appRoleAssignedTo  : (appRoleAssignedTo as any[])?.map(this.mapIdDisplayName),
+                        ownedObjects       : (ownedObjects      as any[])?.map(this.mapIdDisplayName)
                     },
                     new Date()
                 );
