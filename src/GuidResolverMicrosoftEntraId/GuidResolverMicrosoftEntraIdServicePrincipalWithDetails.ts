@@ -11,17 +11,13 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
-            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, abortController);
-            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , abortController);
-            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , abortController);
-            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , abortController);
+            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, abortController);
+            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, abortController);
+            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, abortController);
+            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, abortController);
 
             if (response && response.displayName) {
-                this.processResponses([response]        , this.onResponse);
-                this.processResponses(owners            , this.onResponse);
-                this.processResponses(appRoleAssignedTo , this.onResponse);
-                this.processResponses(ownedObjects      , this.onResponse);
-                this.processResponses(appRoleAssignments, this.onResponse);
+                this.processResponses(response, this.onResponse);
 
                 abortController.abort();
 
