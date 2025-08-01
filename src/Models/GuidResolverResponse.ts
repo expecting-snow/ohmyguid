@@ -2,7 +2,8 @@ export class GuidResolverResponse {
     constructor(
         readonly guid       : string,
         readonly displayName: string,
-        readonly type       : 'Azure Advisor Recommendation'
+        readonly type       : 'Azure Application Insights Instrumentation Key'
+                            | 'Azure Advisor Recommendation'
                             | 'Azure ManagementGroup' 
                             | 'Azure Policy Definition BuiltIn'
                             | 'Azure Policy Definition Custom'
