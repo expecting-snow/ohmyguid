@@ -11,12 +11,12 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response = await this.getClient(abortController).api(`/applications/${guid}`).get();
-            const owners   = await this.resolveAll(`/applications/${guid}/owners`, abortController);
+            const owners   = await this.resolveAll(`/applications/${guid}/owners`, this.onResponse, abortController);
             
             if (response && response.displayName) {
 
+                this.processResponses(response , this.onResponse);
 
-                this.processResponses(owners , this.onResponse);
                 abortController.abort();
 
                 return new GuidResolverResponse(
@@ -25,7 +25,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                     'Microsoft Entra ID AppRegistration Details',
                     {
                         appRegistration: response,
-                        owners         : (owners as any[])?.map(this.mapIdDisplayName)
+                        owners         : (owners as any[])?.map(this.mapIdDisplayName).sort()
                     },
                     new Date()
                 );

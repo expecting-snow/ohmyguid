@@ -11,16 +11,13 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
-            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, abortController);
-            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , abortController);
-            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , abortController);
-            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , abortController);
+            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, abortController);
+            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, abortController);
+            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, abortController);
+            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, abortController);
 
             if (response && response.displayName) {
-                this.processResponses(owners            , this.onResponse);
-                this.processResponses(appRoleAssignedTo , this.onResponse);
-                this.processResponses(ownedObjects      , this.onResponse);
-                this.processResponses(appRoleAssignments, this.onResponse);
+                this.processResponses(response, this.onResponse);
 
                 abortController.abort();
 
@@ -30,10 +27,10 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                     'Microsoft Entra ID ServicePrincipal Details',
                     {
                         servicePrincipal   : response,
-                        owners             : (owners            as any[])?.map(this.mapIdDisplayName),
-                        appRoleAssignments : appRoleAssignments,
-                        appRoleAssignedTo  : appRoleAssignedTo,
-                        ownedObjects       : (ownedObjects      as any[])?.map(this.mapIdDisplayName)
+                        owners             : (owners            as any[])?.map(this.mapIdDisplayName     ).sort(),
+                        appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
+                        ownedObjects       : (ownedObjects      as any[])?.map(this.mapIdDisplayName     ).sort(),
+                        appRoleAssignedTo  : appRoleAssignedTo
                     },
                     new Date()
                 );

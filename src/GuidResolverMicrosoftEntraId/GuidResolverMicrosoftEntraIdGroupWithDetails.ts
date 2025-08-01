@@ -11,14 +11,12 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.getClient(abortController).api(`/groups/${guid}`).get();
-            const owners             = await this.resolveAll(`/groups/${guid}/owners`            , abortController);
-            const members            = await this.resolveAll(`/groups/${guid}/members`           , abortController);
-            const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, abortController);
+            const owners             = await this.resolveAll(`/groups/${guid}/owners`            , this.onResponse, abortController);
+            const members            = await this.resolveAll(`/groups/${guid}/members`           , this.onResponse, abortController);
+            const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, this.onResponse, abortController);
 
             if (response && response.displayName) {
-                this.processResponses(owners            , this.onResponse);
-                this.processResponses(members           , this.onResponse);
-                this.processResponses(appRoleAssignments, this.onResponse);
+                this.processResponses(response, this.onResponse);
 
                 abortController.abort();
 
@@ -28,8 +26,8 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
                     'Microsoft Entra ID Group Details',
                     {
                         group             : response,
-                        owners            : (owners  as any[])?.map(this.mapIdDisplayName),
-                        members           : (members as any[])?.map(this.mapIdDisplayName),
+                        owners            : (owners  as any[])?.map(this.mapIdDisplayName).sort(),
+                        members           : (members as any[])?.map(this.mapIdDisplayName).sort(),
                         appRoleAssignments: appRoleAssignments
                     },
                     new Date()

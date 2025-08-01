@@ -2,7 +2,9 @@ export class GuidResolverResponse {
     constructor(
         readonly guid       : string,
         readonly displayName: string,
-        readonly type       : 'Azure Advisor Recommendation'
+        readonly type       : 'Azure Application Insights Instrumentation Key'
+                            | 'Azure Advisor Recommendation'
+                            | 'Azure Log Analytics Workspace Customer Id'
                             | 'Azure ManagementGroup' 
                             | 'Azure Policy Definition BuiltIn'
                             | 'Azure Policy Definition Custom'
@@ -12,6 +14,7 @@ export class GuidResolverResponse {
                             | 'Azure Subscription' 
                             | 'Microsoft Entra ID AppRegistration'
                             | 'Microsoft Entra ID AppRegistration Details'
+                            | 'Microsoft Entra ID AppRoleDefinition'
                             | 'Microsoft Entra ID DirectoryRole'
                             | 'Microsoft Entra ID Group'
                             | 'Microsoft Entra ID Group Details'
