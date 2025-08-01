@@ -27,10 +27,10 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
                     'Microsoft Entra ID User Details',
                     {
                         user              : response,
-                        transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName),
-                        ownedObjects      : (ownedObjects       as any[])?.map(this.mapIdDisplayName),
-                        appRoleAssignments: appRoleAssignments,
-                        createdObjects    : (createdObjects     as any[])?.map(this.mapIdDisplayName)
+                        transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        ownedObjects      : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        appRoleAssignments: (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
+                        createdObjects    : (createdObjects     as any[])?.map(this.mapIdDisplayName    ).sort()
                     },
                     new Date()
                 );

@@ -48,11 +48,18 @@ export class GuidResolverMicrosoftEntraIdBase {
         }
     }
 
-    protected mapIdDisplayName(p: any): { displayName: string; id: string } {
+    protected mapIdDisplayName1(p: any): { displayName: string; id: string } {
         return { 
             displayName: p?.displayName,
             id         : p?.id
         };
+    }
+    protected mapIdDisplayName(p: any): string {
+        return `${p?.displayName} (${p?.id})`;
+    }
+
+    protected mapAppRoleAssignment(p: any): string {
+        return `${p?.resourceDisplayName} (${p?.principalType}) (${p?.resourceId}) (${p?.appRoleId})`;
     }
 
     protected processResponses(response: any, onResponse: (guidResolverResponse: any) => void): void {

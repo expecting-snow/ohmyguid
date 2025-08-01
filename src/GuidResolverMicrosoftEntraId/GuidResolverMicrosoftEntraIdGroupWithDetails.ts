@@ -26,8 +26,8 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
                     'Microsoft Entra ID Group Details',
                     {
                         group             : response,
-                        owners            : (owners  as any[])?.map(this.mapIdDisplayName),
-                        members           : (members as any[])?.map(this.mapIdDisplayName),
+                        owners            : (owners  as any[])?.map(this.mapIdDisplayName).sort(),
+                        members           : (members as any[])?.map(this.mapIdDisplayName).sort(),
                         appRoleAssignments: appRoleAssignments
                     },
                     new Date()

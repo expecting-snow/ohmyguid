@@ -25,7 +25,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                     'Microsoft Entra ID AppRegistration Details',
                     {
                         appRegistration: response,
-                        owners         : (owners as any[])?.map(this.mapIdDisplayName)
+                        owners         : (owners as any[])?.map(this.mapIdDisplayName).sort()
                     },
                     new Date()
                 );
