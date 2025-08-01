@@ -4,6 +4,7 @@ export class GuidResolverResponse {
         readonly displayName: string,
         readonly type       : 'Azure Application Insights Instrumentation Key'
                             | 'Azure Advisor Recommendation'
+                            | 'Azure Log Analytics Workspace Customer Id'
                             | 'Azure ManagementGroup' 
                             | 'Azure Policy Definition BuiltIn'
                             | 'Azure Policy Definition Custom'

@@ -2,7 +2,7 @@ import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 import { ResourceGraphClient  } from "@azure/arm-resourcegraph"      ;
 import { TokenCredential      } from "@azure/identity"               ;
 
-export class GuidResolverAzureApplicationInsights {
+export class GuidResolverAzureLogAnalyticsWorkspaceCustomerId {
     private readonly client: ResourceGraphClient;
 
     constructor(
@@ -13,18 +13,18 @@ export class GuidResolverAzureApplicationInsights {
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const query = `resources | where type == 'microsoft.insights/components' | extend instrumentationKey = parse_json(properties).InstrumentationKey | where instrumentationKey == '${guid}'`;
+            const query = `resources | where type == 'microsoft.operationalinsights/workspaces' | extend customerId = parse_json(properties).customerId | where customerId == '${guid}'`;
 
             const result = await this.client.resources({ query, subscriptions: [] });
 
-            if (result.count > 0 && result.data[0].instrumentationKey === guid && result.data[0].name) {
+            if (result.count > 0 && result.data[0].customerId === guid && result.data[0].name) {
 
                 abortController.abort();
 
                 return new GuidResolverResponse(
                     guid,
                     result.data[0].name,
-                    'Azure Application Insights Instrumentation Key',
+                    'Azure Log Analytics Workspace Customer Id',
                     result.data[0],
                     new Date()
                 );
