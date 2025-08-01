@@ -12,6 +12,8 @@ This extension provides CodeLens support for guids within text files by looking 
 - Azure Policy Definition Ids
 - Azure Role Definition Ids
 - Azure Subscription Ids
+- Azure Application Insights InstrumentationKey Ids
+- Azure Log Analytics Workspace Ids
 
 in
 
