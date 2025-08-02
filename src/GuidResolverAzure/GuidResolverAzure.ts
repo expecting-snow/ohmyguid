@@ -4,31 +4,31 @@ import { GuidResolverAzureManagementGroup                       } from "./GuidRe
 import { GuidResolverAzureRoleDefinition                        } from "./GuidResolverAzureRoleDefinition"                       ;
 import { GuidResolverAzureSubscription                          } from "./GuidResolverAzureSubscription"                         ;
 import { GuidResolverResponse                                   } from "../Models/GuidResolverResponse"                          ;
+import { IGuidResolver                                          } from "../GuidResolver"                                         ;
 import { TokenCredential                                        } from "@azure/identity"                                         ;
 
 export class GuidResolverAzure {
-
-    private readonly guidResolverAzureSubscription                         : GuidResolverAzureSubscription                         ;
-    private readonly guidResolverAzureManagementGroup                      : GuidResolverAzureManagementGroup                      ;
-    private readonly guidResolverAzureRoleDefinition                       : GuidResolverAzureRoleDefinition                       ;
-    private readonly guidResolverAzureApplicationInsightsInstrumentationKey: GuidResolverAzureApplicationInsightsInstrumentationKey;
-    private readonly guidResolverAzureLogAnalyticsWorkspaceCustomerId      : GuidResolverAzureLogAnalyticsWorkspaceCustomerId      ;
+    private readonly guidResolvers: IGuidResolver[];
 
     constructor(
         tokenCredential: TokenCredential
     ) {
-        this.guidResolverAzureSubscription                          = new GuidResolverAzureSubscription                         (tokenCredential);
-        this.guidResolverAzureManagementGroup                       = new GuidResolverAzureManagementGroup                      (tokenCredential);
-        this.guidResolverAzureRoleDefinition                        = new GuidResolverAzureRoleDefinition                       (tokenCredential);
-        this.guidResolverAzureApplicationInsightsInstrumentationKey = new GuidResolverAzureApplicationInsightsInstrumentationKey(tokenCredential);
-        this.guidResolverAzureLogAnalyticsWorkspaceCustomerId       = new GuidResolverAzureLogAnalyticsWorkspaceCustomerId      (tokenCredential);
+        this.guidResolvers = [
+            new GuidResolverAzureSubscription                         (tokenCredential),
+            new GuidResolverAzureManagementGroup                      (tokenCredential),
+            new GuidResolverAzureRoleDefinition                       (tokenCredential),
+            new GuidResolverAzureApplicationInsightsInstrumentationKey(tokenCredential),
+            new GuidResolverAzureLogAnalyticsWorkspaceCustomerId      (tokenCredential),
+        ];
     }
-
+    
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
-        return await this.guidResolverAzureSubscription                         .resolve(guid, abortController)
-            ?? await this.guidResolverAzureManagementGroup                      .resolve(guid, abortController)
-            ?? await this.guidResolverAzureRoleDefinition                       .resolve(guid, abortController)
-            ?? await this.guidResolverAzureApplicationInsightsInstrumentationKey.resolve(guid, abortController)
-            ?? await this.guidResolverAzureLogAnalyticsWorkspaceCustomerId      .resolve(guid, abortController);
+        for (const guidResolver of this.guidResolvers) {
+            const response = await guidResolver.resolve(guid, abortController);
+            if (response) {
+                return response;
+            }
+        }
+        return undefined;
     }
 }

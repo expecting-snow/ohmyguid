@@ -1,7 +1,7 @@
 import { Client, PageCollection, PageIterator, PageIteratorCallback } from "@microsoft/microsoft-graph-client";
+import { GuidResolverResponse                                       } from "../Models/GuidResolverResponse";
 import { TokenCredential                                            } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                      } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 
 export class GuidResolverMicrosoftEntraIdBase {
     constructor(
