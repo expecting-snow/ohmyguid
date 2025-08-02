@@ -29,14 +29,24 @@ export function activate(context: vscode.ExtensionContext) {
     // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
     const tokenCredential: TokenCredential = new CachingAzureCliCredential(
-        value => outputChannel.appendLine(`Authenticate : ${value}`),
-        error => {
+        (value: string) => outputChannel.appendLine(`Authenticate : ${value}`),
+        (error: string) => {
             outputChannel.appendLine(`Authenticate : ${error}`);
             vscode.window.showInformationMessage(`Authenticate : ${error}`);
         }
     );
 
-    const guidResolver = new GuidResolver(tokenCredential);
+    const guidResolver = new GuidResolver(
+        tokenCredential,
+        (error: string) => {
+            outputChannel.appendLine(`GuidResolver : ${error}`);
+            telemetryReporter.sendTelemetryErrorEvent(
+                TelemetryReporterEvents.resolve,
+                {
+                    error: `${error}`
+                }
+            );
+        });
 
     const guidCache = new GuidCache(
         guidResolver,
@@ -106,18 +116,31 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('ohmyguid.openLink',
             async (value: GuidResolverResponse) => {
-                const { filePath, error } = await new GuidResolverResponseToTempFile(res => guidCache.update(res.guid, res), GuidLinkProvider.resolveLink).toTempFile(value, tokenCredential);
+                const { filePath, error } = await new GuidResolverResponseToTempFile(
+                    res => guidCache.update(res.guid, res),
+                    GuidLinkProvider.resolveLink,
+                    (error: string) => {
+                        outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
+                        telemetryReporter.sendTelemetryErrorEvent(
+                            TelemetryReporterEvents.export,
+                            {
+                                error: `${error}`
+                            }
+                        );
+                    }
+                ).toTempFile(value, tokenCredential);
 
                 if (error) {
-                    outputChannel.appendLine(`Export : ${error}`);
-                    vscode.window.showInformationMessage(`Export : ${error}`);
+                    outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${error}`);
+                    vscode.window.showInformationMessage(`${TelemetryReporterEvents.export}  : ${error}`);
                 }
                 else if (filePath) {
-                    outputChannel.appendLine(`Export : ${filePath}`);
+                    outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${filePath}`);
                     const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
                     await vscode.window.showTextDocument(doc, { preview: false });
                 }
                 else {
+                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
                     telemetryReporter.sendTelemetryErrorEvent(
                         TelemetryReporterEvents.export,
                         {

@@ -14,17 +14,18 @@ export class GuidResolverMicrosoftEntraId {
     private readonly guidResolvers: IGuidResolver[];
 
     constructor(
-        tokenCredential: TokenCredential
+        tokenCredential: TokenCredential,
+        callbackError: (error: any) => void
     ) {
         this.guidResolvers = [
-            new GuidResolverMicrosoftEntraIdDirectoryObject         (tokenCredential),
-            new GuidResolverMicrosoftEntraIdTenant                  (tokenCredential),
-            new GuidResolverMicrosoftEntraIdAppRegistration         (tokenCredential),
-            new GuidResolverMicrosoftEntraIdAppRegistrationClientId (tokenCredential),
-            new GuidResolverMicrosoftEntraIdServicePrincipal        (tokenCredential),
-            new GuidResolverMicrosoftEntraIdServicePrincipalClientId(tokenCredential),
-            new GuidResolverMicrosoftEntraIdGroup                   (tokenCredential),
-            new GuidResolverMicrosoftEntraIdUser                    (tokenCredential),
+            new GuidResolverMicrosoftEntraIdDirectoryObject         (tokenCredential, callbackError),
+            new GuidResolverMicrosoftEntraIdTenant                  (tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdAppRegistration         (tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdAppRegistrationClientId (tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdServicePrincipal        (tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdServicePrincipalClientId(tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdGroup                   (tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdUser                    (tokenCredential               ),
         ];
      }
    

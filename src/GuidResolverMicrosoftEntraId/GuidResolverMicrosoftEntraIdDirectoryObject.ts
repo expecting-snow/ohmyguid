@@ -5,7 +5,8 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
-        tokenCredential: TokenCredential
+        tokenCredential: TokenCredential,
+        private readonly callbackError: (error: any) => void
     ) { super(tokenCredential); }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
@@ -22,7 +23,7 @@ export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMic
                 else if (response["@odata.type"] === '#microsoft.graph.tokenIssuancePolicy') { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID TokenIssuancePolicy', response, new Date()); }
                 else if (response["@odata.type"] === '#microsoft.graph.directoryRole'      ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID DirectoryRole'      , response, new Date()); }
                 else {
-                    console.log(`Unknown response type: ${response["@odata.type"]} for id: ${response.id}`);
+                    this.callbackError(`DirectoryObject: Unknown response type: ${response["@odata.type"]}`);
                     return undefined;
                 }
             }

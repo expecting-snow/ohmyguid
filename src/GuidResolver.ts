@@ -12,10 +12,11 @@ export class GuidResolver implements IGuidResolver {
         private readonly guidResolverMicrosoftEntraId: GuidResolverMicrosoftEntraId;
 
     constructor(
-        private readonly tokenCredential: TokenCredential,
+        tokenCredential: TokenCredential,
+        callbackError: (error: string) => void
     ) { 
-        this.guidResolverAzure            = new GuidResolverAzure           (tokenCredential);
-        this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(tokenCredential);
+        this.guidResolverAzure            = new GuidResolverAzure           (tokenCredential               );
+        this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(tokenCredential, callbackError);
     }
 
     async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
