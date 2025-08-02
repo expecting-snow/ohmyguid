@@ -3,6 +3,7 @@ import { GuidResolverAzureLogAnalyticsWorkspaceCustomerId       } from "./GuidRe
 import { GuidResolverAzureManagementGroup                       } from "./GuidResolverAzureManagementGroup"                      ;
 import { GuidResolverAzureRoleDefinition                        } from "./GuidResolverAzureRoleDefinition"                       ;
 import { GuidResolverAzureSubscription                          } from "./GuidResolverAzureSubscription"                         ;
+import { GuidResolverAzureTag                                   } from "./GuidResolverAzureTag"                                  ;
 import { GuidResolverResponse                                   } from "../Models/GuidResolverResponse"                          ;
 import { IGuidResolver                                          } from "../GuidResolver"                                         ;
 import { TokenCredential                                        } from "@azure/identity"                                         ;
@@ -19,6 +20,7 @@ export class GuidResolverAzure {
             new GuidResolverAzureRoleDefinition                       (tokenCredential),
             new GuidResolverAzureApplicationInsightsInstrumentationKey(tokenCredential),
             new GuidResolverAzureLogAnalyticsWorkspaceCustomerId      (tokenCredential),
+            new GuidResolverAzureTag                                  (tokenCredential),
         ];
     }
     

@@ -9,6 +9,7 @@ export class GuidResolverResponse {
                             | 'Azure Policy Definition BuiltIn'
                             | 'Azure Policy Definition Custom'
                             | 'Azure Policy Definition Static'
+                            | 'Azure Resources By Tag'
                             | 'Azure RoleDefinition BuiltInRole'
                             | 'Azure RoleDefinition CustomRole'
                             | 'Azure Subscription' 
