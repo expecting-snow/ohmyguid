@@ -1,15 +1,16 @@
-import * as vscode                        from 'vscode';
-import { GuidCache                      } from './GuidCache'; 
-import { GuidLinkProvider               } from './GuidLinkProvider'; 
-import { GuidResolverResponse           } from './Models/GuidResolverResponse'; 
-import { GuidResolverResponseToTempFile } from './GuidResolverResponseToTempFile'; 
-import { TelemetryReporterEvents        } from './TelemetryReporterEvents';
-import { TokenCredential                } from '@azure/identity';
-import { TelemetryReporter } from '@vscode/extension-telemetry';
 
-export function registerCommandOpenLink(context: vscode.ExtensionContext, guidCache:GuidCache, tokenCredential : TokenCredential, outputChannel: vscode.OutputChannel, telemetryReporter: TelemetryReporter) {
+import { commands, ExtensionContext, OutputChannel, Uri, window, workspace } from 'vscode';
+import { GuidCache                                                         } from './GuidCache';
+import { GuidLinkProvider                                                  } from './GuidLinkProvider';
+import { GuidResolverResponse                                              } from './Models/GuidResolverResponse';
+import { GuidResolverResponseToTempFile                                    } from './GuidResolverResponseToTempFile';
+import { TelemetryReporter                                                 } from '@vscode/extension-telemetry';
+import { TelemetryReporterEvents                                           } from './TelemetryReporterEvents';
+import { TokenCredential                                                   } from '@azure/identity';
+
+export function registerCommandOpenLink(context: ExtensionContext, guidCache:GuidCache, tokenCredential : TokenCredential, outputChannel: OutputChannel, telemetryReporter: TelemetryReporter) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('ohmyguid.openLink',
+        commands.registerCommand('ohmyguid.openLink',
             async (value: GuidResolverResponse) => {
                 const { filePath, error } = await new GuidResolverResponseToTempFile(
                     res => guidCache.update(res.guid, res),
@@ -27,12 +28,12 @@ export function registerCommandOpenLink(context: vscode.ExtensionContext, guidCa
 
                 if (error) {
                     outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${error}`);
-                    vscode.window.showInformationMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+                    window.showInformationMessage(`${TelemetryReporterEvents.export}  : ${error}`);
                 }
                 else if (filePath) {
                     outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${filePath}`);
-                    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
-                    await vscode.window.showTextDocument(doc, { preview: false });
+                    const doc = await workspace.openTextDocument(Uri.file(filePath));
+                    await window.showTextDocument(doc, { preview: false });
                 }
                 else {
                     outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
@@ -48,12 +49,12 @@ export function registerCommandOpenLink(context: vscode.ExtensionContext, guidCa
     );
 }
 
-export function registerCommandRefresh(context: vscode.ExtensionContext, guidCache: GuidCache) {
+export function registerCommandRefresh(context: ExtensionContext, guidCache: GuidCache) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('ohmyguid.refresh',
+        commands.registerCommand('ohmyguid.refresh',
             () => {
                 guidCache.clear();
-                vscode.window.showInformationMessage('Extension "ohmyguid" - refresh');
+                window.showInformationMessage('Extension "ohmyguid" - refresh');
             }
         )
     );

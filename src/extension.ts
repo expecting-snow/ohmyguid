@@ -1,70 +1,32 @@
-import * as vscode                        from 'vscode';
-import { createTelemetryReporter        } from './extensionCreateTelemetryReporter';
-import { CachingAzureCliCredential      } from './CachingAzureCliCredential';
-import { GuidCache                      } from './GuidCache';
-import { GuidCodeLensProvider           } from './GuidCodeLensProvider';
-import { GuidResolver                   } from './GuidResolver';
-import { GuidResolverResponseRenderer   } from './GuidResolverResponseRenderer';
-import { initStaticContent              } from './extensionStaticContent';
-import { registerCommandOpenLink, registerCommandRefresh        } from './extensionCommands';
-import { TelemetryReporterEvents        } from './TelemetryReporterEvents';
-import { TokenCredential                } from '@azure/identity';
+import { createOutputChannel                             } from './extensionCreateOutputChannel';
+import { createTelemetryReporter                         } from './extensionCreateTelemetryReporter';
+import { ExtensionContext, window                        } from 'vscode';
+import { initStaticContent                               } from './extensionStaticContent';
+import { registerCache                                   } from './extensionCache';
+import { registerCommandOpenLink, registerCommandRefresh } from './extensionCommands';
+import { registerGuidCodeLensProvider                    } from './extensionRegisterGuidCodeLensProvider';
+import { resolveTokenProvider                            } from './extensionTokenCredential';
+import { TelemetryReporterEvents                         } from './TelemetryReporterEvents';
 
-export function activate(context: vscode.ExtensionContext) {
-    const outputChannel = vscode.window.createOutputChannel('ohmyguid');
-    context.subscriptions.push(outputChannel);
+export function activate(context: ExtensionContext) {
+    // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
 
+    const outputChannel = createOutputChannel(context);
+    
     outputChannel.appendLine('activate');
 
     const telemetryReporter = createTelemetryReporter(context);
-    context.subscriptions.push(telemetryReporter);
 
-    // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
+    const tokenCredential = resolveTokenProvider(outputChannel.appendLine, window.showInformationMessage);
 
-    const tokenCredential: TokenCredential = new CachingAzureCliCredential(
-        (value: string) => outputChannel.appendLine(`Authenticate : ${value}`),
-        (error: string) => {
-            outputChannel.appendLine(`Authenticate : ${error}`);
-            vscode.window.showInformationMessage(`Authenticate : ${error}`);
-        }
-    );
-
-    const guidResolver = new GuidResolver(
-        tokenCredential,
-        (error: string) => {
-            outputChannel.appendLine(`GuidResolver : ${error}`);
-            telemetryReporter.sendTelemetryErrorEvent(
-                TelemetryReporterEvents.resolve,
-                {
-                    error: `${error}`
-                }
-            );
-        });
-
-    const guidCache = new GuidCache(
-        guidResolver,
-        context.workspaceState,
-        value => outputChannel.appendLine(`Cache : ${value}`)
-    );
-    
-    context.subscriptions.push(guidCache);
+    const guidCache = registerCache(context, tokenCredential, outputChannel, telemetryReporter);
 
     initStaticContent(guidCache);
 
-    context.subscriptions.push(
-        vscode.languages.registerCodeLensProvider(
-            {
-                scheme: 'file'
-            },
-            new GuidCodeLensProvider(
-                guidCache,
-                new GuidResolverResponseRenderer()
-            )
-        )
-    );
+    registerGuidCodeLensProvider(context, guidCache);
 
     registerCommandRefresh(context, guidCache);
-    
+
     registerCommandOpenLink(context, guidCache, tokenCredential, outputChannel, telemetryReporter);
 
     outputChannel.appendLine('activated');
@@ -73,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-    vscode.window.createOutputChannel('ohmyguid').appendLine('Extension "ohmyguid" - deactivate');
+    window.createOutputChannel('ohmyguid').appendLine('Extension "ohmyguid" - deactivate');
 }
 
 

@@ -1,22 +1,24 @@
+import { ExtensionContext  } from 'vscode';
 import { TelemetryReporter } from '@vscode/extension-telemetry';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as vscode from 'vscode';
+import { readFileSync      } from 'fs';
+import path from 'path';
+ 
+
 
 /**
  * Returns a {@link TelemetryReporter} with `extensionVersion` from package.json `version`.
  */
 
-export function createTelemetryReporter(context: vscode.ExtensionContext): TelemetryReporter {
+export function createTelemetryReporter(context: ExtensionContext): TelemetryReporter {
 
     const telemetryConfig = JSON.parse(
-        fs.readFileSync(
+        readFileSync(
             path.join(context.extensionPath, 'telemetry.json'),
             'utf8'
         )
     );
     const packageJson = JSON.parse(
-        fs.readFileSync(
+        readFileSync(
             path.join(context.extensionPath, 'package.json'),
             'utf8'
         )
@@ -25,5 +27,9 @@ export function createTelemetryReporter(context: vscode.ExtensionContext): Telem
     telemetryConfig.commonProperties = telemetryConfig.commonProperties || {};
     telemetryConfig.commonProperties.extensionVersion = packageJson.version;
 
-    return new TelemetryReporter(telemetryConfig.aiKey);
+    const telemetryReporter = new TelemetryReporter(telemetryConfig.aiKey);
+
+    context.subscriptions.push(telemetryReporter);
+
+    return telemetryReporter;
 }
