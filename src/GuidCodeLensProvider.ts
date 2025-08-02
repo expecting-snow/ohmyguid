@@ -1,8 +1,8 @@
-import * as vscode from 'vscode';
-import { GuidCache } from './GuidCache';
-import { GuidResolverResponseRenderer } from "./GuidResolverResponseRenderer";
+import { CancellationToken, CodeLens, CodeLensProvider, Command, Range, TextDocument } from 'vscode';
+import { GuidCache                                                                   } from './GuidCache';
+import { GuidResolverResponseRenderer                                                } from "./GuidResolverResponseRenderer";
 
-export class GuidCodeLensProvider implements vscode.CodeLensProvider {
+export class GuidCodeLensProvider implements CodeLensProvider {
 
     private readonly guidRegex = /\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b/g;
 
@@ -11,7 +11,7 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
         readonly renderer: GuidResolverResponseRenderer
     ) { }
 
-    provideCodeLenses(document: vscode.TextDocument): GuidCodeLens[] {
+    provideCodeLenses(document: TextDocument): GuidCodeLens[] {
         const codeLenses: GuidCodeLens[] = [];
         const text = document.getText();
 
@@ -26,7 +26,7 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
 
             const codeLens = new GuidCodeLens(
                 guid,
-                new vscode.Range(
+                new Range(
                     document.positionAt(match.index),
                     document.positionAt(match.index + guid.length)
                 )
@@ -46,7 +46,7 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
         return codeLenses;
     }
 
-    async resolveCodeLens(codeLens: GuidCodeLens, token: vscode.CancellationToken) : Promise<GuidCodeLens> {
+    async resolveCodeLens(codeLens: GuidCodeLens, token: CancellationToken) : Promise<GuidCodeLens> {
         const promise = this.guidCache.getResolved(codeLens.guid);
         if (promise) {
             const resolvedValue = await promise;
@@ -71,10 +71,10 @@ export class GuidCodeLensProvider implements vscode.CodeLensProvider {
     }
 }
 
-class GuidCodeLens extends vscode.CodeLens {
+class GuidCodeLens extends CodeLens {
     guid: string;
 
-    constructor(guid: string, range: vscode.Range, command?: vscode.Command) {
+    constructor(guid: string, range: Range, command?: Command) {
         super(range, command);
         this.guid = guid;
     }

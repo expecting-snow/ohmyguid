@@ -1,8 +1,9 @@
 import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
 import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
+import { IGuidResolver                    } from "../GuidResolver";
 import { TokenCredential                  } from "@azure/identity";
 
-export class GuidResolverMicrosoftEntraIdAppRegistration extends GuidResolverMicrosoftEntraIdBase {
+export class GuidResolverMicrosoftEntraIdAppRegistration extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }

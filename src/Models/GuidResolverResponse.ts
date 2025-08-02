@@ -22,6 +22,7 @@ export class GuidResolverResponse {
                             | 'Microsoft Entra ID ServicePrincipal Details'
                             | 'Microsoft Entra ID Tenant'
                             | 'Microsoft Entra ID TokenLifetimePolicy'
+                            | 'Microsoft Entra ID TokenIssuancePolicy'
                             | 'Microsoft Entra ID User'
                             | 'Microsoft Entra ID User Details',
         readonly object     : any,

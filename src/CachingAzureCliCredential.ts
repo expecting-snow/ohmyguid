@@ -19,8 +19,8 @@ export class CachingAzureCliCredential implements TokenCredential {
     private tryToAuthenticate: boolean = true;
 
     constructor(
-        readonly callbackInfo: (value: any) => void,
-        readonly callbackError: (error: any) => void
+        readonly callbackInfo: (value: string) => void,
+        readonly callbackError: (error: string) => void
     ) {
         this.credential = new AzureCliCredential      ();
         this.cache      = new Map<string, AccessToken>();

@@ -19,6 +19,7 @@ export class GuidResolverResponseToTempFile {
     constructor(
         private readonly onResponse: (guidResolverResponse: GuidResolverResponse) => void,
         private readonly getLink: (item: GuidResolverResponse) => string | undefined,
+        private readonly callbackError: (error: string) => void,
         private readonly pathSubDirectories = ['expecting-snow', 'ohmyguid']
     ) { }
 
@@ -41,7 +42,9 @@ export class GuidResolverResponseToTempFile {
             case 'Microsoft Entra ID ServicePrincipal': return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdServicePrincipalWithDetails(this.onResponse, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID Tenant'          : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdTenant                     (                 tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID User'            : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdUserWithDetails            (this.onResponse, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            default:                                    return this.toTempFileInternal(guidResolverResponse);
+            default:
+                this.callbackError(`ResponseToTempFile: Unknown response type: ${responseType}`);                                    
+                return this.toTempFileInternal(guidResolverResponse);
         }
     }
 
