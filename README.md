@@ -3,17 +3,19 @@
 ![Sample](images/sample.png)
 
 This extension provides CodeLens support for guids within text files by looking up
-- Microsoft Entra Id AppRegistration Ids (id / appId / clientId / appRoleAssignments)
-- Microsoft Entra Id ServicePrincipal Ids (id / appId / clientId / appRoleAssignments)
-- Microsoft Entra Id Group Ids
-- Microsoft Entra Id User Ids
 - Azure Advisor Recommendation Ids
+- Azure Application Insights InstrumentationKey Ids
+- Azure Log Analytics Workspace Ids
 - Azure Management Group Ids
 - Azure Policy Definition Ids
 - Azure Role Definition Ids
 - Azure Subscription Ids
-- Azure Application Insights InstrumentationKey Ids
-- Azure Log Analytics Workspace Ids
+- Azure Tag Ids
+- Microsoft Entra Id AppRegistration Ids (id / appId / clientId / appRoleAssignments)
+- Microsoft Entra Id DirectoryObject Ids
+- Microsoft Entra Id Group Ids
+- Microsoft Entra Id ServicePrincipal Ids (id / appId / clientId / appRoleAssignments)
+- Microsoft Entra Id User Ids
 
 in
 
