@@ -55,6 +55,10 @@ export class GuidResolverMicrosoftEntraIdBase {
         };
     }
     protected mapIdDisplayName(p: any): string {
+        if(p.userPrincipalName) {
+            return `${p?.userPrincipalName} (${p?.id})`;
+        }
+
         return `${p?.displayName} (${p?.id})`;
     }
 
