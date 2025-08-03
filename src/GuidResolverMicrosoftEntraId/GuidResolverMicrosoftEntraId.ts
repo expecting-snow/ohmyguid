@@ -14,18 +14,20 @@ export class GuidResolverMicrosoftEntraId {
     private readonly guidResolvers: IGuidResolver[];
 
     constructor(
-        tokenCredential: TokenCredential,
-        callbackError: (error: any) => void
+        onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
+        onToBeResolved  : (guid                 : string              ) => void,
+        tokenCredential : TokenCredential,
+        callbackError   : (error: any) => void
     ) {
         this.guidResolvers = [
-            new GuidResolverMicrosoftEntraIdDirectoryObject         (tokenCredential, callbackError),
-            new GuidResolverMicrosoftEntraIdTenant                  (tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdAppRegistration         (tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdAppRegistrationClientId (tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdServicePrincipal        (tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdServicePrincipalClientId(tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdGroup                   (tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdUser                    (tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdTenant                  (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdAppRegistration         (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdServicePrincipal        (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdGroup                   (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdUser                    (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdDirectoryObject         (onResponse, onToBeResolved, tokenCredential, callbackError),
         ];
      }
    

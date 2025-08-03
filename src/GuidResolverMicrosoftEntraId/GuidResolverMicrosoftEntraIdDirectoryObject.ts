@@ -5,6 +5,8 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
+        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential,
         private readonly callbackError: (error: any) => void
     ) { super(tokenCredential); }
@@ -14,6 +16,7 @@ export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMic
             const response = await this.getClient(abortController).api(`/directoryObjects/${guid}`).get();
 
             if (response && response.displayName && response['@odata.type']) {
+                this.processResponses(response, this.onResponse, this.onToBeResolved);
 
                      if (response['@odata.type'] === '#microsoft.graph.group'              ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID Group'              , response, new Date()); }
                 else if (response['@odata.type'] === '#microsoft.graph.user'               ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID User'               , response, new Date()); }

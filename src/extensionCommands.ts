@@ -4,6 +4,7 @@ import { GuidCache                                                         } fro
 import { GuidLinkProvider                                                  } from './GuidLinkProvider';
 import { GuidResolverResponse                                              } from './Models/GuidResolverResponse';
 import { GuidResolverResponseToTempFile                                    } from './GuidResolverResponseToTempFile';
+import { initStaticContent                                                 } from './extensionStaticContent';
 import { TelemetryReporter                                                 } from '@vscode/extension-telemetry';
 import { TelemetryReporterEvents                                           } from './TelemetryReporterEvents';
 import { TokenCredential                                                   } from '@azure/identity';
@@ -55,6 +56,8 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
         commands.registerCommand('ohmyguid.refresh',
             () => {
                 guidCache.clear();
+                context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
+                initStaticContent(guidCache);
                 window.showInformationMessage('Extension "ohmyguid" - refresh');
             }
         )

@@ -80,9 +80,9 @@ export class GuidResolverMicrosoftEntraIdBase {
     }
 
     protected processResponses(
-        response: any, 
-        onResponse: (guidResolverResponse: any) => void,
-        onToBeResolved: (guid: string) => void
+        response       : any, 
+        onResponse     : (guidResolverResponse : any   ) => void,
+        onToBeResolved : (guid                 : string) => void
     ): void {
         if (response && response.id && response.displayName && (response['@odata.type'] || response["@odata.context"])) {
             if (response['@odata.type'] === '#microsoft.graph.group' || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#groups/$entity') {

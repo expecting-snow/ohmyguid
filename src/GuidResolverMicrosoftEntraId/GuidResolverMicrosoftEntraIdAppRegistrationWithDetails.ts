@@ -16,7 +16,6 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
             const owners   = await this.resolveAll(`/applications/${guid}/owners`, this.onResponse, _ => _ , this.onToBeResolved, abortController);
             
             if (response && response.displayName) {
-
                 this.processResponses(response , this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
