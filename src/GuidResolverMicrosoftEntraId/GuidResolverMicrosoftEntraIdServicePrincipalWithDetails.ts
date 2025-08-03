@@ -5,20 +5,21 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
-        private readonly onResponse: (guidResolverResponse: GuidResolverResponse) => void,
+        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
-            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, abortController);
-            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, abortController);
-            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, abortController);
-            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, abortController);
+            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, abortController);
+            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
+            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
+            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
 
             if (response && response.displayName) {
-                this.processResponses(response, this.onResponse);
+                this.processResponses(response, this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
 
