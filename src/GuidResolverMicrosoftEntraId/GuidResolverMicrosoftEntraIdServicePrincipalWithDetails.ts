@@ -29,9 +29,9 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                     'Microsoft Entra ID ServicePrincipal Details',
                     {
                         servicePrincipal   : response,
-                        owners             : (owners            as any[])?.map(this.mapIdDisplayName     ).sort(),
+                        owners             : (owners             as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
-                        ownedObjects       : (ownedObjects      as any[])?.map(this.mapIdDisplayName     ).sort(),
+                        ownedObjects       : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignedTo  : appRoleAssignedTo
                     },
                     new Date()

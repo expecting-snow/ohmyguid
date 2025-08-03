@@ -140,26 +140,26 @@ export class GuidResolverMicrosoftEntraIdBase {
             else if (response['@odata.type'] === '#microsoft.graph.directoryRole') {
                 onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID DirectoryRole', response, new Date()));
             }
-            else if (response['@odata.type'] === 'microsoft.graph.appRoleAssignment') {
-                /*  
-                    {
-                         id: "...not a guid...",
-                         deletedDateTime: null,
-                         appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
-                         createdDateTime: "...",                                  |
-                         principalDisplayName: "...",                             |
-                         principalId: "...",                                      |
-                         principalType: "User | ServicePrincipal | Group",        |
-                         resourceDisplayName: "app registration display name",    |
-                         resourceId: "app registration guid",                  <--
-                    }
-                */
-                if (response.resourceId) {
-                    onToBeResolved(response.resourceId);
-                }
-            }
             else {
                 console.warn(`Unknown response type: ${response['@odata.type']} for id: ${response.id}`);
+            }
+        }
+        else if (response && response['@odata.type'] === 'microsoft.graph.appRoleAssignment') {
+            /*  
+                {
+                     id: "...not a guid...",
+                     deletedDateTime: null,
+                     appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
+                     createdDateTime: "...",                                  |
+                     principalDisplayName: "...",                             |
+                     principalId: "...",                                      |
+                     principalType: "User | ServicePrincipal | Group",        |
+                     resourceDisplayName: "app registration display name",    |
+                     resourceId: "app registration guid",                  <--
+                }
+            */
+            if (response.resourceId) {
+                onToBeResolved(response.resourceId);
             }
         }
     }

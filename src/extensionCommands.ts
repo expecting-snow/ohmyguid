@@ -14,7 +14,7 @@ export function registerCommandOpenLink(context: ExtensionContext, guidCache:Gui
             async (value: GuidResolverResponse) => {
                 const { filePath, error } = await new GuidResolverResponseToTempFile(
                     res => guidCache.update(res.guid, res),
-                    guidCache.getResolvedOrEnqueue,
+                    guid => guidCache.getResolvedOrEnqueue(guid),
                     GuidLinkProvider.resolveLink,
                     (error: string) => {
                         outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
