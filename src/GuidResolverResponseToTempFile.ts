@@ -59,7 +59,7 @@ export class GuidResolverResponseToTempFile {
         try {
             await mkdir(path.join(tempDirectory, ...this.pathSubDirectories), { recursive: true });
 
-            const fileName = `${guidResolverResponse.type} ${guidResolverResponse.guid}.json`.replaceAll(' ','_');
+            const fileName = `${guidResolverResponse.type}--${guidResolverResponse.guid}--${guidResolverResponse.displayName}.json`.replaceAll(' ','_');
 
             const filePath = path.join(tempDirectory, ...this.pathSubDirectories, fileName);
 

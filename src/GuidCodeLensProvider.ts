@@ -34,7 +34,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
             if (response) {
                 codeLens.command = {
-                    title: this.renderer.render(response) || 'No information available',
+                    title: this.renderer.render(response) || '',
                     command: 'ohmyguid.openLink',
                     arguments: [ response ]
                 };
@@ -53,7 +53,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
             if (resolvedValue) {
                 codeLens.command = {
-                    title: this.renderer.render(resolvedValue) || 'No information available',
+                    title: this.renderer.render(resolvedValue) || '',
                     command: 'ohmyguid.openLink',
                     arguments: [resolvedValue]
                 };
@@ -63,7 +63,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
         }
 
         codeLens.command = {
-            title: 'No information available',
+            title: '',
             command: '',
             arguments: []
         };

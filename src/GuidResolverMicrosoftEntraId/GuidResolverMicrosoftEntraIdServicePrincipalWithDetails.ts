@@ -24,7 +24,8 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                                       ? await this.getClient(abortController).api(`/applications`).filter(`appId eq '${response.appId}'`).get()
                                       : undefined;
 
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+                this.processResponses(response       , this.onResponse, this.onToBeResolved);
+                this.processResponses(appRegistration, this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
 

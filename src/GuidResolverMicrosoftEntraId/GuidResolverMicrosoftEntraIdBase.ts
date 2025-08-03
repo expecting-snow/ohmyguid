@@ -98,12 +98,12 @@ export class GuidResolverMicrosoftEntraIdBase {
                                 id: "...not a guid...",
                                 deletedDateTime: null,
                                 appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
-                                createdDateTime: "...",                                  |
-                                principalDisplayName: "...",                             |
-                                principalId: "...",                                      |
-                                principalType: "User | ServicePrincipal | Group",        |
-                                resourceDisplayName: "app registration display name",    |
-                                resourceId: "app registration guid",                  <--
+                                createdDateTime: "...",                                                       |
+                                principalDisplayName: "...",                                                  |
+                                principalId: "...",                                                           |
+                                principalType: "User | ServicePrincipal | Group",                             |
+                                resourceDisplayName: "app registration display name",                         |
+                                resourceId: "app registration guid",                  <------------------------
                             }
                         */
                         if (item.resourceId) {
@@ -222,23 +222,21 @@ export class GuidResolverMicrosoftEntraIdBase {
                 console.warn(`Unknown response type: ${response['@odata.type']} for id: ${response.id}`);
             }
         }
-        else if (response && response['@odata.type'] === 'microsoft.graph.appRoleAssignment') {
+        else if (response && response.resourceId && response['@odata.type'] === 'microsoft.graph.appRoleAssignment') {
             /*  
                 {
                      id: "...not a guid...",
                      deletedDateTime: null,
                      appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
-                     createdDateTime: "...",                                  |
-                     principalDisplayName: "...",                             |
-                     principalId: "...",                                      |
-                     principalType: "User | ServicePrincipal | Group",        |
-                     resourceDisplayName: "app registration display name",    |
-                     resourceId: "app registration guid",                  <--
+                     createdDateTime: "...",                                                       |
+                     principalDisplayName: "...",                                                  |
+                     principalId: "...",                                                           |
+                     principalType: "User | ServicePrincipal | Group",                             |
+                     resourceDisplayName: "app registration display name",                         |
+                     resourceId: "app registration guid",                  <------------------------
                 }
             */
-            if (response.resourceId) {
-                onToBeResolved(response.resourceId);
-            }
+            onToBeResolved(response.resourceId);
         }
     }
 }

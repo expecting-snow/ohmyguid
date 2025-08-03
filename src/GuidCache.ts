@@ -18,6 +18,10 @@ export class GuidCache {
     }
 
     async getResolved(guid: string): Promise<GuidResolverResponse | undefined> {
+        if (guid === GuidResolverResponse.EMPTY_GUID) {
+            return GuidResolverResponse.EMPTY_RESPONSE;
+        }
+
         const response = this.memento.get<GuidResolverResponse>(guid);
 
         if (response) {
@@ -48,6 +52,10 @@ export class GuidCache {
     }
 
     getResolvedOrEnqueue(guid: string): GuidResolverResponse | undefined {
+        if (guid === GuidResolverResponse.EMPTY_GUID) {
+            return GuidResolverResponse.EMPTY_RESPONSE;
+        }
+
         const response = this.memento.get<GuidResolverResponse>(guid);
 
         if (response) {
@@ -85,6 +93,10 @@ export class GuidCache {
     }
 
     update(guid: string, guidResolverResponse: GuidResolverResponse): void {
+        if (guid === GuidResolverResponse.EMPTY_GUID) {
+            return;
+        }
+
         this.memento.update(guid, guidResolverResponse);
     }
 
