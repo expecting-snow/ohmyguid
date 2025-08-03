@@ -55,10 +55,12 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.refresh',
             () => {
+
+                window.showInformationMessage('Extension "ohmyguid" - refreshing');
                 guidCache.clear();
                 context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
                 initStaticContent(guidCache);
-                window.showInformationMessage('Extension "ohmyguid" - refresh');
+                window.showInformationMessage('Extension "ohmyguid" - refreshed');
             }
         )
     );
