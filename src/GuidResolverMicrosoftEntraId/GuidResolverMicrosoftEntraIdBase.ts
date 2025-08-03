@@ -118,6 +118,11 @@ export class GuidResolverMicrosoftEntraIdBase {
                 if (response.appRoles) {
                     for (const appRole of response.appRoles) {
                         if (appRole && appRole.id && appRole.displayName) {
+                            if (response.appId) {
+                                // add a reference to the appId in the metadata to link back to the app registration that defines the appRole
+                                appRole.metadata = {};
+                                appRole.metadata.appId = response.appId;
+                            }
                             onResponse(new GuidResolverResponse(appRole.id, appRole.displayName, 'Microsoft Entra ID AppRoleDefinition', appRole, new Date()));
                         }
                     }
@@ -129,6 +134,11 @@ export class GuidResolverMicrosoftEntraIdBase {
                 if (response.appRoles) {
                     for (const appRole of response.appRoles) {
                         if (appRole && appRole.id && appRole.displayName) {
+                            if (response.appId) {
+                                // add a reference to the appId in the metadata to link back to the app registration that defines the appRole
+                                appRole.metadata = {};
+                                appRole.metadata.appId = response.appId;
+                            }
                             onResponse(new GuidResolverResponse(appRole.id, appRole.displayName, 'Microsoft Entra ID AppRoleDefinition', appRole, new Date()));
                         }
                     }
