@@ -23,11 +23,11 @@ export class GuidLinkProvider {
             case 'Microsoft Entra ID Group':
                 return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.guid}/menuId/`;
             case 'Microsoft Entra ID Group Details':
-                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.object.group.guid}/menuId/`;
+                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.object.group.id}/menuId/`;
             case 'Microsoft Entra ID User':
                 return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.guid}/hidePreviewBanner~/true`;
             case 'Microsoft Entra ID User Details':
-                return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.object.user.guid}/hidePreviewBanner~/true`;
+                return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.object.user.id}/hidePreviewBanner~/true`;
             default:
                 console.log(`No link available for type: ${item.type}`);
                 return undefined;

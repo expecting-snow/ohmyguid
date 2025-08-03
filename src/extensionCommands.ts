@@ -4,6 +4,7 @@ import { GuidCache                                                         } fro
 import { GuidLinkProvider                                                  } from './GuidLinkProvider';
 import { GuidResolverResponse                                              } from './Models/GuidResolverResponse';
 import { GuidResolverResponseToTempFile                                    } from './GuidResolverResponseToTempFile';
+import { initStaticContent                                                 } from './extensionStaticContent';
 import { TelemetryReporter                                                 } from '@vscode/extension-telemetry';
 import { TelemetryReporterEvents                                           } from './TelemetryReporterEvents';
 import { TokenCredential                                                   } from '@azure/identity';
@@ -14,6 +15,7 @@ export function registerCommandOpenLink(context: ExtensionContext, guidCache:Gui
             async (value: GuidResolverResponse) => {
                 const { filePath, error } = await new GuidResolverResponseToTempFile(
                     res => guidCache.update(res.guid, res),
+                    guid => guidCache.getResolvedOrEnqueue(guid),
                     GuidLinkProvider.resolveLink,
                     (error: string) => {
                         outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
@@ -53,8 +55,12 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.refresh',
             () => {
+
+                window.showInformationMessage('Extension "ohmyguid" - refreshing');
                 guidCache.clear();
-                window.showInformationMessage('Extension "ohmyguid" - refresh');
+                context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
+                initStaticContent(guidCache);
+                window.showInformationMessage('Extension "ohmyguid" - refreshed');
             }
         )
     );

@@ -5,20 +5,21 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
-        private readonly onResponse: (guidResolverResponse: GuidResolverResponse) => void,
+        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.getClient(abortController).api(`/users/${guid}`).get();
-            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, abortController);
-            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, abortController);
-            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, abortController);
-            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, abortController);
+            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, abortController);
+            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
+            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, abortController);
+            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
 
             if (response && response.displayName) {
-                this.processResponses(response, this.onResponse);
+                this.processResponses(response, this.onResponse, this.onToBeResolved);
                 
                 abortController.abort();
 

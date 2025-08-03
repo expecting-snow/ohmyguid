@@ -5,6 +5,8 @@ import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdAppRegistrationClientId extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
+        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
@@ -13,6 +15,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationClientId extends GuidRes
             const response = await this.getClient(abortController).api(`/applications`).filter(`appId eq '${guid}'`).get();
 
             if (response && response.value && response.value.length > 0) {
+                this.processResponses(response.value[0], this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
 

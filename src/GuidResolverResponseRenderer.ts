@@ -8,6 +8,10 @@ export class GuidResolverResponseRenderer {
             return '';
         }
 
+        if (response.type === 'Empty') {
+            return '';
+        }
+
         if (response.type === 'Microsoft Entra ID Tenant') {
             return `${response.type}${response.object.displayName ? ` ${this.separator} ${response.object.displayName}` : ''}${response.object.defaultDomainName ? ` ${this.separator} ${response.object.defaultDomainName}` : ''}`;
         }

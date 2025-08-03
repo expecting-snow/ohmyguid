@@ -9,8 +9,6 @@ import { resolveTokenProvider                            } from './extensionToke
 import { TelemetryReporterEvents                         } from './TelemetryReporterEvents';
 
 export function activate(context: ExtensionContext) {
-    // context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
-
     const outputChannel = createOutputChannel(context);
     
     outputChannel.appendLine('activate');
