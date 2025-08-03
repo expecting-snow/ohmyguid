@@ -19,6 +19,11 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
             const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
 
             if (response && response.displayName) {
+
+                const appRegistration = response.appId
+                                      ? await this.getClient(abortController).api(`/applications`).filter(`appId eq '${response.appId}'`).get()
+                                      : undefined;
+
                 this.processResponses(response, this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
@@ -29,6 +34,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                     'Microsoft Entra ID ServicePrincipal Details',
                     {
                         servicePrincipal   : response,
+                        appRegistration    : appRegistration?.value?.at(0)?.id,
                         owners             : (owners             as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
                         ownedObjects       : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
