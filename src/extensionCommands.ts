@@ -21,8 +21,11 @@ export function registerCommandOpenLink(
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.openLink',
-            (value: GuidResolverResponse) => handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter)
+            (value: GuidResolverResponse) => { 
+                window.showInformationMessage(`${context.extension.id} - '${value.guid}'`);
 
+                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter);
+            }
         )
     );
 }
