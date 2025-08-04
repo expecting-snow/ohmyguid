@@ -28,7 +28,7 @@ files.
 
 ## Features
 
-stay tuned...
+Use the command 'OhMyGuid: LookUp' to enter a guid an look it up.
 
 ## Telemetry
 
