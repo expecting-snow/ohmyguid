@@ -54,12 +54,11 @@ export function registerCommandOpenLink(context: ExtensionContext, guidCache:Gui
 export function registerCommandRefresh(context: ExtensionContext, guidCache: GuidCache) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.refresh',
-            () => {
-
+            async () => {
                 window.showInformationMessage('Extension "ohmyguid" - refreshing');
                 guidCache.clear();
                 context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
-                initStaticContent(guidCache);
+                await initStaticContent(context, guidCache);
                 window.showInformationMessage('Extension "ohmyguid" - refreshed');
             }
         )

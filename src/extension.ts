@@ -8,7 +8,7 @@ import { registerGuidCodeLensProvider                    } from './extensionRegi
 import { resolveTokenProvider                            } from './extensionTokenCredential';
 import { TelemetryReporterEvents                         } from './TelemetryReporterEvents';
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
     const outputChannel = createOutputChannel(context);
     
     outputChannel.appendLine('activate');
@@ -19,7 +19,7 @@ export function activate(context: ExtensionContext) {
 
     const guidCache = registerCache(context, tokenCredential, outputChannel, telemetryReporter);
 
-    initStaticContent(guidCache);
+    await initStaticContent(context, guidCache);
 
     registerGuidCodeLensProvider(context, guidCache);
 
