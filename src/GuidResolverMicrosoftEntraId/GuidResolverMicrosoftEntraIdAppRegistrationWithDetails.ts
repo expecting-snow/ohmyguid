@@ -48,8 +48,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                                                'servicePrincipal.id'                     : servicePrincipal?.object?.id,
                                                'servicePrincipal.appOwnerOrganizationId' : servicePrincipal?.object?.appOwnerOrganizationId,
                                             },
+                        owners            : (owners as any[])?.map(this.mapIdDisplayName).sort(),
                         appRegistration   : application.object,
-                        owners            : (owners as any[])?.map(this.mapIdDisplayName).sort()
                     },
                     new Date()
                 );

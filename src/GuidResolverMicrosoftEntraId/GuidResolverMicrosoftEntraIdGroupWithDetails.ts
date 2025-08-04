@@ -36,9 +36,9 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
                                                 id   : response.object?.id,
                                                 name : response.displayName
                                             },
-                        group             : response.object,
                         owners            : (owners  as any[])?.map(this.mapIdDisplayName).sort(),
                         members           : (members as any[])?.map(this.mapIdDisplayName).sort(),
+                        group             : response.object,
                         appRoleAssignments: appRoleAssignments
                     },
                     new Date()

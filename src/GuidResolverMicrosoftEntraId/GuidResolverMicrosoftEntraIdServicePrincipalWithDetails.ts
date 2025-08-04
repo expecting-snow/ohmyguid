@@ -52,8 +52,8 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                                                'servicePrincipal.id'                     : servicePrincipal.object?.id,
                                                'servicePrincipal.appOwnerOrganizationId' : servicePrincipal.object?.appOwnerOrganizationId,
                                             },
-                        servicePrincipal   : servicePrincipal.object,
                         owners             : (owners             as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        servicePrincipal   : servicePrincipal.object,
                         appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
                         ownedObjects       : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignedTo  : appRoleAssignedTo
