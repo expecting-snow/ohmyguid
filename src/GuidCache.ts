@@ -41,8 +41,6 @@ export class GuidCache {
         if (resolvedValue) {
             this.memento.update(guid, resolvedValue);
 
-            this.trySetAzureSubscription(resolvedValue);
-
             this.callbackInfo(`${guid} - NEW - ${resolvedValue.displayName}`);
 
             return resolvedValue;
@@ -69,27 +67,6 @@ export class GuidCache {
         }
 
         return undefined;
-    }
-
-    private trySetAzureSubscription(guidResolverResponse: GuidResolverResponse): void {
-        if (guidResolverResponse.type === 'Azure Subscription') {
-            this.memento.update(`Azure Subscription ${guidResolverResponse.guid}`, guidResolverResponse);
-        }
-    }
-
-    private getAzureSubscriptions(): GuidResolverResponse[] {
-        const keys = this.memento.keys();
-        const keysAzureSubscriptions = keys.filter(key => key.startsWith('Azure Subscription '));
-        const subscriptions: GuidResolverResponse[] = [];
-
-        for (const key of keysAzureSubscriptions) {
-            const response = this.memento.get<GuidResolverResponse>(key);
-            if (response) {
-                subscriptions.push(response);
-            }
-        }
-
-        return subscriptions;
     }
 
     update(guid: string, guidResolverResponse: GuidResolverResponse): void {

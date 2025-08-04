@@ -28,6 +28,11 @@
         "command": "ohmyguid.refresh",
         "title": "Refresh",
         "category": "OhMyGuid"
+      },
+      {
+        "command": "ohmyguid.lookup",
+        "title": "LookUp",
+        "category": "OhMyGuid"
       }
     ],
     "codeLens": [
