@@ -54,12 +54,6 @@ export class GuidResolverMicrosoftEntraIdBase {
         }
     }
 
-    protected mapIdDisplayName1(p: any): { displayName: string; id: string } {
-        return { 
-            displayName: p?.displayName,
-            id         : p?.id
-        };
-    }
     protected mapIdDisplayName(p: any): string {
         if(p.userPrincipalName) {
             return `${p?.userPrincipalName} (${p?.id})`;
@@ -115,6 +109,10 @@ export class GuidResolverMicrosoftEntraIdBase {
             else if (response['@odata.type'] === '#microsoft.graph.servicePrincipal' || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#servicePrincipals/$entity') {
                 onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ServicePrincipal', response, new Date()));
 
+                if (response.appId) {
+                    onToBeResolved(response.appId);
+                }
+
                 if (response.appRoles) {
                     for (const appRole of response.appRoles) {
                         if (appRole && appRole.id && appRole.displayName) {
@@ -163,6 +161,10 @@ export class GuidResolverMicrosoftEntraIdBase {
             }
             else if (response['@odata.type'] === '#microsoft.graph.application' || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#applications/$entity') {
                 onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID AppRegistration', response, new Date()));
+
+                if(response.appId){
+                    onResponse(new GuidResolverResponse(response.appId, response.displayName, 'Microsoft Entra ID AppRegistration', response, new Date()));
+                }
 
                 if (response.appRoles) {
                     for (const appRole of response.appRoles) {
