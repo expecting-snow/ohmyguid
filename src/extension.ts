@@ -1,14 +1,16 @@
-import { createOutputChannel                             } from './extensionCreateOutputChannel';
-import { createTelemetryReporter                         } from './extensionCreateTelemetryReporter';
-import { ExtensionContext, window                        } from 'vscode';
-import { initStaticContent                               } from './extensionStaticContent';
-import { registerCache                                   } from './extensionCache';
-import { registerCommandOpenLink, registerCommandRefresh } from './extensionCommands';
-import { registerGuidCodeLensProvider                    } from './extensionRegisterGuidCodeLensProvider';
-import { resolveTokenProvider                            } from './extensionTokenCredential';
-import { TelemetryReporterEvents                         } from './TelemetryReporterEvents';
+import { createOutputChannel                                                    } from './extensionCreateOutputChannel';
+import { createTelemetryReporter                                                } from './extensionCreateTelemetryReporter';
+import { ExtensionContext, window                                               } from 'vscode';
+import { GuidResolver                                                           } from './GuidResolver';
+import { GuidResolverResponse                                                   } from './Models/GuidResolverResponse';
+import { initStaticContent                                                      } from './extensionStaticContent';
+import { registerCache                                                          } from './extensionCache';
+import { registerCommandLookup, registerCommandOpenLink, registerCommandRefresh } from './extensionCommands';
+import { registerGuidCodeLensProvider                                           } from './extensionRegisterGuidCodeLensProvider';
+import { resolveTokenProvider                                                   } from './extensionTokenCredential';
+import { TelemetryReporterEvents                                                } from './TelemetryReporterEvents';
 
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
     const outputChannel = createOutputChannel(context);
     
     outputChannel.appendLine('activate');
@@ -17,16 +19,30 @@ export function activate(context: ExtensionContext) {
 
     const tokenCredential = resolveTokenProvider(outputChannel.appendLine, window.showInformationMessage);
 
-    const guidCache = registerCache(context, tokenCredential, outputChannel, telemetryReporter);
+    const guidResolver = new GuidResolver(
+        (res  : GuidResolverResponse) => guidCache.update              (res.guid, res),
+        (guid : string              ) => guidCache.getResolvedOrEnqueue(guid         ),
+        tokenCredential,
+        (error: string) => {
+            outputChannel.appendLine(`GuidResolver : ${error}`);
+            telemetryReporter.sendTelemetryErrorEvent(
+                TelemetryReporterEvents.resolve,
+                {
+                    error: `${error}`
+                }
+            );
+        }
+    );
 
-    initStaticContent(guidCache);
+    const guidCache = registerCache(context, guidResolver, outputChannel);
 
-    registerGuidCodeLensProvider(context, guidCache);
+    await initStaticContent(context, guidCache);
 
-    registerCommandRefresh(context, guidCache);
-
-    registerCommandOpenLink(context, guidCache, tokenCredential, outputChannel, telemetryReporter);
-
+    registerGuidCodeLensProvider(context,               guidCache                                                   );
+    registerCommandRefresh      (context,               guidCache                                                   );
+    registerCommandOpenLink     (context,               guidCache, tokenCredential, outputChannel, telemetryReporter);
+    registerCommandLookup       (context, guidResolver, guidCache, tokenCredential, outputChannel, telemetryReporter);
+    
     outputChannel.appendLine('activated');
 
     telemetryReporter.sendTelemetryEvent(TelemetryReporterEvents.activate);
