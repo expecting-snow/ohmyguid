@@ -15,19 +15,35 @@ export class GuidLinkProvider {
             case 'Microsoft Entra ID AppRegistration':
                 return `https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/${item.object.appId}/isMSAApp~/false`;
             case 'Microsoft Entra ID AppRegistration Details':
-                return `https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/${item.object.appRegistration.appId}/isMSAApp~/false`;
+                if (item.object?.appRegistration?.appId) {
+                    return `https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/${item.object.appRegistration.appId}/isMSAApp~/false`;
+                }
+                console.log(`No link available for type: ${item.type}`);
+                return undefined;
             case 'Microsoft Entra ID ServicePrincipal':
-                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/ManagedAppMenuBlade/~/Overview/objectId/${item.object.id}/appId/${item.object.appId}`;
+                    return `https://portal.azure.com/#view/Microsoft_AAD_IAM/ManagedAppMenuBlade/~/Overview/objectId/${item.object.id}/appId/${item.object.appId}`;
             case 'Microsoft Entra ID ServicePrincipal Details':
-                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/ManagedAppMenuBlade/~/Overview/objectId/${item.object.servicePrincipal.id}/appId/${item.object.servicePrincipal.appId}`;
+                if (item.object?.servicePrincipal?.id && item.object?.servicePrincipal?.appId) {
+                    return `https://portal.azure.com/#view/Microsoft_AAD_IAM/ManagedAppMenuBlade/~/Overview/objectId/${item.object.servicePrincipal.id}/appId/${item.object.servicePrincipal.appId}`;
+                }
+                console.log(`No link available for type: ${item.type}`);
+                return undefined;
             case 'Microsoft Entra ID Group':
                 return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.guid}/menuId/`;
             case 'Microsoft Entra ID Group Details':
-                return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.object.group.id}/menuId/`;
+                if (item.object?.group?.id) {
+                    return `https://portal.azure.com/#view/Microsoft_AAD_IAM/GroupDetailsMenuBlade/~/Overview/groupId/${item.object.group.id}/menuId/`;
+                }
+                console.log(`No link available for type: ${item.type}`);
+                return undefined;
             case 'Microsoft Entra ID User':
                 return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.guid}/hidePreviewBanner~/true`;
             case 'Microsoft Entra ID User Details':
-                return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.object.user.id}/hidePreviewBanner~/true`;
+                if (item.object?.user?.id) {
+                    return `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/${item.object.user.id}/hidePreviewBanner~/true`;
+                }
+                console.log(`No link available for type: ${item.type}`);
+                return undefined;
             default:
                 console.log(`No link available for type: ${item.type}`);
                 return undefined;

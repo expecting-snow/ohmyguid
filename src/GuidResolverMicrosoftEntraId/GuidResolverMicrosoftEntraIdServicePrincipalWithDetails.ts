@@ -1,41 +1,58 @@
-import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
-import { IGuidResolver                    } from "../GuidResolver";
-import { TokenCredential                  } from "@azure/identity";
+import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId";
+import { GuidResolverMicrosoftEntraIdBase                     } from "./GuidResolverMicrosoftEntraIdBase";
+import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidResolverMicrosoftEntraIdServicePrincipal";
+import { GuidResolverMicrosoftEntraIdServicePrincipalClientId } from "./GuidResolverMicrosoftEntraIdServicePrincipalClientId";
+import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse";
+import { IGuidResolver                                        } from "../GuidResolver";
+import { TokenCredential                                      } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
+    
+    private readonly guidResolverMicrosoftEntraIdServicePrincipalClientId : GuidResolverMicrosoftEntraIdServicePrincipalClientId;
+    private readonly guidResolverMicrosoftEntraIdServicePrincipal         : GuidResolverMicrosoftEntraIdServicePrincipal;
+    private readonly guidResolverMicrosoftEntraIdAppRegistrationClientId  : GuidResolverMicrosoftEntraIdAppRegistrationClientId;
+    
     constructor(
         private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
-    ) { super(tokenCredential); }
+    ) { 
+        super(tokenCredential); 
+        this.guidResolverMicrosoftEntraIdServicePrincipal         = new GuidResolverMicrosoftEntraIdServicePrincipal        (onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdServicePrincipalClientId = new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdAppRegistrationClientId  = new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential);
+    }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response           = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
+            const servicePrincipal   = await this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, new AbortController())
+                                    ?? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, new AbortController());
             const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, abortController);
             const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
             const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
             const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
 
-            if (response && response.displayName) {
+            if (servicePrincipal && servicePrincipal.displayName) {
 
-                const appRegistration = response.appId
-                                      ? await this.getClient(abortController).api(`/applications`).filter(`appId eq '${response.appId}'`).get()
+                const appRegistration = servicePrincipal.object?.appId
+                                      ? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(servicePrincipal.object.appId, new AbortController())
                                       : undefined;
-
-                this.processResponses(response       , this.onResponse, this.onToBeResolved);
-                this.processResponses(appRegistration, this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
 
                 return new GuidResolverResponse(
                     guid,
-                    response.displayName,
+                    servicePrincipal.displayName,
                     'Microsoft Entra ID ServicePrincipal Details',
                     {
-                        servicePrincipal   : response,
-                        appRegistration    : appRegistration?.value?.at(0)?.id,
+                        ids               : {
+                                               'application.id'                          : appRegistration?.object?.id,
+                                               'application.publisherDomain'             : appRegistration?.object?.publisherDomain,
+                                               'application.appId'                       : servicePrincipal.object?.appId,
+                                               'servicePrincipal.id'                     : servicePrincipal.object?.id,
+                                               'servicePrincipal.appOwnerOrganizationId' : servicePrincipal.object?.appOwnerOrganizationId,
+                                            },
+                        servicePrincipal   : servicePrincipal.object,
                         owners             : (owners             as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
                         ownedObjects       : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),

@@ -69,7 +69,7 @@ export class GuidResolverResponseToTempFile {
                     {
                         link: this.getLink(guidResolverResponse) || null,
                         date: guidResolverResponse.dateTime,
-                        data: guidResolverResponse.object
+                        ...guidResolverResponse.object
                     },
                     null,
                     2
