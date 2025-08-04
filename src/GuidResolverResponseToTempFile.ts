@@ -1,5 +1,4 @@
 import { constants, mkdir, writeFile                             } from 'fs/promises'                                                                           ;
-import { GuidCache                                               } from './GuidCache'                                                                           ;
 import { GuidResolverAzureManagementGroup                        } from './GuidResolverAzure/GuidResolverAzureManagementGroup'                                  ;
 import { GuidResolverAzureRoleDefinitionCustomRoles              } from './GuidResolverAzure/GuidResolverAzureRoleDefinitionCustomRoles'                        ;
 import { GuidResolverAzureSubscription                           } from './GuidResolverAzure/GuidResolverAzureSubscription'                                     ;
