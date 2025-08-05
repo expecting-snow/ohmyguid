@@ -99,6 +99,21 @@ export class GuidCache {
             }
         }
 
+        // 4. try to resolve response from enqueued promise
+        {
+            const guidTransformed = this.guidTransform(guid);
+
+            const promise = this.cache.get(guidTransformed);
+
+            if (promise) {
+                const response = await promise;
+
+                if (response) {
+                    return response;
+                }
+            }
+        }
+
         return undefined;
     }
 

@@ -69,6 +69,14 @@ export class GuidResolverMicrosoftEntraIdBase {
         return p;
     }
 
+    protected mapToTypeApplicationFederatedIdentityCredentials(resourceId: string, p: any): any {
+        if (p) {
+            p['@odata.type'] = 'microsoft.graph.application.federatedIdentityCredentials';
+            p.resourceId = resourceId;
+        }
+        return p;
+    }
+
     protected mapAppRoleAssignment(p: any): string {
         return `${p?.resourceDisplayName} (${p?.principalType}) (${p?.resourceId}) (${p?.appRoleId})`;
     }
@@ -238,6 +246,34 @@ export class GuidResolverMicrosoftEntraIdBase {
                      resourceId: "app registration guid",                  <------------------------
                 }
             */
+            onToBeResolved(response.resourceId);
+        }
+        else if (response && response.subject && response['@odata.type'] === 'microsoft.graph.application.federatedIdentityCredentials') {
+            /*  
+                {
+                    "@odata.type": "microsoft.graph.application.federatedIdentityCredentials"
+                    "id": "<guid>",
+                    "name": "...",
+                    "issuer": "https://github.com/_services/token",
+                    "subject": "repo:...:environment:...",
+                    "description": "...",
+                    "audiences": [
+                        "api://AzureADTokenExchange"
+                    ],
+                    "@odata.type": "microsoft.graph.application.federatedIdentityCredentials",
+                    "resourceId": "<guid>"
+                }
+            */
+            onResponse(
+                new GuidResolverResponse(
+                    response.id, 
+                    response.subject, 
+                    'Microsoft Entra ID AppRegistration FederatedIdentityCredential', 
+                    response, 
+                    new Date()
+                )
+            );
+
             onToBeResolved(response.resourceId);
         }
     }
