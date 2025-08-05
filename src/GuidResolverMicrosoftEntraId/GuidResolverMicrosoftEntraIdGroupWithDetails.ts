@@ -22,6 +22,7 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
             const owners             = await this.resolveAll(`/groups/${guid}/owners`            , this.onResponse, _ => _                          , this.onToBeResolved, abortController);
             const members            = await this.resolveAll(`/groups/${guid}/members`           , this.onResponse, _ => _                          , this.onToBeResolved, abortController);
             const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment , this.onToBeResolved, abortController);
+            const transitiveMemberOf = await this.resolveAll(`/groups/${guid}/transitiveMemberOf`, this.onResponse, _ => _                          , this.onToBeResolved, abortController);
 
             if (response && response.displayName) {
 
@@ -36,10 +37,11 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
                                                 id   : response.object?.id,
                                                 name : response.displayName
                                             },
-                        owners            : (owners  as any[])?.map(this.mapIdDisplayName).sort(),
-                        members           : (members as any[])?.map(this.mapIdDisplayName).sort(),
+                        owners            : (owners             as any[])?.map(this.mapIdDisplayName).sort(),
+                        members           : (members            as any[])?.map(this.mapIdDisplayName).sort(),
                         group             : response.object,
-                        appRoleAssignments: appRoleAssignments
+                        appRoleAssignments: appRoleAssignments,
+                        transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName).sort(),
                     },
                     new Date()
                 );
