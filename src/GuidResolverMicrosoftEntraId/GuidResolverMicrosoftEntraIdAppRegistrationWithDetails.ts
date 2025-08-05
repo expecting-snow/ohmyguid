@@ -24,10 +24,11 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const application = await this.guidResolverMicrosoftEntraIdAppRegistration        .resolve(guid, new AbortController())
-                             ?? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(guid, new AbortController());
-            const owners      = await this.resolveAll(`/applications/${guid}/owners`, this.onResponse, _ => _ , this.onToBeResolved, new AbortController());
-            
+            const application                  = await this.guidResolverMicrosoftEntraIdAppRegistration        .resolve(guid, new AbortController())
+                                              ?? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(guid, new AbortController());
+            const owners                       = await this.resolveAll(`/applications/${guid}/owners`                      , this.onResponse, _ => _                                                              , this.onToBeResolved, new AbortController());
+            const federatedIdentityCredentials = await this.resolveAll(`/applications/${guid}/federatedIdentityCredentials`, this.onResponse, _ => this.mapToTypeApplicationFederatedIdentityCredentials(guid, _) , this.onToBeResolved, new AbortController());
+
             if (application && application.displayName) {
 
                 const servicePrincipal = application.object.appId
@@ -50,6 +51,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                                             },
                         owners            : (owners as any[])?.map(this.mapIdDisplayName).sort(),
                         appRegistration   : application.object,
+                        federatedIdentityCredentials,
                     },
                     new Date()
                 );
