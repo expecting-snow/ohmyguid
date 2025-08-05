@@ -4,77 +4,113 @@ import { GuidResolverResponse } from "./Models/GuidResolverResponse";
 
 export class GuidCache {
 
-    private cache: Map<string, Promise<GuidResolverResponse | undefined>> = new Map();
+    private readonly cache         : Map<string, Promise<GuidResolverResponse | undefined>>;
+    private readonly guidTransform : (guid: string) => string;
 
     constructor(
         private readonly guidResolver: GuidResolver,
         private readonly memento: Memento,
         private readonly callbackInfo: (value: any) => void
-    ) { }
+    ) {
+        this.cache = new Map<string, Promise<GuidResolverResponse | undefined>>();
+        this.guidTransform = (guid: string) => guid.toLowerCase().trim();
+    }
 
     dispose(): any {
-        this.callbackInfo('cache - dispose');
+        this.callbackInfo('Cache - dispose');
         this.clear();
     }
 
-    async getResolved(guid: string): Promise<GuidResolverResponse | undefined> {
-        if (guid === GuidResolverResponse.EMPTY_GUID) {
+    getResolved(guid: string): GuidResolverResponse | undefined {
+        const guidTransformed = this.guidTransform(guid);
+
+        if (guidTransformed === GuidResolverResponse.EMPTY_GUID) {
             return GuidResolverResponse.EMPTY_RESPONSE;
         }
 
-        const response = this.memento.get<GuidResolverResponse>(guid);
+        return this.memento.get<GuidResolverResponse>(guidTransformed);
+    }
+
+    getResolvedOrEnqueuePromise(guid: string): GuidResolverResponse | undefined {
+        const response = this.getResolved(guid);
 
         if (response) {
-            this.callbackInfo(`${guid} - ${response.displayName}`);
-
             return response;
         }
 
-        const promise = this.cache.get(guid);
+        const guidTransformed = this.guidTransform(guid);
 
-        if(!promise){
-            return undefined;
-        }
+        if (!this.cache.has(guidTransformed)) {
+            this.callbackInfo(`${guidTransformed} - set`);
 
-        const resolvedValue = await promise;
+            this.cache.set(
+                guidTransformed, 
+                this.guidResolver.resolve(guidTransformed)
+                                 .then(
+                                    (resolvedValue: GuidResolverResponse | undefined) => {
+                                        if (resolvedValue) {
+                                             this.update(guidTransformed, resolvedValue);
+                                         } else {
+                                             this.callbackInfo(`${guidTransformed} - NOT FOUND`);
+                                         }
+                                         
+                                         this.cache.delete(guidTransformed);
 
-        if (resolvedValue) {
-            this.memento.update(guid, resolvedValue);
-
-            this.callbackInfo(`${guid} - NEW - ${resolvedValue.displayName}`);
-
-            return resolvedValue;
+                                         return resolvedValue;
+                                     }
+                                 )
+            );
         }
 
         return undefined;
     }
 
-    getResolvedOrEnqueue(guid: string): GuidResolverResponse | undefined {
-        if (guid === GuidResolverResponse.EMPTY_GUID) {
-            return GuidResolverResponse.EMPTY_RESPONSE;
+    async getResolvedOrResolvePromise(guid: string): Promise<GuidResolverResponse | undefined> {
+        // 1. try to resolve response from cache
+        {
+            const response = this.getResolved(guid);
+
+            if (response) {
+                return response;
+            }
         }
 
-        const response = this.memento.get<GuidResolverResponse>(guid);
+        // 2. try to resolve response from enqueued promise
+        {
+            const guidTransformed = this.guidTransform(guid);
 
-        if (response) {
-            return response;
+            const promise = this.cache.get(guidTransformed);
+
+            if (promise) {
+                const response = await promise;
+
+                if (response) {
+                    return response;
+                }
+            }
         }
 
-        if (!this.cache.has(guid)) {
-            this.callbackInfo(`${guid} - set`);
+        // 3. try to resolve response or enqueue promise
+        {
+            const response = this.getResolvedOrEnqueuePromise(guid);
 
-            this.cache.set(guid, this.guidResolver.resolve(guid));
+            if (response) {
+                return response;
+            }
         }
 
         return undefined;
     }
 
     update(guid: string, guidResolverResponse: GuidResolverResponse): void {
-        if (guid === GuidResolverResponse.EMPTY_GUID) {
+        const guidTransformed = this.guidTransform(guid);
+
+        if (guidTransformed === GuidResolverResponse.EMPTY_GUID) {
             return;
         }
 
-        this.memento.update(guid, guidResolverResponse);
+        this.callbackInfo(`${guidTransformed} - ${guidResolverResponse.type} - ${guidResolverResponse.displayName}`);
+        this.memento.update(guidTransformed, guidResolverResponse);
     }
 
     clear() {

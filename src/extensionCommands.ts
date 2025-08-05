@@ -1,14 +1,14 @@
 
-import { commands, ExtensionContext, OutputChannel, Uri, window, workspace } from 'vscode';
-import { GuidCache                                                         } from './GuidCache';
-import { GuidLinkProvider                                                  } from './GuidLinkProvider';
-import { GuidResolverResponse                                              } from './Models/GuidResolverResponse';
-import { GuidResolverResponseToTempFile                                    } from './GuidResolverResponseToTempFile';
-import { initStaticContent                                                 } from './extensionStaticContent';
-import { TelemetryReporter                                                 } from '@vscode/extension-telemetry';
-import { TelemetryReporterEvents                                           } from './TelemetryReporterEvents';
-import { TokenCredential                                                   } from '@azure/identity';
-import { GuidResolver                                                      } from './GuidResolver';
+import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri, window, workspace } from 'vscode';
+import { GuidCache                                                              } from './GuidCache';
+import { GuidLinkProvider                                                       } from './GuidLinkProvider';
+import { GuidResolverResponse                                                   } from './Models/GuidResolverResponse';
+import { GuidResolverResponseToTempFile                                         } from './GuidResolverResponseToTempFile';
+import { initStaticContent                                                      } from './extensionStaticContent';
+import { TelemetryReporter                                                      } from '@vscode/extension-telemetry';
+import { TelemetryReporterEvents                                                } from './TelemetryReporterEvents';
+import { TokenCredential                                                        } from '@azure/identity';
+import { GuidResolver                                                           } from './GuidResolver';
 
 const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
@@ -21,8 +21,13 @@ export function registerCommandOpenLink(
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.openLink',
-            (value: GuidResolverResponse) => handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter)
+            (value: GuidResolverResponse) => { 
+                window.showInformationMessage(`${context.extension.id} - '${value.guid}'`);
 
+                const fileNameSuffix= 'details';
+
+                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter, fileNameSuffix);
+            }
         )
     );
 }
@@ -52,25 +57,44 @@ export function registerCommandLookup(
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.lookup',
             async () => {
-                const guid = await window.showInputBox({
-                    prompt: 'Please enter a GUID to look up',
-                    placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-                });
+                const value = await env.clipboard.readText();
+
+                const prompt      = 'Please enter a GUID to look up';
+                const placeHolder = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+                const validateInput = (value: string) => {
+                    /**
+                     * InputBoxValidationSeverity
+                     * 
+                     * The severity of the validation message.
+                     * NOTE: When using `InputBoxValidationSeverity.Error`, the user will not be allowed to accept (hit ENTER) the input.
+                     * `Info` and `Warning` will still allow the InputBox to accept the input.
+                     */
+                    return value && guidRegex.test(value)
+                        ? ''
+                        : {
+                            message: 'Invalid guid',
+                            severity: InputBoxValidationSeverity.Error
+                        };
+                };
+
+                const guid = value && guidRegex.test(value)
+                    ? await window.showInputBox({ prompt, placeHolder, value, validateInput})
+                    : await window.showInputBox({ prompt, placeHolder       , validateInput});
 
                 if (!guid || !guidRegex.test(guid)) {
                     window.showErrorMessage('Invalid GUID format. Please enter a valid GUID.');
                     return;
                 }
 
-                window.showInformationMessage(`${context.extension.id} - Looking up '${guid}'`);
+                window.showInformationMessage(`${context.extension.id} - '${guid}'`);
 
-                const value = await guidResolver.resolve(guid);
+                const guidResolverResponse = await guidCache.getResolvedOrResolvePromise(guid);
 
-                if (value) {
-                    await handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter);
-                }
-                else {
-                    window.showErrorMessage(`${context.extension.id} - Looking up '${guid}' failed.`);
+                if (guidResolverResponse) {
+                    const fileNameSuffix = '';
+                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, telemetryReporter, fileNameSuffix);
+                } else {
+                    window.showErrorMessage(`${context.extension.id} - ERROR - '${guid}'`);
                 }
             }
         )
@@ -82,11 +106,12 @@ async function handle(
     guidCache        : GuidCache,
     tokenCredential  : TokenCredential,
     outputChannel    : OutputChannel,
-    telemetryReporter: TelemetryReporter
+    telemetryReporter: TelemetryReporter,
+    fileNameSuffix   : '' | 'details'
 ) {
     const { filePath, error } = await new GuidResolverResponseToTempFile(
         res => guidCache.update(res.guid, res),
-        guid => guidCache.getResolvedOrEnqueue(guid),
+        guid => guidCache.getResolvedOrEnqueuePromise(guid),
         GuidLinkProvider.resolveLink,
         (error: string) => {
             outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
@@ -97,7 +122,7 @@ async function handle(
                 }
             );
         }
-    ).toTempFile(value, tokenCredential);
+    ).toTempFile(value, fileNameSuffix, tokenCredential);
 
     if (error) {
         outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${error}`);
