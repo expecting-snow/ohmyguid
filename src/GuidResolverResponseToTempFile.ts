@@ -23,32 +23,36 @@ export class GuidResolverResponseToTempFile {
         private readonly pathSubDirectories = ['expecting-snow', 'ohmyguid']
     ) { }
 
-    async toTempFile(guidResolverResponse: GuidResolverResponse, tokenCredential: TokenCredential): Promise<{ filePath?: string, error?: Error }>{
+    async toTempFile(guidResolverResponse: GuidResolverResponse, fileNameSuffix: '' | 'details', tokenCredential: TokenCredential): Promise<{ filePath?: string, error?: Error }>{
+        if(fileNameSuffix === '') {
+            return this.toTempFileInternal(guidResolverResponse, fileNameSuffix);
+        }
+        
         const responseType    = guidResolverResponse.type;
         const guid            = guidResolverResponse.guid;
         const abortController = new AbortController();
 
         switch (responseType) {
-            case 'Azure Advisor Recommendation'       : return this.toTempFileInternal(guidResolverResponse);
-            case 'Azure ManagementGroup'              : return this.toTempFileInternal(await new GuidResolverAzureManagementGroup                       (tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Azure Policy Definition BuiltIn'    : return this.toTempFileInternal(guidResolverResponse);
-            case 'Azure Policy Definition Custom'     : return this.toTempFileInternal(guidResolverResponse);
-            case 'Azure Policy Definition Static'     : return this.toTempFileInternal(guidResolverResponse);
-            case 'Azure RoleDefinition BuiltInRole'   : return this.toTempFileInternal(guidResolverResponse);
-            case 'Azure RoleDefinition CustomRole'    : return this.toTempFileInternal(await new GuidResolverAzureRoleDefinitionCustomRoles             (                                      tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Azure Subscription'                 : return this.toTempFileInternal(await new GuidResolverAzureSubscription                          (                                      tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID AppRegistration' : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdAppRegistrationWithDetails (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID Group'           : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdGroupWithDetails           (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID ServicePrincipal': return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdServicePrincipalWithDetails(this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID Tenant'          : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdTenant                     (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID User'            : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdUserWithDetails            (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse);
+            case 'Azure Advisor Recommendation'       : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                           , fileNameSuffix);
+            case 'Azure Policy Definition BuiltIn'    : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                           , fileNameSuffix);
+            case 'Azure Policy Definition Custom'     : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                           , fileNameSuffix);
+            case 'Azure Policy Definition Static'     : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                           , fileNameSuffix);
+            case 'Azure RoleDefinition BuiltInRole'   : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                           , fileNameSuffix);
+            case 'Azure ManagementGroup'              : return this.toTempFileInternal(await new GuidResolverAzureManagementGroup                       (                                      tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Azure RoleDefinition CustomRole'    : return this.toTempFileInternal(await new GuidResolverAzureRoleDefinitionCustomRoles             (                                      tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Azure Subscription'                 : return this.toTempFileInternal(await new GuidResolverAzureSubscription                          (                                      tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Microsoft Entra ID AppRegistration' : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdAppRegistrationWithDetails (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Microsoft Entra ID Group'           : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdGroupWithDetails           (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Microsoft Entra ID ServicePrincipal': return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdServicePrincipalWithDetails(this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Microsoft Entra ID Tenant'          : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdTenant                     (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
+            case 'Microsoft Entra ID User'            : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdUserWithDetails            (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid, abortController) ?? guidResolverResponse, fileNameSuffix);
             default:
                 this.callbackError(`ResponseToTempFile: Unknown response type: ${responseType}`);
-                return this.toTempFileInternal(guidResolverResponse);
+                return this.toTempFileInternal(guidResolverResponse, fileNameSuffix);
         }
     }
 
-    private async toTempFileInternal(guidResolverResponse: GuidResolverResponse): Promise<{ filePath?: string, error?: Error }> {
+    private async toTempFileInternal(guidResolverResponse: GuidResolverResponse, fileNameSuffix: string): Promise<{ filePath?: string, error?: Error }> {
         const tempDirectory = os.tmpdir();
 
         if (!tempDirectory) {
@@ -58,7 +62,11 @@ export class GuidResolverResponseToTempFile {
         try {
             await mkdir(path.join(tempDirectory, ...this.pathSubDirectories), { recursive: true });
 
-            const fileName = `${guidResolverResponse.type}--${guidResolverResponse.guid}--${guidResolverResponse.displayName}.json`.replaceAll(' ','_');
+            const fileName = `${guidResolverResponse.type}--`
+                           + `${guidResolverResponse.guid}--`
+                           + `${guidResolverResponse.displayName}`
+                           + `${fileNameSuffix ? `--${fileNameSuffix}` : ''}`
+                           + `.json`.replaceAll(' ', '_');
 
             const filePath = path.join(tempDirectory, ...this.pathSubDirectories, fileName);
 

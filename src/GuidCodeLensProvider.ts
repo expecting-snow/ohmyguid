@@ -22,7 +22,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
             const guid = match[0];
 
-            const response = this.guidCache.getResolvedOrEnqueue(guid);
+            const response = this.guidCache.getResolvedOrEnqueuePromise(guid);
 
             const codeLens = new GuidCodeLens(
                 guid,
@@ -47,7 +47,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
     }
 
     async resolveCodeLens(codeLens: GuidCodeLens, token: CancellationToken) : Promise<GuidCodeLens> {
-        const promise = this.guidCache.getResolved(codeLens.guid);
+        const promise = this.guidCache.getResolvedOrResolvePromise(codeLens.guid);
         if (promise) {
             const resolvedValue = await promise;
 

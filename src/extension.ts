@@ -20,8 +20,8 @@ export async function activate(context: ExtensionContext) {
     const tokenCredential = resolveTokenProvider(outputChannel.appendLine, window.showInformationMessage);
 
     const guidResolver = new GuidResolver(
-        (res  : GuidResolverResponse) => guidCache.update              (res.guid, res),
-        (guid : string              ) => guidCache.getResolvedOrEnqueue(guid         ),
+        (res  : GuidResolverResponse) => guidCache.update                     (res.guid, res),
+        (guid : string              ) => guidCache.getResolvedOrEnqueuePromise(guid         ),
         tokenCredential,
         (error: string) => {
             outputChannel.appendLine(`GuidResolver : ${error}`);

@@ -21,55 +21,82 @@ export class GuidCache {
         this.clear();
     }
 
-    async getResolved(guid: string): Promise<GuidResolverResponse | undefined> {
+    getResolved(guid: string): GuidResolverResponse | undefined {
         const guidTransformed = this.guidTransform(guid);
 
         if (guidTransformed === GuidResolverResponse.EMPTY_GUID) {
             return GuidResolverResponse.EMPTY_RESPONSE;
         }
 
-        const response = this.memento.get<GuidResolverResponse>(guidTransformed);
+        return this.memento.get<GuidResolverResponse>(guidTransformed);
+    }
+
+    getResolvedOrEnqueuePromise(guid: string): GuidResolverResponse | undefined {
+        const response = this.getResolved(guid);
 
         if (response) {
-            this.callbackInfo(`${guidTransformed} - ${response.displayName}`);
-
             return response;
         }
 
-        const promise = this.cache.get(guidTransformed);
+        const guidTransformed = this.guidTransform(guid);
 
-        if (promise) {
-            const resolvedValue = await promise;
+        if (!this.cache.has(guidTransformed)) {
+            this.callbackInfo(`${guidTransformed} - set`);
 
-            if (resolvedValue) {
-                this.memento.update(guidTransformed, resolvedValue);
+            this.cache.set(
+                guidTransformed, 
+                this.guidResolver.resolve(guidTransformed)
+                                 .then(
+                                    (resolvedValue: GuidResolverResponse | undefined) => {
+                                        if (resolvedValue) {
+                                             this.update(guidTransformed, resolvedValue);
+                                         } else {
+                                             this.callbackInfo(`${guidTransformed} - NOT FOUND`);
+                                         }
+                                         
+                                         this.cache.delete(guidTransformed);
 
-                this.callbackInfo(`${guidTransformed} - NEW - ${resolvedValue.displayName}`);
-
-                return resolvedValue;
-            }
+                                         return resolvedValue;
+                                     }
+                                 )
+            );
         }
 
         return undefined;
     }
 
-    getResolvedOrEnqueue(guid: string): GuidResolverResponse | undefined {
-        const guidTransformed = this.guidTransform(guid);
+    async getResolvedOrResolvePromise(guid: string): Promise<GuidResolverResponse | undefined> {
+        // 1. try to resolve response from cache
+        {
+            const response = this.getResolved(guid);
 
-        if (guidTransformed === GuidResolverResponse.EMPTY_GUID) {
-            return GuidResolverResponse.EMPTY_RESPONSE;
+            if (response) {
+                return response;
+            }
         }
 
-        const response = this.memento.get<GuidResolverResponse>(guidTransformed);
+        // 2. try to resolve response from enqueued promise
+        {
+            const guidTransformed = this.guidTransform(guid);
 
-        if (response) {
-            return response;
+            const promise = this.cache.get(guidTransformed);
+
+            if (promise) {
+                const response = await promise;
+
+                if (response) {
+                    return response;
+                }
+            }
         }
 
-        if (!this.cache.has(guidTransformed)) {
-            this.callbackInfo(`${guidTransformed} - set`);
+        // 3. try to resolve response or enqueue promise
+        {
+            const response = this.getResolvedOrEnqueuePromise(guid);
 
-            this.cache.set(guidTransformed, this.guidResolver.resolve(guidTransformed));
+            if (response) {
+                return response;
+            }
         }
 
         return undefined;
@@ -82,6 +109,7 @@ export class GuidCache {
             return;
         }
 
+        this.callbackInfo(`${guidTransformed} - ${guidResolverResponse.type} - ${guidResolverResponse.displayName}`);
         this.memento.update(guidTransformed, guidResolverResponse);
     }
 

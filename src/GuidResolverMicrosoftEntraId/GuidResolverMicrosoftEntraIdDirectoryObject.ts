@@ -25,6 +25,7 @@ export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMic
                 else if (response['@odata.type'] === '#microsoft.graph.tokenLifetimePolicy') { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID TokenLifetimePolicy', response, new Date()); }
                 else if (response['@odata.type'] === '#microsoft.graph.tokenIssuancePolicy') { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID TokenIssuancePolicy', response, new Date()); }
                 else if (response['@odata.type'] === '#microsoft.graph.directoryRole'      ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID DirectoryRole'      , response, new Date()); }
+                // todo #microsoft.graph.administrativeUnit
                 else {
                     this.callbackError(`DirectoryObject: Unknown response type: ${response["@odata.type"]}`);
                     return undefined;

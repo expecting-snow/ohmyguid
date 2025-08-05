@@ -24,7 +24,9 @@ export function registerCommandOpenLink(
             (value: GuidResolverResponse) => { 
                 window.showInformationMessage(`${context.extension.id} - '${value.guid}'`);
 
-                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter);
+                const fileNameSuffix= 'details';
+
+                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter, fileNameSuffix);
             }
         )
     );
@@ -86,12 +88,12 @@ export function registerCommandLookup(
 
                 window.showInformationMessage(`${context.extension.id} - '${guid}'`);
 
-                const guidResolverResponse = await guidResolver.resolve(guid);
+                const guidResolverResponse = await guidCache.getResolvedOrResolvePromise(guid);
 
                 if (guidResolverResponse) {
-                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, telemetryReporter);
-                }
-                else {
+                    const fileNameSuffix = '';
+                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, telemetryReporter, fileNameSuffix);
+                } else {
                     window.showErrorMessage(`${context.extension.id} - ERROR - '${guid}'`);
                 }
             }
@@ -104,11 +106,12 @@ async function handle(
     guidCache        : GuidCache,
     tokenCredential  : TokenCredential,
     outputChannel    : OutputChannel,
-    telemetryReporter: TelemetryReporter
+    telemetryReporter: TelemetryReporter,
+    fileNameSuffix   : '' | 'details'
 ) {
     const { filePath, error } = await new GuidResolverResponseToTempFile(
         res => guidCache.update(res.guid, res),
-        guid => guidCache.getResolvedOrEnqueue(guid),
+        guid => guidCache.getResolvedOrEnqueuePromise(guid),
         GuidLinkProvider.resolveLink,
         (error: string) => {
             outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
@@ -119,7 +122,7 @@ async function handle(
                 }
             );
         }
-    ).toTempFile(value, tokenCredential);
+    ).toTempFile(value, fileNameSuffix, tokenCredential);
 
     if (error) {
         outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${error}`);
