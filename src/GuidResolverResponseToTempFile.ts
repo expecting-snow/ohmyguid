@@ -1,4 +1,3 @@
-import { constants, mkdir, writeFile                             } from 'fs/promises'                                                                           ;
 import { GuidResolverAzureManagementGroup                        } from './GuidResolverAzure/GuidResolverAzureManagementGroup'                                  ;
 import { GuidResolverAzureRoleDefinitionCustomRoles              } from './GuidResolverAzure/GuidResolverAzureRoleDefinitionCustomRoles'                        ;
 import { GuidResolverAzureSubscription                           } from './GuidResolverAzure/GuidResolverAzureSubscription'                                     ;
@@ -9,8 +8,10 @@ import { GuidResolverMicrosoftEntraIdTenant                      } from './GuidR
 import { GuidResolverMicrosoftEntraIdUserWithDetails             } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdUserWithDetails'            ;
 import { GuidResolverResponse                                    } from "./Models/GuidResolverResponse"                                                         ;
 import { TokenCredential                                         } from '@azure/identity'                                                                       ;
-import * as os   from 'os';
-import * as path from 'path';
+import * as os            from 'os';
+import * as path          from 'path';
+import { Uri, workspace } from 'vscode';
+
 
 
 export class GuidResolverResponseToTempFile {
@@ -52,16 +53,27 @@ export class GuidResolverResponseToTempFile {
         }
     }
 
-    private async toTempFileInternal(guidResolverResponse: GuidResolverResponse, fileNameSuffix: string): Promise<{ filePath?: string, error?: Error }> {
-        const tempDirectory = os.tmpdir();
-
-        if (!tempDirectory) {
-            return { error: new Error('Unable to determine temporary directory') };
-        }
-
+    async getTempFileUri(guidResolverResponse: GuidResolverResponse, fileNameSuffix: string): Promise<{ filePath?: string, error?: Error }> {
         try {
-            await mkdir(path.join(tempDirectory, ...this.pathSubDirectories), { recursive: true });
+            const rawFileName = `${guidResolverResponse.type}--`
+                + `${guidResolverResponse.guid}--`
+                + `${guidResolverResponse.displayName}`
+                + `${fileNameSuffix ? `--${fileNameSuffix}` : ''}`
+                + `.json`;
 
+            const fileName = rawFileName.replace(/[^a-zA-Z0-9.\-]/g, '_');
+
+            const tempFileUri = Uri.file(path.join(os.tmpdir(), ...this.pathSubDirectories, fileName));
+
+            return { filePath: tempFileUri.fsPath };
+        }
+        catch (e: any) {
+            return { error: e };
+        }
+    }
+
+    private async toTempFileInternal(guidResolverResponse: GuidResolverResponse, fileNameSuffix: string): Promise<{ filePath?: string, error?: Error }> {
+        try {
             const rawFileName = `${guidResolverResponse.type}--`
                               + `${guidResolverResponse.guid}--`
                               + `${guidResolverResponse.displayName}`
@@ -70,11 +82,12 @@ export class GuidResolverResponseToTempFile {
 
             const fileName = rawFileName.replace(/[^a-zA-Z0-9.\-]/g, '_');
 
-            const filePath = path.join(tempDirectory, ...this.pathSubDirectories, fileName);
+            const tempDirectoryUri = Uri.file(path.join(os.tmpdir(), ...this.pathSubDirectories          ));
+            const tempFileUri      = Uri.file(path.join(os.tmpdir(), ...this.pathSubDirectories, fileName));
 
-            await writeFile(
-                filePath,
-                JSON.stringify(
+            await workspace.fs.createDirectory(tempDirectoryUri);
+
+            const fileContent = Buffer.from(JSON.stringify(
                     {
                         link: this.getLink(guidResolverResponse) || null,
                         date: guidResolverResponse.dateTime,
@@ -82,15 +95,11 @@ export class GuidResolverResponseToTempFile {
                     },
                     null,
                     2
-                ),
-                {
-                    encoding: 'utf8'
-                    , flag: 'w'
-                    , mode: constants.S_IRUSR | constants.S_IWUSR
-                }
-            );
+                ), 'utf8');
 
-            return { filePath };
+            await workspace.fs.writeFile(tempFileUri, fileContent);
+
+            return { filePath: tempFileUri.fsPath };
         }
         catch (e: any) {
             return { error: e };
