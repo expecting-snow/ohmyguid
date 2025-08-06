@@ -38,10 +38,10 @@ export async function activate(context: ExtensionContext) {
 
     await initStaticContent(context, guidCache);
 
-    registerGuidCodeLensProvider(context,               guidCache                                                   );
-    registerCommandRefresh      (context,               guidCache                                                   );
-    registerCommandOpenLink     (context,               guidCache, tokenCredential, outputChannel, telemetryReporter);
-    registerCommandLookup       (context, guidResolver, guidCache, tokenCredential, outputChannel, telemetryReporter);
+    registerGuidCodeLensProvider(context, guidCache                                                   );
+    registerCommandRefresh      (context, guidCache                                                   );
+    registerCommandOpenLink     (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
+    registerCommandLookup       (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     
     outputChannel.appendLine('activated');
 

@@ -1,14 +1,13 @@
 
-import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri, window, workspace } from 'vscode';
-import { GuidCache                                                              } from './GuidCache';
-import { GuidLinkProvider                                                       } from './GuidLinkProvider';
-import { GuidResolverResponse                                                   } from './Models/GuidResolverResponse';
-import { GuidResolverResponseToTempFile                                         } from './GuidResolverResponseToTempFile';
-import { initStaticContent                                                      } from './extensionStaticContent';
-import { TelemetryReporter                                                      } from '@vscode/extension-telemetry';
-import { TelemetryReporterEvents                                                } from './TelemetryReporterEvents';
-import { TokenCredential                                                        } from '@azure/identity';
-import { GuidResolver                                                           } from './GuidResolver';
+import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri, window, workspace } from 'vscode'                          ;
+import { GuidCache                                                                                          } from './GuidCache'                     ;
+import { GuidLinkProvider                                                                                   } from './GuidLinkProvider'              ;
+import { GuidResolverResponse                                                                               } from './Models/GuidResolverResponse'   ;
+import { GuidResolverResponseToTempFile                                                                     } from './GuidResolverResponseToTempFile';
+import { initStaticContent                                                                                  } from './extensionStaticContent'        ;
+import { TelemetryReporter                                                                                  } from '@vscode/extension-telemetry'     ;
+import { TelemetryReporterEvents                                                                            } from './TelemetryReporterEvents'       ;
+import { TokenCredential                                                                                    } from '@azure/identity'                 ;
 
 const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
@@ -24,9 +23,9 @@ export function registerCommandOpenLink(
             (value: GuidResolverResponse) => { 
                 window.showInformationMessage(`${context.extension.id} - '${value.guid}'`);
 
-                const fileNameSuffix= 'details';
+                const resolutionType = 'details';
 
-                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter, fileNameSuffix);
+                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter, resolutionType);
             }
         )
     );
@@ -48,7 +47,6 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
 
 export function registerCommandLookup(
     context          : ExtensionContext,
-    guidResolver     : GuidResolver,
     guidCache        : GuidCache,
     tokenCredential  : TokenCredential,
     outputChannel    : OutputChannel,
@@ -91,8 +89,8 @@ export function registerCommandLookup(
                 const guidResolverResponse = await guidCache.getResolvedOrResolvePromise(guid);
 
                 if (guidResolverResponse) {
-                    const fileNameSuffix = '';
-                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, telemetryReporter, fileNameSuffix);
+                    const resolutionType = '';
+                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, telemetryReporter, resolutionType);
                 } else {
                     window.showErrorMessage(`${context.extension.id} - ERROR - '${guid}'`);
                 }
@@ -107,9 +105,9 @@ async function handle(
     tokenCredential  : TokenCredential,
     outputChannel    : OutputChannel,
     telemetryReporter: TelemetryReporter,
-    fileNameSuffix   : '' | 'details'
+    resolutionType   : '' | 'details'
 ) {
-    const { filePath, error } = await new GuidResolverResponseToTempFile(
+    const guidResolverResponseToTempFile = new GuidResolverResponseToTempFile(
         res => guidCache.update(res.guid, res),
         guid => guidCache.getResolvedOrEnqueuePromise(guid),
         GuidLinkProvider.resolveLink,
@@ -122,14 +120,33 @@ async function handle(
                 }
             );
         }
-    ).toTempFile(value, fileNameSuffix, tokenCredential);
+    );
+
+    const { guidResolverResponse, filePath, error } = await guidResolverResponseToTempFile.toTempFile(value, resolutionType, tokenCredential);
 
     if (error) {
-        outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${error}`);
-        window.showInformationMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+        outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
+        window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+
+        telemetryReporter.sendTelemetryErrorEvent(
+            TelemetryReporterEvents.export,
+            {
+                error: 'b8334565'
+            }
+        );
+
+        const cachedFileFalllback = guidResolverResponseToTempFile.getTempFileUri(guidResolverResponse);
+
+        if (!cachedFileFalllback.error && cachedFileFalllback.uri) {
+            const cachedDoc = await workspace.openTextDocument(cachedFileFalllback.uri);
+            await window.showTextDocument(cachedDoc, { preview: false });
+        }
+        else{
+            window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+        }
     }
     else if (filePath) {
-        outputChannel.appendLine(`${TelemetryReporterEvents.export}  : ${filePath}`);
+        outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${filePath}`);
         const doc = await workspace.openTextDocument(Uri.file(filePath));
         await window.showTextDocument(doc, { preview: false });
     }
@@ -138,7 +155,7 @@ async function handle(
         telemetryReporter.sendTelemetryErrorEvent(
             TelemetryReporterEvents.export,
             {
-                error: 'filepath and error are undefined.'
+                error: '4c7b7b7b'
             }
         );
     }
