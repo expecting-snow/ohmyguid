@@ -19,6 +19,7 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.guidResolverMicrosoftEntraIdUser.resolve(guid, new AbortController());
+            const memberOf           = await this.resolveAll(`/users/${guid}/memberOf`          , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
             const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, abortController);
             const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
             const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, abortController);
@@ -37,11 +38,12 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
                                                 id                : response.object?.id,
                                                 userPrincipalName : response.object?.userPrincipalName
                                             },
-                        user              : response.object,
+                        memberOf          : (memberOf           as any[])?.map(this.mapIdDisplayName    ).sort(),
                         transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName    ).sort(),
                         ownedObjects      : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignments: (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
-                        createdObjects    : (createdObjects     as any[])?.map(this.mapIdDisplayName    ).sort()
+                        createdObjects    : (createdObjects     as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        user              : response.object
                     },
                     new Date()
                 );

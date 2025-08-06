@@ -38,7 +38,9 @@ export class GuidResolverMicrosoftEntraIdBase {
         try {
             var collection: any[] = [];
 
-            const response: PageCollection = await this.getClient(abortController, defaultVersion).api(url).get();
+            const client = this.getClient(abortController, defaultVersion);
+
+            const response: PageCollection = await client.api(url).get();
 
             const callback: PageIteratorCallback = (item: any) => {
                  this.processResponses(mapper(item), onResponse, onToBeResolved);
@@ -46,7 +48,7 @@ export class GuidResolverMicrosoftEntraIdBase {
                  return true;
             };
 
-            const pageIterator = new PageIterator(this.getClient(abortController, defaultVersion), response, callback);
+            const pageIterator = new PageIterator(client, response, callback);
 
             await pageIterator.iterate();
 
