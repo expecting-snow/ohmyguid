@@ -1,14 +1,14 @@
-import { createOutputChannel                                                    } from './extensionCreateOutputChannel';
-import { createTelemetryReporter                                                } from './extensionCreateTelemetryReporter';
-import { ExtensionContext, window                                               } from 'vscode';
-import { GuidResolver                                                           } from './GuidResolver';
-import { GuidResolverResponse                                                   } from './Models/GuidResolverResponse';
-import { initStaticContent                                                      } from './extensionStaticContent';
-import { registerCache                                                          } from './extensionCache';
-import { registerCommandLookup, registerCommandOpenLink, registerCommandRefresh } from './extensionCommands';
-import { registerGuidCodeLensProvider                                           } from './extensionRegisterGuidCodeLensProvider';
-import { resolveTokenProvider                                                   } from './extensionTokenCredential';
-import { TelemetryReporterEvents                                                } from './TelemetryReporterEvents';
+import { createOutputChannel                                                                         } from './extensionCreateOutputChannel'         ;
+import { createTelemetryReporter                                                                     } from './extensionCreateTelemetryReporter'     ;
+import { ExtensionContext, window                                                                    } from 'vscode'                                 ;
+import { GuidResolver                                                                                } from './GuidResolver'                         ;
+import { GuidResolverResponse                                                                        } from './Models/GuidResolverResponse'          ;
+import { initStaticContent                                                                           } from './extensionStaticContent'               ;
+import { registerCache                                                                               } from './extensionCache'                       ;
+import { registerCommandInfo, registerCommandLookup, registerCommandOpenLink, registerCommandRefresh } from './extensionCommands'                    ;
+import { registerGuidCodeLensProvider                                                                } from './extensionRegisterGuidCodeLensProvider';
+import { resolveTokenProvider                                                                        } from './extensionTokenCredential'             ;
+import { TelemetryReporterEvents                                                                     } from './TelemetryReporterEvents'              ;
 
 export async function activate(context: ExtensionContext) {
     const outputChannel = createOutputChannel(context);
@@ -40,6 +40,7 @@ export async function activate(context: ExtensionContext) {
 
     registerGuidCodeLensProvider(context, guidCache                                                   );
     registerCommandRefresh      (context, guidCache                                                   );
+    registerCommandInfo         (context, guidCache                                                   );
     registerCommandOpenLink     (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     registerCommandLookup       (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     

@@ -45,6 +45,16 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
     );
 }
 
+export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCache) {
+    context.subscriptions.push(
+        commands.registerCommand('ohmyguid.info',
+            () => {
+                window.showInformationMessage(`${context.extension.id} - info`);
+            }
+        )
+    );
+}
+
 export function registerCommandLookup(
     context          : ExtensionContext,
     guidCache        : GuidCache,

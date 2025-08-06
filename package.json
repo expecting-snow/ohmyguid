@@ -33,6 +33,11 @@
         "command": "ohmyguid.lookup",
         "title": "LookUp",
         "category": "OhMyGuid"
+      },
+      {
+        "command": "ohmyguid.info",
+        "title": "Info",
+        "category": "OhMyGuid"
       }
     ],
     "codeLens": [
