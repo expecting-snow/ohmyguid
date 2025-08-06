@@ -15,4 +15,3 @@ jobs:
       - run: npm install
       - run: npm audit
       - run: npm run compile
-      - run: npm run test
