@@ -55,29 +55,19 @@ export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCa
                 window.showInformationMessage(`${context.extension.id} - info`);
 
                 if (error) {
-                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-                    window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+                    outputChannel.appendLine(`${TelemetryReporterEvents.info} : ${error}`);
+                    window.showErrorMessage(`${TelemetryReporterEvents.info}  : ${error}`);
 
-                    telemetryReporter.sendTelemetryErrorEvent(
-                        TelemetryReporterEvents.export,
-                        {
-                            error: 'dfc2477c'
-                        }
-                    );
+                    telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.info, { error: 'omg-dfc2477c' });
                 }
                 else if (filePath) {
-                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${filePath}`);
+                    outputChannel.appendLine(`${TelemetryReporterEvents.info} : ${filePath}`);
                     const doc = await workspace.openTextDocument(Uri.file(filePath));
                     await window.showTextDocument(doc, { preview: false });
                 }
                 else {
-                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-                    telemetryReporter.sendTelemetryErrorEvent(
-                        TelemetryReporterEvents.export,
-                        {
-                            error: '8423d58d'
-                        }
-                    );
+                    outputChannel.appendLine(`${TelemetryReporterEvents.info} : ${error}`);
+                    telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.info, { error: 'omg-8423d58d' });
                 }
             }
         )
@@ -152,12 +142,7 @@ async function handle(
         GuidLinkProvider.resolveLink,
         (error: string) => {
             outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-            telemetryReporter.sendTelemetryErrorEvent(
-                TelemetryReporterEvents.export,
-                {
-                    error: `${error}`
-                }
-            );
+            telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.export, { error: 'omg-c34c9a5a'});
         }
     );
 
@@ -167,12 +152,7 @@ async function handle(
         outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
         window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
 
-        telemetryReporter.sendTelemetryErrorEvent(
-            TelemetryReporterEvents.export,
-            {
-                error: 'b8334565'
-            }
-        );
+        telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.export, { error: 'omg-b8334565' });
 
         const cachedFileFalllback = guidResolverResponseToTempFile.getTempFileUri(guidResolverResponse);
 
@@ -191,11 +171,6 @@ async function handle(
     }
     else {
         outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-        telemetryReporter.sendTelemetryErrorEvent(
-            TelemetryReporterEvents.export,
-            {
-                error: '4c7b7b7b'
-            }
-        );
+        telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.export, { error: 'omg-4c7b7b7b' });
     }
 }

@@ -25,12 +25,7 @@ export async function activate(context: ExtensionContext) {
         tokenCredential,
         (error: string) => {
             outputChannel.appendLine(`GuidResolver : ${error}`);
-            telemetryReporter.sendTelemetryErrorEvent(
-                TelemetryReporterEvents.resolve,
-                {
-                    error: `${error}`
-                }
-            );
+            telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.resolve, { error: 'omg-375a2ef2' });
         }
     );
 
