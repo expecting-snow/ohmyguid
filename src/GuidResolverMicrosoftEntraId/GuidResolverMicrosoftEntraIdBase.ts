@@ -51,8 +51,8 @@ export class GuidResolverMicrosoftEntraIdBase {
             await pageIterator.iterate();
 
             return collection;
-        } catch {
-            console.error(`Error resolving all for url: ${url}`);
+        } catch (e: any) {
+            console.error(`Error ${url} ${e.message}`);
         }
 
         return undefined;
