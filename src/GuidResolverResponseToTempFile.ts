@@ -62,20 +62,13 @@ export class GuidResolverResponseToTempFile {
         try {
             await mkdir(path.join(tempDirectory, ...this.pathSubDirectories), { recursive: true });
 
-            // Replace illegal filename characters for Windows, Linux, and macOS with underscore
-            const sanitizeFileName = (name: string) =>
-                name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')  // Windows reserved chars and control chars
-                    .replace(/[\u{0080}-\u{009F}]/gu , '_')  // More control chars
-                    .replace(/[\/]/g                 , '_')  // Extra slash for POSIX
-                    .replace(/ /g                    , '_'); // Replace blanks with underscore
-
             const rawFileName = `${guidResolverResponse.type}--`
                               + `${guidResolverResponse.guid}--`
                               + `${guidResolverResponse.displayName}`
                               + `${fileNameSuffix ? `--${fileNameSuffix}` : ''}`
                               + `.json`;
 
-            const fileName = sanitizeFileName(rawFileName);
+            const fileName = rawFileName.replace(/[^a-zA-Z0-9.\-]/g, '_');
 
             const filePath = path.join(tempDirectory, ...this.pathSubDirectories, fileName);
 
