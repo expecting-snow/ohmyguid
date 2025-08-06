@@ -27,7 +27,7 @@ files.
 
 ## Features
 
-Use the command 'OhMyGuid: LookUp' to enter a guid an look it up.
+Use the command 'OhMyGuid: LookUp' to enter a guid and look it up.
 
 ## Telemetry
 

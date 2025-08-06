@@ -8,7 +8,7 @@ export class GuidResolverMicrosoftEntraIdBase {
         private readonly tokenCredential: TokenCredential
     ) { }
 
-    protected getClient(abortController: AbortController): Client {
+    protected getClient(abortController: AbortController, defaultVersion?: string,): Client {
         return Client.initWithMiddleware({
             fetchOptions: {
                 signal: abortController.signal
@@ -22,7 +22,8 @@ export class GuidResolverMicrosoftEntraIdBase {
                     'https://graph.microsoft.com/.default'
                 ]
             }
-            )
+            ),
+            defaultVersion: defaultVersion || 'v1.0',
         });
     }
 
@@ -31,12 +32,13 @@ export class GuidResolverMicrosoftEntraIdBase {
         onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         mapper          : (response             : any                 ) => any,
         onToBeResolved  : (guid                 : string              ) => void,
-        abortController : AbortController
+        abortController : AbortController,
+        defaultVersion? : string
     ): Promise<any[] | undefined> {
         try {
             var collection: any[] = [];
 
-            const response: PageCollection = await this.getClient(abortController).api(url).get();
+            const response: PageCollection = await this.getClient(abortController, defaultVersion).api(url).get();
 
             const callback: PageIteratorCallback = (item: any) => {
                  this.processResponses(mapper(item), onResponse, onToBeResolved);
@@ -44,14 +46,16 @@ export class GuidResolverMicrosoftEntraIdBase {
                  return true;
             };
 
-            const pageIterator = new PageIterator(this.getClient(abortController), response, callback);
+            const pageIterator = new PageIterator(this.getClient(abortController, defaultVersion), response, callback);
 
             await pageIterator.iterate();
 
             return collection;
         } catch {
-            return undefined;
+            console.error(`Error resolving all for url: ${url}`);
         }
+
+        return undefined;
     }
 
     protected mapIdDisplayName(p: any): string {
