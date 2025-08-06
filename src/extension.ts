@@ -40,7 +40,7 @@ export async function activate(context: ExtensionContext) {
 
     registerGuidCodeLensProvider(context, guidCache                                                   );
     registerCommandRefresh      (context, guidCache                                                   );
-    registerCommandInfo         (context, guidCache                                                   );
+    registerCommandInfo         (context, guidCache                 , outputChannel, telemetryReporter);
     registerCommandOpenLink     (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     registerCommandLookup       (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     

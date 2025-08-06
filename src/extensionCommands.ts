@@ -1,5 +1,6 @@
 
 import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri, window, workspace } from 'vscode'                          ;
+import { DiagnosticsToTempFile                                                                              } from './DiagnosticsToTempFile'         ;
 import { GuidCache                                                                                          } from './GuidCache'                     ;
 import { GuidLinkProvider                                                                                   } from './GuidLinkProvider'              ;
 import { GuidResolverResponse                                                                               } from './Models/GuidResolverResponse'   ;
@@ -45,11 +46,39 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
     );
 }
 
-export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCache) {
+export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCache, outputChannel: OutputChannel, telemetryReporter: TelemetryReporter) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.info',
-            () => {
+            async () => {
+                const { filePath, error } = await new DiagnosticsToTempFile().toTempFile(context);
+
                 window.showInformationMessage(`${context.extension.id} - info`);
+
+                if (error) {
+                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
+                    window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+
+                    telemetryReporter.sendTelemetryErrorEvent(
+                        TelemetryReporterEvents.export,
+                        {
+                            error: 'dfc2477c'
+                        }
+                    );
+                }
+                else if (filePath) {
+                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${filePath}`);
+                    const doc = await workspace.openTextDocument(Uri.file(filePath));
+                    await window.showTextDocument(doc, { preview: false });
+                }
+                else {
+                    outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
+                    telemetryReporter.sendTelemetryErrorEvent(
+                        TelemetryReporterEvents.export,
+                        {
+                            error: '8423d58d'
+                        }
+                    );
+                }
             }
         )
     );

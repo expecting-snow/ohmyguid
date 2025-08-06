@@ -9,7 +9,7 @@ export class DiagnosticsToTempFile {
     ) { }
 
     async toTempFile(context: ExtensionContext): Promise<{ filePath?: string, error?: Error }> {
-        return this.toTempFileInternal();
+        return this.toTempFileInternal(context);
 
     }
 
@@ -31,7 +31,7 @@ export class DiagnosticsToTempFile {
         }
     }
 
-    private async toTempFileInternal(): Promise<{ filePath?: string, error?: Error }> {
+    private async toTempFileInternal(context: ExtensionContext): Promise<{ filePath?: string, error?: Error }> {
         try {
             //throw new Error('This method should not be called directly. Use `toTempFile` instead.');
             const { uri, error } = this.getTempFileUri();
@@ -40,13 +40,28 @@ export class DiagnosticsToTempFile {
                 return { error: new Error(`Could not create URI. Error: ${error?.message}`) };
             }
 
-            const fileContent = Buffer.from(JSON.stringify(
+                
+            const data = JSON.stringify(
                 {
-
+                    extensionKind        : context.extension.extensionKind === 1 
+                                               ? 'ui' : context.extension.extensionKind === 2
+                                                   ? 'workspace' : context.extension.extensionKind,
+                    extensionMode        : context.extensionMode === 1
+                                               ? 'Production' : context.extensionMode === 2
+                                                   ? 'Development' : context.extensionMode === 3
+                                                       ? 'Test' : context.extensionMode,
+                    extensionPath        : context.extensionPath           + '',
+                    extensionUri         : context.extensionUri    .fsPath + '',
+                    globalStorageUri     : context.globalStorageUri.fsPath + '',
+                    logUri               : context.logUri          .fsPath + '',
+                    storageUri           : context.storageUri     ?.fsPath + '',
+                    'workspaceState.keys': context.workspaceState.keys().length,
                 },
                 null,
                 2
-            ), 'utf8');
+            );
+
+            const fileContent = Buffer.from(data, 'utf8');
 
             // missing directories are created automatically
             await workspace.fs.writeFile(uri, fileContent);
