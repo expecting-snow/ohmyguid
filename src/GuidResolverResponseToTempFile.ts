@@ -53,7 +53,7 @@ export class GuidResolverResponseToTempFile {
         }
     }
 
-    async getTempFileUri(guidResolverResponse: GuidResolverResponse, fileNameSuffix: string): Promise<{ filePath?: string, error?: Error }> {
+    async getTempFileUri(guidResolverResponse: GuidResolverResponse, fileNameSuffix: string): Promise<{ uri?: Uri, error?: Error }> {
         try {
             const rawFileName = `${guidResolverResponse.type}--`
                 + `${guidResolverResponse.guid}--`
@@ -65,7 +65,7 @@ export class GuidResolverResponseToTempFile {
 
             const tempFileUri = Uri.file(path.join(os.tmpdir(), ...this.pathSubDirectories, fileName));
 
-            return { filePath: tempFileUri.fsPath };
+            return { uri: tempFileUri };
         }
         catch (e: any) {
             return { error: e };
@@ -82,10 +82,11 @@ export class GuidResolverResponseToTempFile {
 
             const fileName = rawFileName.replace(/[^a-zA-Z0-9.\-]/g, '_');
 
-            const tempDirectoryUri = Uri.file(path.join(os.tmpdir(), ...this.pathSubDirectories          ));
-            const tempFileUri      = Uri.file(path.join(os.tmpdir(), ...this.pathSubDirectories, fileName));
+            const { uri , error } = await this.getTempFileUri(guidResolverResponse, fileName);
 
-            await workspace.fs.createDirectory(tempDirectoryUri);
+            if(uri === undefined || error) {
+                return { error: new Error(`Could not create URI for '${guidResolverResponse.guid}'. Error: ${error?.message}`) };
+            }
 
             const fileContent = Buffer.from(JSON.stringify(
                     {
@@ -97,9 +98,10 @@ export class GuidResolverResponseToTempFile {
                     2
                 ), 'utf8');
 
-            await workspace.fs.writeFile(tempFileUri, fileContent);
+            // this creates missing directories if they do not exist
+            await workspace.fs.writeFile(uri, fileContent);
 
-            return { filePath: tempFileUri.fsPath };
+            return { filePath: uri.fsPath };
         }
         catch (e: any) {
             return { error: e };
