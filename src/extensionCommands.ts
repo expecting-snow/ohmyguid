@@ -126,7 +126,6 @@ export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCa
                 const document = await workspace.openTextDocument({ content: data, language: 'json' });
 
                 await window.showTextDocument(document, { preview: false });
-                          
             }
         )
     );
