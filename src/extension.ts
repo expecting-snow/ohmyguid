@@ -34,7 +34,7 @@ export async function activate(context: ExtensionContext) {
     await initStaticContent(context, guidCache);
 
     registerGuidCodeLensProvider(context, guidCache                                                   );
-    registerCommandRefresh      (context, guidCache                                                   );
+    registerCommandRefresh      (context, guidCache, tokenCredential                                  );
     registerCommandInfo         (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     registerCommandOpenLink     (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     registerCommandLookup       (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
