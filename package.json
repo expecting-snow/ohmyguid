@@ -2,7 +2,7 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Azure and Microsoft Entra ID guids look up",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "engines": {
     "vscode": "^1.102.0"
   },
@@ -30,8 +30,8 @@
         "category": "OhMyGuid"
       },
       {
-        "command": "ohmyguid.lookup",
-        "title": "LookUp",
+        "command": "ohmyguid.info",
+        "title": "Info",
         "category": "OhMyGuid"
       }
     ],
@@ -88,6 +88,7 @@
     "async-mutex": "^0.5.0",
     "esbuild": "^0.25.3",
     "eslint": "^9.32.0",
+    "jwt-decode": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.2"
   }
