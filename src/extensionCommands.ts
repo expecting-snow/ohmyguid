@@ -1,14 +1,14 @@
 
-import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri, window, workspace } from 'vscode'                          ;
-import { DiagnosticsToTempFile                                                                              } from './DiagnosticsToTempFile'         ;
-import { GuidCache                                                                                          } from './GuidCache'                     ;
-import { GuidLinkProvider                                                                                   } from './GuidLinkProvider'              ;
-import { GuidResolverResponse                                                                               } from './Models/GuidResolverResponse'   ;
-import { GuidResolverResponseToTempFile                                                                     } from './GuidResolverResponseToTempFile';
-import { initStaticContent                                                                                  } from './extensionStaticContent'        ;
-import { TelemetryReporter                                                                                  } from '@vscode/extension-telemetry'     ;
-import { TelemetryReporterEvents                                                                            } from './TelemetryReporterEvents'       ;
-import { TokenCredential                                                                                    } from '@azure/identity'                 ;
+import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri,  window, workspace } from 'vscode'                          ;
+import { GuidCache                                                                                           } from './GuidCache'                     ;
+import { GuidLinkProvider                                                                                    } from './GuidLinkProvider'              ;
+import { GuidResolverResponse                                                                                } from './Models/GuidResolverResponse'   ;
+import { GuidResolverResponseToTempFile                                                                      } from './GuidResolverResponseToTempFile';
+import { initStaticContent                                                                                   } from './extensionStaticContent'        ;
+import { jwtDecode                                                                                           } from "jwt-decode"                      ;
+import { TelemetryReporter                                                                                   } from '@vscode/extension-telemetry'     ;
+import { TelemetryReporterEvents                                                                             } from './TelemetryReporterEvents'       ;
+import { TokenCredential                                                                                     } from '@azure/identity'                 ;
 
 const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
@@ -46,29 +46,87 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
     );
 }
 
-export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCache, outputChannel: OutputChannel, telemetryReporter: TelemetryReporter) {
+export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCache, tokenCredential: TokenCredential, outputChannel: OutputChannel, telemetryReporter: TelemetryReporter) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.info',
             async () => {
-                const { filePath, error } = await new DiagnosticsToTempFile().toTempFile(context);
+                const getToken = async (tokenCredential: TokenCredential, scopes: string | string[]) => {
+                    try {
+                        const token = await tokenCredential.getToken(scopes);
 
-                window.showInformationMessage(`${context.extension.id} - info`);
+                        if (!token) {
+                            return undefined;
+                        }
 
-                if (error) {
-                    outputChannel.appendLine(`${TelemetryReporterEvents.info} : ${error}`);
-                    window.showErrorMessage(`${TelemetryReporterEvents.info}  : ${error}`);
+                        const response = {
+                            token: {
+                                accessToken          : token.token,
+                                expiresOnTimestamp   : token.expiresOnTimestamp    ? new Date(token.expiresOnTimestamp   ).toLocaleString() : undefined,
+                                refreshAfterTimestamp: token.refreshAfterTimestamp ? new Date(token.refreshAfterTimestamp).toLocaleString() : undefined,
+                                tokenType            : token.tokenType,
+                            },
+                            tokenDecoded: {
+                                header : jwtDecode(token.token, { header: true  }),
+                                payload: jwtDecode(token.token, { header: false })
+                            }
+                        };
 
-                    telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.info, { error: 'omg-dfc2477c' });
-                }
-                else if (filePath) {
-                    outputChannel.appendLine(`${TelemetryReporterEvents.info} : ${filePath}`);
-                    const doc = await workspace.openTextDocument(Uri.file(filePath));
-                    await window.showTextDocument(doc, { preview: false });
-                }
-                else {
-                    outputChannel.appendLine(`${TelemetryReporterEvents.info} : ${error}`);
-                    telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.info, { error: 'omg-8423d58d' });
-                }
+                        return response;
+                    }
+                    catch {
+                        return undefined;
+                    }
+                };
+
+                const getTokens = async (tokenCredential: TokenCredential) => {
+                    const scopes = [
+                        'https://management.azure.com/.default',
+                        'https://graph.microsoft.com/.default'
+                    ];
+
+                    const responses = await Promise.all(
+                        scopes.map(
+                            async scope => (
+                                {
+                                    name      : scope,
+                                    credential: await getToken(tokenCredential, scope)
+                                }
+                            )
+                        )
+                    );
+
+                    return responses.sort((a, b) => a.name.localeCompare(b.name));
+                };
+
+                const data = JSON.stringify(
+                    {
+                        extension:{                        
+                            'extension.id'          : context.extension.id,
+                            extensionKind           : context.extension.extensionKind === 1 
+                                                    ? 'ui' : context.extension.extensionKind === 2
+                                                        ? 'workspace' : context.extension.extensionKind,
+                            extensionMode           : context.extensionMode === 1
+                                                    ? 'Production' : context.extensionMode === 2
+                                                        ? 'Development' : context.extensionMode === 3
+                                                            ? 'Test' : context.extensionMode,
+                            extensionPath           : context.extensionPath           + '',
+                            extensionUri            : context.extensionUri    .fsPath + '',
+                            globalStorageUri        : context.globalStorageUri.fsPath + '',
+                            logUri                  : context.logUri          .fsPath + '',
+                            storageUri              : context.storageUri     ?.fsPath + '',
+                            'workspaceState.keys'   : context.workspaceState.keys().length,
+                            'extension.packageJSON' : context.extension.packageJSON,
+                        },
+                        credentials : await getTokens(tokenCredential) 
+                    },
+                    null,
+                    2
+                );
+
+                const document = await workspace.openTextDocument({ content: data, language: 'json' });
+
+                await window.showTextDocument(document, { preview: false });
+                          
             }
         )
     );
