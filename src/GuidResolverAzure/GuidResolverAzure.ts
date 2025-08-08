@@ -1,6 +1,7 @@
 import { GuidResolverAzureApplicationInsightsInstrumentationKey } from "./GuidResolverAzureApplicationInsightsInstrumentationKey";
 import { GuidResolverAzureLogAnalyticsWorkspaceCustomerId       } from "./GuidResolverAzureLogAnalyticsWorkspaceCustomerId"      ;
 import { GuidResolverAzureManagementGroup                       } from "./GuidResolverAzureManagementGroup"                      ;
+import { GuidResolverAzureManagementGroups                      } from "./GuidResolverAzureManagementGroups"                     ;
 import { GuidResolverAzureRoleDefinition                        } from "./GuidResolverAzureRoleDefinition"                       ;
 import { GuidResolverAzureSubscription                          } from "./GuidResolverAzureSubscription"                         ;
 import { GuidResolverAzureSubscriptions                         } from "./GuidResolverAzureSubscriptions"                        ;
@@ -29,7 +30,8 @@ export class GuidResolverAzure {
         ];
 
         this.guidResolverInits = [
-            new GuidResolverAzureSubscriptions(this.onResponse, this.onToBeResolved, tokenCredential, this.callbackError)
+            new GuidResolverAzureManagementGroups(this.onResponse, this.onToBeResolved, tokenCredential, this.callbackError),
+            new GuidResolverAzureSubscriptions   (this.onResponse, this.onToBeResolved, tokenCredential, this.callbackError),
         ];
     }
     

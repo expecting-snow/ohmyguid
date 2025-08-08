@@ -2,7 +2,7 @@ import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 import { ResourceGraphClient  } from "@azure/arm-resourcegraph";
 import { TokenCredential      } from "@azure/identity";
 
-export class GuidResolverAzureSubscriptions {
+export class GuidResolverAzureManagementGroups {
     private readonly client: ResourceGraphClient;
 
     constructor(
@@ -16,19 +16,19 @@ export class GuidResolverAzureSubscriptions {
 
     async resolve(abortController: AbortController): Promise<void> {
         try {
-            const query = `resourcecontainers | where type == 'microsoft.resources/subscriptions'`;
+            const query = `resourcecontainers | where type == 'microsoft.management/managementgroups'`;
 
             const result = await this.client.resources({ query, subscriptions: [] }); // abortController adden
 
             if (result && result.data && Array.isArray(result.data)) {
-                for (const subscription of result.data) {
-                    if (subscription.id && subscription.name) {
+                for (const managementGroup of result.data) {
+                    if (managementGroup.id && managementGroup.name) {
                         this.onResponse(
                             new GuidResolverResponse(
-                                subscription.id,
-                                subscription.name,
-                                "Azure Subscription",
-                                subscription,
+                                managementGroup.id,
+                                managementGroup.name,
+                                "Azure ManagementGroup",
+                                managementGroup,
                                 new Date()
                             )
                         );
@@ -41,7 +41,7 @@ export class GuidResolverAzureSubscriptions {
             }
         }
         catch (e: any) {
-            this.callbackError(`GuidResolverAzureSubscriptions ${e.message}`);
+            this.callbackError(`GuidResolverAzureManagementGroups ${e.message}`);
         }
     }
 }
