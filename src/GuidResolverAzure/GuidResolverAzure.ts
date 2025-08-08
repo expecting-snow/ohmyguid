@@ -1,3 +1,4 @@
+import { AbortController                                        } from "@azure/abort-controller"                                 ;
 import { GuidResolverAzureApplicationInsightsInstrumentationKey } from "./GuidResolverAzureApplicationInsightsInstrumentationKey";
 import { GuidResolverAzureLogAnalyticsWorkspaceCustomerId       } from "./GuidResolverAzureLogAnalyticsWorkspaceCustomerId"      ;
 import { GuidResolverAzureManagementGroup                       } from "./GuidResolverAzureManagementGroup"                      ;
@@ -7,11 +8,11 @@ import { GuidResolverAzureSubscription                          } from "./GuidRe
 import { GuidResolverAzureSubscriptions                         } from "./GuidResolverAzureSubscriptions"                        ;
 import { GuidResolverAzureTag                                   } from "./GuidResolverAzureTag"                                  ;
 import { GuidResolverResponse                                   } from "../Models/GuidResolverResponse"                          ;
-import { IGuidResolver, IGuidResolverInits                      } from "../GuidResolver"                                         ;
+import { IGuidResolverAzure, IGuidResolverInits                 } from "../GuidResolver"                                         ;
 import { TokenCredential                                        } from "@azure/identity"                                         ;
 
 export class GuidResolverAzure {
-    private readonly guidResolvers    : IGuidResolver[];
+    private readonly guidResolvers    : IGuidResolverAzure[];
     private readonly guidResolverInits: IGuidResolverInits[];
 
     constructor(

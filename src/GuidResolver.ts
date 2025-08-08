@@ -1,13 +1,18 @@
-import { GuidResolverAzure            } from "./GuidResolverAzure/GuidResolverAzure";
-import { GuidResolverMicrosoftEntraId } from "./GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraId";
-import { GuidResolverResponse         } from "./Models/GuidResolverResponse";
-import { TokenCredential              } from "@azure/identity";
+import { AbortController as AzureAbortController } from "@azure/abort-controller";
+import { GuidResolverAzure                       } from "./GuidResolverAzure/GuidResolverAzure";
+import { GuidResolverMicrosoftEntraId            } from "./GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraId";
+import { GuidResolverResponse                    } from "./Models/GuidResolverResponse";
+import { TokenCredential                         } from "@azure/identity";
 
 export interface IGuidResolver {
     resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined>;
 }
+export interface IGuidResolverAzure {
+    resolve(guid: string, abortController: AzureAbortController): Promise<GuidResolverResponse | undefined>;
+}
+
 export interface IGuidResolverInits {
-    resolve( abortController: AbortController): Promise<void>;
+    resolve( abortController: AzureAbortController): Promise<void>;
 }
 export class GuidResolver implements IGuidResolver {
         private readonly guidResolverAzure           : GuidResolverAzure           ;
@@ -25,15 +30,17 @@ export class GuidResolver implements IGuidResolver {
 
     async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
         const abortController = new AbortController();
+        const azureAbortController = new AzureAbortController();
+        abortController.signal.addEventListener('abort', () => azureAbortController.abort());
 
-        const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid, abortController);
-        const promiseAzure            = this.guidResolverAzure           .resolve(guid, abortController);
+        const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid, abortController     );
+        const promiseAzure            = this.guidResolverAzure           .resolve(guid, azureAbortController);
 
         return await promiseMicrosoftEntraId
             ?? await promiseAzure;
     }
 
-    async init(abortController: AbortController): Promise<void> {
+    async init(abortController: AzureAbortController): Promise<void> {
         await this.guidResolverAzure.init(abortController);
     }
 }

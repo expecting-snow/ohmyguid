@@ -1,6 +1,7 @@
+import { AbortController      } from "@azure/abort-controller"       ;
 import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { ResourceGraphClient } from "@azure/arm-resourcegraph";
-import { TokenCredential      } from "@azure/identity";
+import { ResourceGraphClient  } from "@azure/arm-resourcegraph"      ;
+import { TokenCredential      } from "@azure/identity"               ;
 
 export class GuidResolverAzureSubscription {
     private readonly client: ResourceGraphClient;
@@ -15,7 +16,7 @@ export class GuidResolverAzureSubscription {
         try {
             const query = `resourcecontainers | where type == 'microsoft.resources/subscriptions' and subscriptionId == '${guid}'`;
 
-            const result = await this.client.resources({ query, subscriptions: [] });
+            const result = await this.client.resources({ query, subscriptions: [] }, { abortSignal: abortController.signal });
 
             if (result.count > 0 && result.data[0].subscriptionId === guid && result.data[0].name) {
 

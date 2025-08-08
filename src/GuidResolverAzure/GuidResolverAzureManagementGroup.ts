@@ -1,3 +1,4 @@
+import { AbortController      } from "@azure/abort-controller"       ;
 import { GuidResolverResponse } from "../Models/GuidResolverResponse";
 import { ResourceGraphClient  } from "@azure/arm-resourcegraph"      ;
 import { TokenCredential      } from "@azure/identity"               ;
@@ -15,7 +16,7 @@ export class GuidResolverAzureManagementGroup {
         try {
             const query = `resourcecontainers | where type == 'microsoft.management/managementgroups' and name == '${guid}'`;
 
-            const result = await this.client.resources({ query, subscriptions: [] });
+            const result = await this.client.resources({ query, subscriptions: [] }, { abortSignal: abortController.signal });
 
             if (result.count > 0 && result.data[0].name === guid && result.data[0].properties.displayName) {
 

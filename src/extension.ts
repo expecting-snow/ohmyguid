@@ -1,3 +1,4 @@
+import { AbortController                                                                             } from "@azure/abort-controller"                ;
 import { createOutputChannel                                                                         } from './extensionCreateOutputChannel'         ;
 import { createTelemetryReporter                                                                     } from './extensionCreateTelemetryReporter'     ;
 import { ExtensionContext, window                                                                    } from 'vscode'                                 ;
