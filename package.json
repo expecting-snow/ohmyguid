@@ -30,8 +30,8 @@
         "category": "OhMyGuid"
       },
       {
-        "command": "ohmyguid.info",
-        "title": "Info",
+        "command": "ohmyguid.lookup",
+        "title": "LookUp",
         "category": "OhMyGuid"
       }
     ],

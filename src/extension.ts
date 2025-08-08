@@ -30,6 +30,8 @@ export async function activate(context: ExtensionContext) {
     );
 
     const guidCache = registerCache(context, guidResolver, outputChannel);
+    
+    await guidResolver.init(new AbortController());
 
     await initStaticContent(context, guidCache);
 

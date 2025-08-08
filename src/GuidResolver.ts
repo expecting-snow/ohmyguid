@@ -6,7 +6,9 @@ import { TokenCredential              } from "@azure/identity";
 export interface IGuidResolver {
     resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined>;
 }
-
+export interface IGuidResolverInits {
+    resolve( abortController: AbortController): Promise<void>;
+}
 export class GuidResolver implements IGuidResolver {
         private readonly guidResolverAzure           : GuidResolverAzure           ;
         private readonly guidResolverMicrosoftEntraId: GuidResolverMicrosoftEntraId;
@@ -17,7 +19,7 @@ export class GuidResolver implements IGuidResolver {
         tokenCredential: TokenCredential,
         callbackError: (error: string) => void
     ) { 
-        this.guidResolverAzure            = new GuidResolverAzure           (tokenCredential               );
+        this.guidResolverAzure            = new GuidResolverAzure           (onResponse, onToBeResolved, tokenCredential, callbackError);
         this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(onResponse, onToBeResolved, tokenCredential, callbackError);
     }
 
@@ -29,5 +31,9 @@ export class GuidResolver implements IGuidResolver {
 
         return await promiseMicrosoftEntraId
             ?? await promiseAzure;
+    }
+
+    async init(abortController: AbortController): Promise<void> {
+        await this.guidResolverAzure.init(abortController);
     }
 }
