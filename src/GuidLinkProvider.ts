@@ -11,7 +11,7 @@ export class GuidLinkProvider {
             case 'Azure Subscription':
                 return `https://portal.azure.com/#@/resource/subscriptions/${item.guid}`;
             case 'Azure Subscription Details':
-                return `https://portal.azure.com/#@/resource/subscriptions/${item.guid}`;
+                return `https://portal.azure.com/#@${item.object?.graph?.tenantId || ''}/resource/subscriptions/${item.guid}`;
             case 'Azure ManagementGroup':
                 return 'https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagementGroupBrowseBlade/~/MGBrowse_overview';
             case 'Microsoft Entra ID AppRegistration':
