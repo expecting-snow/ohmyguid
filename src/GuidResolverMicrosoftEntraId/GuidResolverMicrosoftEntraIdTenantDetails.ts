@@ -4,6 +4,7 @@ import { GuidResolverResponse                    } from "../Models/GuidResolverR
 import { IGuidResolver                           } from "../GuidResolver"                   ;
 import { ManagementGroupsAPI                     } from "@azure/arm-managementgroups"       ;
 import { TokenCredential                         } from "@azure/identity"                   ;
+import { AzureManagementGroups } from "../AzureManagementGroups";
 
 export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     private readonly managementGroupsAPI: ManagementGroupsAPI;
@@ -25,20 +26,20 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
             const managementGroups = [];
             for await (const managementGroup of this.managementGroupsAPI.entities.list({ abortSignal: abortController.signal })) {
-                if (managementGroup.tenantId !== guid) {
-                    // not in this tenant
-                    continue;
-                }
+                // if (managementGroup.tenantId !== guid) {
+                //     // not in this tenant
+                //     continue;
+                // }
                 
-                if (managementGroup.name === guid) {
-                    // the tenant root
-                    continue;
-                }
+                // if (managementGroup.name === guid) {
+                //     // the tenant root
+                //     continue;
+                // }
 
-                if (managementGroup.parentDisplayNameChain && managementGroup.parentDisplayNameChain.length > 1) {
-                    // not a top-level
-                    continue;
-                }
+                // if (managementGroup.parentDisplayNameChain && managementGroup.parentDisplayNameChain.length > 1) {
+                //     // not a top-level
+                //     continue;
+                // }
 
                 managementGroups.push(managementGroup);
             }
@@ -48,13 +49,16 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
                 abortController.abort();
 
+                const managementGroupsHierarchy = new AzureManagementGroups().resolveRoot(managementGroups);
+
                 return new GuidResolverResponse(
                     guid,
                     tenant.displayName,
                     'Microsoft Entra ID Tenant Details',
                     {
                         tenant,
-                        managementGroups: managementGroups.map(p => ({ [`${p.displayName}`]: p.id }))
+                        // managementGroups: managementGroups.map(p => ({ [`${p.displayName}`]: p.id })),
+                        managementGroupsHierarchy
                     },
                     new Date()
                 );
