@@ -1,11 +1,25 @@
 import { EntityInfo } from "@azure/arm-managementgroups";
 
 export class EntityNode {
-    readonly children: EntityNode[];
+    readonly id: string;
+    private readonly descendants: EntityNode[];
+
     constructor(
         readonly entity: EntityInfo,
     ) {
-        this.children = [];
+        if (!entity.id) {
+            throw new Error('Entity ID is missing');
+        }
+        this.id = entity.id;
+        this.descendants = [];
+    }
+
+    addDescendant(child: EntityNode): void {
+        this.descendants.push(child);
+    }
+
+    getDescendants() {
+        return this.descendants;
     }
 }
 
@@ -24,15 +38,15 @@ export class AzureManagementGroups {
         return rootNode;
     }
 
-    private resolveDescendantsInternal(entityNode: EntityNode, collection: EntityInfo[]){
-        const descendants = collection.filter(p => p.parent?.id === entityNode.entity.id);
+    private resolveDescendantsInternal(entityNode: EntityNode, entityInfos: EntityInfo[]){
+        const descendants = entityInfos.filter(p => p.parent?.id === entityNode.id);
 
         for (const descendant of descendants) {
             const descendantNode = new EntityNode(descendant);
 
-            this.resolveDescendantsInternal(descendantNode, collection);
+            this.resolveDescendantsInternal(descendantNode, entityInfos);
 
-            entityNode.children.push(descendantNode);
+            entityNode.addDescendant(descendantNode);
         }
     }
 }
