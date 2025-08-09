@@ -32,6 +32,11 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                 )
             );
 
+            if(codeLenses.find(p => p.guid === guid)) {
+                // Skip if already added
+                continue;
+            }
+
             if (response) {
                 codeLens.command = {
                     title: this.renderer.render(response) || '',
