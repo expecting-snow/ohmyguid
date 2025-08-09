@@ -1,4 +1,5 @@
 
+import { CachingAzureCliCredential                                                                           } from './CachingAzureCliCredential'     ;
 import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri,  window, workspace } from 'vscode'                          ;
 import { GuidCache                                                                                           } from './GuidCache'                     ;
 import { GuidLinkProvider                                                                                    } from './GuidLinkProvider'              ;
@@ -32,11 +33,12 @@ export function registerCommandOpenLink(
     );
 }
 
-export function registerCommandRefresh(context: ExtensionContext, guidCache: GuidCache) {
+export function registerCommandRefresh(context: ExtensionContext, guidCache: GuidCache, tokenCredential: TokenCredential) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.refresh',
             async () => {
                 window.showInformationMessage(`${context.extension.id} - refreshing`);
+                await (tokenCredential as CachingAzureCliCredential).clear();
                 guidCache.clear();
                 context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
                 await initStaticContent(context, guidCache);

@@ -64,4 +64,8 @@ export class CachingAzureCliCredential implements TokenCredential {
             }
         });
     }
+
+    clear(): Promise<void> {
+        return this.mutex.runExclusive(() => this.cache.clear());
+    }
 }

@@ -1,6 +1,7 @@
+import { AbortController                            } from "@azure/abort-controller"                     ;
 import { GuidResolverAzureRoleDefinitionCustomRoles } from "./GuidResolverAzureRoleDefinitionCustomRoles";
-import { GuidResolverResponse                       } from "../Models/GuidResolverResponse";
-import { TokenCredential                            } from "@azure/identity";
+import { GuidResolverResponse                       } from "../Models/GuidResolverResponse"              ;
+import { TokenCredential                            } from "@azure/identity"                             ;
 
 export class GuidResolverAzureRoleDefinition {
     private readonly guidResolverAzureRoleDefinitionCustomRoles: GuidResolverAzureRoleDefinitionCustomRoles;
