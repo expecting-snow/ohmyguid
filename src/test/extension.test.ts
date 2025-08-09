@@ -31,15 +31,15 @@ suite('Extension Test Suite', () => {
         const azureManagementGroups = new AzureManagementGroups();
         const root = azureManagementGroups.resolveRoot(collection);
 
-        assert.ok(root?.id === _0);
+        assert.ok(root?.entity.id === _0);
 
-        assert.ok(root?.getDescendants().find(p => p.id === _0_1));
-        assert.ok(root?.getDescendants().find(p => p.id === _0_2));
+        assert.ok(root?.getDescendants().find(p => p.entity.id === _0_1));
+        assert.ok(root?.getDescendants().find(p => p.entity.id === _0_2));
 
-        assert.ok(root?.getDescendants().filter(p => p.id === _0_1).at(0)?.getDescendants().find(p => p.id === _0_1_a));
-        assert.ok(root?.getDescendants().filter(p => p.id === _0_1).at(0)?.getDescendants().find(p => p.id === _0_1_b));
+        assert.ok(root?.getDescendants().filter(p => p.entity.id === _0_1).at(0)?.getDescendants().find(p => p.entity.id === _0_1_a));
+        assert.ok(root?.getDescendants().filter(p => p.entity.id === _0_1).at(0)?.getDescendants().find(p => p.entity.id === _0_1_b));
 
-        assert.ok(root?.getDescendants().filter(p => p.id === _0_2).at(0)?.getDescendants().find(p => p.id === _0_2_a));
-        assert.ok(root?.getDescendants().filter(p => p.id === _0_2).at(0)?.getDescendants().find(p => p.id === _0_2_b));
+        assert.ok(root?.getDescendants().filter(p => p.entity.id === _0_2).at(0)?.getDescendants().find(p => p.entity.id === _0_2_a));
+        assert.ok(root?.getDescendants().filter(p => p.entity.id === _0_2).at(0)?.getDescendants().find(p => p.entity.id === _0_2_b));
     });
 });

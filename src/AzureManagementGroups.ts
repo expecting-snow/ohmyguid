@@ -1,7 +1,6 @@
 import { EntityInfo } from "@azure/arm-managementgroups";
 
 export class EntityNode {
-    readonly id: string;
     private readonly descendants: EntityNode[];
 
     constructor(
@@ -10,7 +9,7 @@ export class EntityNode {
         if (!entity.id) {
             throw new Error('Entity ID is missing');
         }
-        this.id = entity.id;
+
         this.descendants = [];
     }
 
@@ -39,7 +38,7 @@ export class AzureManagementGroups {
     }
 
     private resolveDescendantsInternal(entityNode: EntityNode, entityInfos: EntityInfo[]){
-        const descendants = entityInfos.filter(p => p.parent?.id === entityNode.id);
+        const descendants = entityInfos.filter(p => p.parent?.id === entityNode.entity.id);
 
         for (const descendant of descendants) {
             const descendantNode = new EntityNode(descendant);
