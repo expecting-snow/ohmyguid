@@ -5,7 +5,7 @@ import { GuidResolverAzureSubscriptionDetails                    } from "./GuidR
 import { GuidResolverMicrosoftEntraIdAppRegistrationWithDetails  } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdAppRegistrationWithDetails' ;
 import { GuidResolverMicrosoftEntraIdGroupWithDetails            } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdGroupWithDetails'           ;
 import { GuidResolverMicrosoftEntraIdServicePrincipalWithDetails } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdServicePrincipalWithDetails';
-import { GuidResolverMicrosoftEntraIdTenant                      } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdTenant'                     ;
+import { GuidResolverMicrosoftEntraIdTenantDetails               } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdTenantDetails'              ;
 import { GuidResolverMicrosoftEntraIdUserWithDetails             } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdUserWithDetails'            ;
 import { GuidResolverResponse                                    } from "./Models/GuidResolverResponse"                                                         ;
 import { TokenCredential                                         } from '@azure/identity'                                                                       ;
@@ -56,7 +56,7 @@ export class GuidResolverResponseToTempFile {
             case 'Microsoft Entra ID AppRegistration' : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdAppRegistrationWithDetails (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID Group'           : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdGroupWithDetails           (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID ServicePrincipal': return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdServicePrincipalWithDetails(this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
-            case 'Microsoft Entra ID Tenant'          : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdTenant                     (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
+            case 'Microsoft Entra ID Tenant'          : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdTenantDetails              (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID User'            : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdUserWithDetails            (this.onResponse, this.onToBeResolved, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
             default:
                 this.callbackError(`ResponseToTempFile: Unknown response type: ${responseType}`);
