@@ -46,6 +46,8 @@ export class GuidLinkProvider {
                 }
                 console.log(`No link available for type: ${item.type}`);
                 return undefined;
+            case 'Microsoft Entra ID Tenant Details':
+                return 'https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagementGroupBrowseBlade/~/MGBrowse_overview';
             default:
                 console.log(`No link available for type: ${item.type}`);
                 return undefined;

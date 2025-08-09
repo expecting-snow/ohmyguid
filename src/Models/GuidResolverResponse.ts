@@ -37,6 +37,7 @@ export type GuidResolverResponseType =
   | 'Microsoft Entra ID ServicePrincipal Details'
   | 'Microsoft Entra ID ServicePrincipal'
   | 'Microsoft Entra ID Tenant'
+  | 'Microsoft Entra ID Tenant Details'
   | 'Microsoft Entra ID TokenIssuancePolicy'
   | 'Microsoft Entra ID TokenLifetimePolicy'
   | 'Microsoft Entra ID User Details'

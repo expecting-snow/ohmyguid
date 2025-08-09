@@ -51,7 +51,7 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                 return new GuidResolverResponse(
                     guid,
                     tenant.displayName,
-                    'Microsoft Entra ID Tenant',
+                    'Microsoft Entra ID Tenant Details',
                     {
                         tenant,
                         managementGroups: managementGroups.map(p => ({ [`${p.displayName}`]: p.id }))
