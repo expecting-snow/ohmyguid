@@ -25,9 +25,10 @@ export class EntityNode {
 export class EntityNodeTransform {
     resolve(node: EntityNode):any {
         return {
-            displayName: node.entity.displayName,
-            id         : node.entity.id,
-            descendants: node.getDescendants().map(descendant => this.resolve(descendant))
+            [`${node.entity.displayName}`]: node.entity.id,
+            descendants: node.getDescendants().length > 0 
+                       ? node.getDescendants().map(descendant => this.resolve(descendant)) 
+                       : undefined
         };
     }
 }
