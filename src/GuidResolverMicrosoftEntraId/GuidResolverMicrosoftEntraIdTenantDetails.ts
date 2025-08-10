@@ -64,7 +64,9 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                     new Date()
                 );
             }
-        } catch { }
+        } catch (e: any) {
+            console.error('Error resolving GUID:', e);
+        }
 
         return undefined;
     }
