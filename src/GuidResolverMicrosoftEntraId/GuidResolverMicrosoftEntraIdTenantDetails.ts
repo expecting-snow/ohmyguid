@@ -1,10 +1,10 @@
 import { AbortController as AzureAbortController } from "@azure/abort-controller"           ;
+import { AzureManagementGroups                   } from "../AzureManagementGroups";
 import { GuidResolverMicrosoftEntraIdBase        } from "./GuidResolverMicrosoftEntraIdBase";
 import { GuidResolverResponse                    } from "../Models/GuidResolverResponse"    ;
 import { IGuidResolver                           } from "../GuidResolver"                   ;
 import { ManagementGroupsAPI                     } from "@azure/arm-managementgroups"       ;
 import { TokenCredential                         } from "@azure/identity"                   ;
-import { AzureManagementGroups, EntityNodeTransform } from "../AzureManagementGroups";
 
 export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     private readonly managementGroupsAPI: ManagementGroupsAPI;
@@ -50,6 +50,9 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                 abortController.abort();
 
                 const managementGroupsHierarchy = new AzureManagementGroups().resolveRoot(managementGroups);
+                //const managementGroupsFlat = EntityNodeTransform.resolve(managementGroupsHierarchy!);
+                const managementGroupsFlat = managementGroupsHierarchy?.flatten();
+
 
                 return new GuidResolverResponse(
                     guid,
@@ -57,9 +60,7 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                     'Microsoft Entra ID Tenant Details',
                     {
                         tenant,
-                        // managementGroups: managementGroups.map(p => ({ [`${p.displayName}`]: p.id })),
-                        managementGroupsHierarchy,
-                        dd: new EntityNodeTransform().resolve(managementGroupsHierarchy!)
+                        managementGroupsFlat
                     },
                     new Date()
                 );

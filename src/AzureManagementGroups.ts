@@ -20,14 +20,16 @@ export class EntityNode {
     getDescendants() {
         return this.descendants;
     }
-}
 
-export class EntityNodeTransform {
-    resolve(node: EntityNode):any {
+    flatten(){
+         return this.flattenInternal(this);
+    }
+
+    flattenInternal(node: EntityNode):any {
         return {
             [`${node.entity.displayName}`]: node.entity.id,
             descendants: node.getDescendants().length > 0 
-                       ? node.getDescendants().map(descendant => this.resolve(descendant)) 
+                       ? node.getDescendants().map(descendant => this.flattenInternal(descendant)) 
                        : undefined
         };
     }
