@@ -22,6 +22,23 @@ export class EntityNode {
     }
 }
 
+export class EntityNodeTransform {
+    resolve(node: EntityNode) {
+        const response : any = {};
+        response[`${node.entity.displayName}`] = node.entity;
+
+        const descendants = node.getDescendants();
+        if (descendants.length > 0) {
+            response.descendants = {};
+            for(const descendant of descendants) {
+                response.descendants[`$${descendant.entity.displayName}`] = this.resolve(descendant);
+            }
+        }
+
+        return response;
+    }
+}
+
 export class AzureManagementGroups {
     resolveRoot(collection: EntityInfo[]): EntityNode | undefined {
         const entityInfo = collection.find(p => p.parent?.id === undefined);
