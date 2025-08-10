@@ -4,7 +4,7 @@ import { GuidResolverResponse                    } from "../Models/GuidResolverR
 import { IGuidResolver                           } from "../GuidResolver"                   ;
 import { ManagementGroupsAPI                     } from "@azure/arm-managementgroups"       ;
 import { TokenCredential                         } from "@azure/identity"                   ;
-import { AzureManagementGroups } from "../AzureManagementGroups";
+import { AzureManagementGroups, EntityNodeTransform } from "../AzureManagementGroups";
 
 export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     private readonly managementGroupsAPI: ManagementGroupsAPI;
@@ -58,7 +58,8 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                     {
                         tenant,
                         // managementGroups: managementGroups.map(p => ({ [`${p.displayName}`]: p.id })),
-                        managementGroupsHierarchy
+                        managementGroupsHierarchy,
+                        dd: new EntityNodeTransform().resolve(managementGroupsHierarchy!)
                     },
                     new Date()
                 );

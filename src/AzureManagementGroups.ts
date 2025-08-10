@@ -24,15 +24,28 @@ export class EntityNode {
 
 export class EntityNodeTransform {
     resolve(node: EntityNode) {
-        const response : any = {};
-        response[`${node.entity.displayName}`] = node.entity;
+        const response: any =  {};
+        
+        response[`${node.entity.displayName}`] = {};
 
         const descendants = node.getDescendants();
-        if (descendants.length > 0) {
-            response.descendants = {};
-            for(const descendant of descendants) {
-                response.descendants[`$${descendant.entity.displayName}`] = this.resolve(descendant);
-            }
+        
+        for (const descendant of descendants) {
+            //this.resolveInt(descendant, response[`${node.entity.displayName}`]);
+            response[`${node.entity.displayName}`][`${descendant.entity.displayName}`] = this.resolveInt(descendant,response[`${node.entity.displayName}`]);
+        }
+
+        return response;
+    }
+
+     resolveInt(node: EntityNode, response:any) {
+
+        response[`${node.entity.displayName}`] = {};
+
+        const descendants = node.getDescendants();
+        
+        for (const descendant of descendants) {
+           response[`${node.entity.displayName}`][`${descendant.entity.displayName}`] = this.resolve(descendant);
         }
 
         return response;
