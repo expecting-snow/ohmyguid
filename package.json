@@ -75,7 +75,7 @@
     "@azure/arm-resourcegraph": "^4.2.1",
     "@azure/arm-resources": "^7.0.0",
     "@azure/arm-subscriptions": "^5.1.0",
-    "@azure/identity": "^4.10.2",
+    "@azure/identity": "^4.11.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
