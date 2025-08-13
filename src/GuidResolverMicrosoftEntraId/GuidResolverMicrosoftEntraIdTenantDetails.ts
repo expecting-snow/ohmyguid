@@ -26,20 +26,10 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
             const managementGroups = [];
             for await (const managementGroup of this.managementGroupsAPI.entities.list({ abortSignal: abortController.signal })) {
-                // if (managementGroup.tenantId !== guid) {
-                //     // not in this tenant
-                //     continue;
-                // }
-                
-                // if (managementGroup.name === guid) {
-                //     // the tenant root
-                //     continue;
-                // }
-
-                // if (managementGroup.parentDisplayNameChain && managementGroup.parentDisplayNameChain.length > 1) {
-                //     // not a top-level
-                //     continue;
-                // }
+                if (managementGroup.tenantId !== guid) {
+                    // not in this tenant
+                    continue;
+                }
 
                 managementGroups.push(managementGroup);
             }
