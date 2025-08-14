@@ -13,7 +13,7 @@ export class GuidResolverResponse {
 }
 
 export type GuidResolverResponseType =
-  'Empty'
+  'Empty' | 'Test'
   | 'Azure Advisor Recommendation'
   | 'Azure Application Insights Instrumentation Key'
   | 'Azure Log Analytics Workspace Customer Id'
