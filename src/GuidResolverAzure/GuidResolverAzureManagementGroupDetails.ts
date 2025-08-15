@@ -19,19 +19,13 @@ private readonly managementGroupsAPI: ManagementGroupsAPI;
                 managementGroups.push(managementGroup);
             }
 
-
-            // if (result.count > 0 && result.data[0].name === guid && result.data[0].properties.displayName) {
-
-            //     abortController.abort();
-
-                return new GuidResolverResponse(
-                    guid,
-                    guid,
-                    'Azure ManagementGroup Details',
-                    managementGroups,
-                    new Date()
-                );
-            // }
+            return new GuidResolverResponse(
+                guid,
+                guid,
+                'Azure ManagementGroup Details',
+                managementGroups,
+                new Date()
+            );
         }
         catch { }
 
