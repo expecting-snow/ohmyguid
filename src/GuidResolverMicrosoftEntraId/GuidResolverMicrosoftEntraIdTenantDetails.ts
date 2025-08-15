@@ -40,7 +40,6 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                 abortController.abort();
 
                 const managementGroupsHierarchy = new AzureManagementGroups().resolveRoot(managementGroups);
-                //const managementGroupsFlat = EntityNodeTransform.resolve(managementGroupsHierarchy!);
                 const managementGroupsFlat = managementGroupsHierarchy?.flatten();
 
 
