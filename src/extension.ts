@@ -1,3 +1,4 @@
+import { AbortController                                                                             } from "@azure/abort-controller"                ;
 import { createOutputChannel                                                                         } from './extensionCreateOutputChannel'         ;
 import { createTelemetryReporter                                                                     } from './extensionCreateTelemetryReporter'     ;
 import { ExtensionContext, window                                                                    } from 'vscode'                                 ;
@@ -30,11 +31,13 @@ export async function activate(context: ExtensionContext) {
     );
 
     const guidCache = registerCache(context, guidResolver, outputChannel);
+    
+    // await guidResolver.init(new AbortController());
 
     await initStaticContent(context, guidCache);
 
     registerGuidCodeLensProvider(context, guidCache                                                   );
-    registerCommandRefresh      (context, guidCache                                                   );
+    registerCommandRefresh      (context, guidCache, tokenCredential                                  );
     registerCommandInfo         (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     registerCommandOpenLink     (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
     registerCommandLookup       (context, guidCache, tokenCredential, outputChannel, telemetryReporter);
