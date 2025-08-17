@@ -1,14 +1,13 @@
 
 import { CachingAzureCliCredential                                                                           } from './CachingAzureCliCredential'     ;
 import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri,  window, workspace } from 'vscode'                          ;
+import { Events                                                                                              } from './Events'       ;
 import { GuidCache                                                                                           } from './GuidCache'                     ;
 import { GuidLinkProvider                                                                                    } from './GuidLinkProvider'              ;
 import { GuidResolverResponse                                                                                } from './Models/GuidResolverResponse'   ;
 import { GuidResolverResponseToTempFile                                                                      } from './GuidResolverResponseToTempFile';
 import { initStaticContent                                                                                   } from './extensionStaticContent'        ;
 import { jwtDecode                                                                                           } from "jwt-decode"                      ;
-import { TelemetryReporter                                                                                   } from '@vscode/extension-telemetry'     ;
-import { TelemetryReporterEvents                                                                             } from './TelemetryReporterEvents'       ;
 import { TokenCredential                                                                                     } from '@azure/identity'                 ;
 
 const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -17,8 +16,7 @@ export function registerCommandOpenLink(
     context           : ExtensionContext,
     guidCache         : GuidCache,
     tokenCredential   : TokenCredential,
-    outputChannel     : OutputChannel,
-    telemetryReporter : TelemetryReporter
+    outputChannel     : OutputChannel
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.openLink',
@@ -27,7 +25,7 @@ export function registerCommandOpenLink(
 
                 const resolutionType = 'details';
 
-                return handle(value, guidCache, tokenCredential, outputChannel, telemetryReporter, resolutionType);
+                return handle(value, guidCache, tokenCredential, outputChannel, resolutionType);
             }
         )
     );
@@ -48,7 +46,12 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
     );
 }
 
-export function registerCommandInfo(context: ExtensionContext, guidCache: GuidCache, tokenCredential: TokenCredential, outputChannel: OutputChannel, telemetryReporter: TelemetryReporter) {
+export function registerCommandInfo(
+    context: ExtensionContext,
+    guidCache: GuidCache,
+    tokenCredential: TokenCredential,
+    outputChannel: OutputChannel
+) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.info',
             async () => {
@@ -137,8 +140,7 @@ export function registerCommandLookup(
     context          : ExtensionContext,
     guidCache        : GuidCache,
     tokenCredential  : TokenCredential,
-    outputChannel    : OutputChannel,
-    telemetryReporter: TelemetryReporter
+    outputChannel    : OutputChannel
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.lookup',
@@ -178,7 +180,7 @@ export function registerCommandLookup(
 
                 if (guidResolverResponse) {
                     const resolutionType = '';
-                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, telemetryReporter, resolutionType);
+                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, resolutionType);
                 } else {
                     window.showErrorMessage(`${context.extension.id} - ERROR - '${guid}'`);
                 }
@@ -192,7 +194,6 @@ async function handle(
     guidCache        : GuidCache,
     tokenCredential  : TokenCredential,
     outputChannel    : OutputChannel,
-    telemetryReporter: TelemetryReporter,
     resolutionType   : '' | 'details'
 ) {
     const guidResolverResponseToTempFile = new GuidResolverResponseToTempFile(
@@ -200,18 +201,15 @@ async function handle(
         guid => guidCache.getResolvedOrEnqueuePromise(guid),
         GuidLinkProvider.resolveLink,
         (error: string) => {
-            outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-            telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.export, { error: 'omg-c34c9a5a'});
+            outputChannel.appendLine(`${Events.export} : ${error}`);
         }
     );
 
     const { guidResolverResponse, filePath, error } = await guidResolverResponseToTempFile.toTempFile(value, resolutionType, tokenCredential);
 
     if (error) {
-        outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-        window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
-
-        telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.export, { error: 'omg-b8334565' });
+        outputChannel.appendLine(`${Events.export} : ${error}`);
+        window.showErrorMessage(`${Events.export}  : ${error}`);
 
         const cachedFileFalllback = guidResolverResponseToTempFile.getTempFileUri(guidResolverResponse);
 
@@ -220,16 +218,15 @@ async function handle(
             await window.showTextDocument(cachedDoc, { preview: false });
         }
         else{
-            window.showErrorMessage(`${TelemetryReporterEvents.export}  : ${error}`);
+            window.showErrorMessage(`${Events.export}  : ${error}`);
         }
     }
     else if (filePath) {
-        outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${filePath}`);
+        outputChannel.appendLine(`${Events.export} : ${filePath}`);
         const doc = await workspace.openTextDocument(Uri.file(filePath));
         await window.showTextDocument(doc, { preview: false });
     }
     else {
-        outputChannel.appendLine(`${TelemetryReporterEvents.export} : ${error}`);
-        telemetryReporter.sendTelemetryErrorEvent(TelemetryReporterEvents.export, { error: 'omg-4c7b7b7b' });
+        outputChannel.appendLine(`${Events.export} : ${error}`);
     }
 }
