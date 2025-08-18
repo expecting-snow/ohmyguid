@@ -83,7 +83,7 @@
     "@azure/identity": "^4.11.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@types/mocha": "^10.0.10",
-    "@types/node": "24.2.1",
+    "@types/node": "24.3.0",
     "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
