@@ -1,7 +1,8 @@
 
 import { CachingAzureCliCredential                                                                           } from './CachingAzureCliCredential'     ;
 import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri,  window, workspace } from 'vscode'                          ;
-import { Events                                                                                              } from './Events'       ;
+import { Events                                                                                              } from './Events'                        ;
+import { EOL                                                                                                 } from 'os'                              ;
 import { GuidCache                                                                                           } from './GuidCache'                     ;
 import { GuidLinkProvider                                                                                    } from './GuidLinkProvider'              ;
 import { GuidResolverResponse                                                                                } from './Models/GuidResolverResponse'   ;
@@ -204,6 +205,25 @@ async function handle(
             outputChannel.appendLine(`${Events.export} : ${error}`);
         }
     );
+    
+    // show file loading
+    const tempFileUri = guidResolverResponseToTempFile.getTempFileUri(value);
+    if (tempFileUri.uri) {
+        const fileContent = Buffer.from(
+            '-------------------------------------------------------------' + EOL +
+            '|                                                           |' + EOL +
+            '|                          LOADING                          |' + EOL +
+            '|                                                           |' + EOL +
+            '-------------------------------------------------------------' + EOL + EOL +
+            JSON.stringify(value, null, 2),
+            'utf8'
+        );
+
+        // missing directories are created automatically
+        await workspace.fs.writeFile(tempFileUri.uri, fileContent);
+        const textDocument = await workspace.openTextDocument(tempFileUri.uri);
+        await window.showTextDocument(textDocument, { preview: false });
+    }
 
     const { guidResolverResponse, filePath, error } = await guidResolverResponseToTempFile.toTempFile(value, resolutionType, tokenCredential);
 
@@ -211,10 +231,10 @@ async function handle(
         outputChannel.appendLine(`${Events.export} : ${error}`);
         window.showErrorMessage(`${Events.export}  : ${error}`);
 
-        const cachedFileFalllback = guidResolverResponseToTempFile.getTempFileUri(guidResolverResponse);
+        const cachedFileFallback = guidResolverResponseToTempFile.getTempFileUri(guidResolverResponse);
 
-        if (!cachedFileFalllback.error && cachedFileFalllback.uri) {
-            const cachedDoc = await workspace.openTextDocument(cachedFileFalllback.uri);
+        if (!cachedFileFallback.error && cachedFileFallback.uri) {
+            const cachedDoc = await workspace.openTextDocument(cachedFileFallback.uri);
             await window.showTextDocument(cachedDoc, { preview: false });
         }
         else{
