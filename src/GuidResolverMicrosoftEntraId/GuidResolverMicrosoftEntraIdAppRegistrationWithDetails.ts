@@ -12,8 +12,9 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
     private readonly guidResolverMicrosoftEntraIdServicePrincipalClientId : GuidResolverMicrosoftEntraIdServicePrincipalClientId;
 
     constructor(
-        private readonly onResponse     : (guidResolverResponse: GuidResolverResponse) => void,
-        private readonly onToBeResolved : (guid                : string              ) => void,
+        private readonly onResponse      : (guidResolverResponse: GuidResolverResponse) => void,
+        private readonly onToBeResolved  : (guid                : string              ) => void,
+        private readonly onProgressUpdate: (value               : string              ) => void,
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential); 
@@ -26,8 +27,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
         try {
             const application                  = await this.guidResolverMicrosoftEntraIdAppRegistration        .resolve(guid, new AbortController())
                                               ?? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(guid, new AbortController());
-            const owners                       = await this.resolveAll(`/applications/${guid}/owners`                      , this.onResponse, _ => _                                                              , this.onToBeResolved, new AbortController());
-            const federatedIdentityCredentials = await this.resolveAll(`/applications/${guid}/federatedIdentityCredentials`, this.onResponse, _ => this.mapToTypeApplicationFederatedIdentityCredentials(guid, _) , this.onToBeResolved, new AbortController());
+            const owners                       = await this.resolveAll(`/applications/${guid}/owners`                      , this.onResponse, _ => _                                                              , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const federatedIdentityCredentials = await this.resolveAll(`/applications/${guid}/federatedIdentityCredentials`, this.onResponse, _ => this.mapToTypeApplicationFederatedIdentityCredentials(guid, _) , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 
             if (application && application.displayName) {
 

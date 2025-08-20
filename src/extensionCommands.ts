@@ -197,9 +197,20 @@ async function handle(
     outputChannel    : OutputChannel,
     resolutionType   : '' | 'details'
 ) {
+    let status =  '-------------------------------------------------------------' + EOL +
+                  '|                                                           |' + EOL +
+                  '|                          LOADING                          |' + EOL +
+                  '|                                                           |' + EOL +
+                  '-------------------------------------------------------------' + EOL + EOL ;
+
     const guidResolverResponseToTempFile = new GuidResolverResponseToTempFile(
-        res => guidCache.update(res.guid, res),
-        guid => guidCache.getResolvedOrEnqueuePromise(guid),
+        res   => guidCache.update(res.guid, res),
+        guid  => guidCache.getResolvedOrEnqueuePromise(guid),
+        value => {
+            status += EOL + value;
+            console.clear();
+            console.log(status);
+        },
         GuidLinkProvider.resolveLink,
         (error: string) => {
             outputChannel.appendLine(`${Events.export} : ${error}`);
