@@ -2,9 +2,9 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Azure and Microsoft Entra ID guids look up",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "engines": {
-    "vscode": "^1.102.0"
+    "vscode": "^1.103.0"
   },
   "icon": "images/icon.png",
   "publisher": "expecting-snow",
