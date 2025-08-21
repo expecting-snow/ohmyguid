@@ -197,54 +197,54 @@ async function handle(
     outputChannel    : OutputChannel,
     resolutionType   : '' | 'details'
 ) {
-    let status =  '-------------------------------------------------------------' + EOL +
-                  '|                                                           |' + EOL +
-                  '|                          LOADING                          |' + EOL +
-                  '|                                                           |' + EOL +
-                  '-------------------------------------------------------------' + EOL + EOL ;
+
+    const progressUpdates: string[] = [
+        '-------------------------------------------------------------',
+        '|                                                           |',
+        '|                          LOADING                          |',
+        '|                                                           |',
+        '-------------------------------------------------------------',
+        EOL
+    ];
 
     const guidResolverResponseToTempFile = new GuidResolverResponseToTempFile(
-        res   => guidCache.update(res.guid, res),
-        guid  => guidCache.getResolvedOrEnqueuePromise(guid),
-        value => {
-            status += EOL + value;
-            console.clear();
-            console.log(status);
+        res  => guidCache.update(res.guid, res),
+        guid => guidCache.getResolvedOrEnqueuePromise(guid),
+        async valueProgress => {
+            if (tempFileUri.uri) {
+                progressUpdates.push(valueProgress);
+
+                const content = Buffer.from(progressUpdates.join(EOL) + EOL + EOL + JSON.stringify(value, null, 2), 'utf8');
+
+                await workspace.fs.writeFile(tempFileUri.uri, content);
+                const textDocument = await workspace.openTextDocument(tempFileUri.uri);
+                await window.showTextDocument(textDocument, { preview: false });
+            }
         },
         GuidLinkProvider.resolveLink,
         (error: string) => {
             outputChannel.appendLine(`${Events.export} : ${error}`);
         }
     );
-    
+
     // show file loading
     const tempFileUri = guidResolverResponseToTempFile.getTempFileUri(value);
     if (tempFileUri.uri) {
-        const fileContent = Buffer.from(
-            '-------------------------------------------------------------' + EOL +
-            '|                                                           |' + EOL +
-            '|                          LOADING                          |' + EOL +
-            '|                                                           |' + EOL +
-            '-------------------------------------------------------------' + EOL + EOL +
-            JSON.stringify(value, null, 2),
-            'utf8'
-        );
+        const content = Buffer.from(progressUpdates.join(EOL) + EOL + EOL + JSON.stringify(value, null, 2), 'utf8');
 
-        await workspace.fs.writeFile(tempFileUri.uri, fileContent);
+        await workspace.fs.writeFile(tempFileUri.uri, content);
         const textDocument = await workspace.openTextDocument(tempFileUri.uri);
         await window.showTextDocument(textDocument, { preview: false });
+        
     }
 
     const { guidResolverResponse, filePath, error } = await guidResolverResponseToTempFile.toTempFile(value, resolutionType, tokenCredential);
 
     // show file loading - update temp file
     if (tempFileUri.uri) {
-        const fileContent = Buffer.from(
-            JSON.stringify(value, null, 2),
-            'utf8'
-        );
+        const content = Buffer.from(JSON.stringify(value, null, 2), 'utf8');
 
-        await workspace.fs.writeFile(tempFileUri.uri, fileContent);
+        await workspace.fs.writeFile(tempFileUri.uri, content);
         const textDocument = await workspace.openTextDocument(tempFileUri.uri);
         await window.showTextDocument(textDocument, { preview: false });
 
@@ -266,8 +266,10 @@ async function handle(
         }
     }
     else if (filePath) {
+        const uri = Uri.file(filePath);
+
         outputChannel.appendLine(`${Events.export} : ${filePath}`);
-        const doc = await workspace.openTextDocument(Uri.file(filePath));
+        const doc = await workspace.openTextDocument(uri);
         await window.showTextDocument(doc, { preview: false });
     }
     else {
