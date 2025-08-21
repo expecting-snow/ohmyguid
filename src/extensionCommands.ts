@@ -1,15 +1,15 @@
 
-import { CachingAzureCliCredential                                                                           } from './CachingAzureCliCredential'     ;
-import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Uri,  window, workspace } from 'vscode'                          ;
-import { Events                                                                                              } from './Events'                        ;
-import { EOL                                                                                                 } from 'os'                              ;
-import { GuidCache                                                                                           } from './GuidCache'                     ;
-import { GuidLinkProvider                                                                                    } from './GuidLinkProvider'              ;
-import { GuidResolverResponse                                                                                } from './Models/GuidResolverResponse'   ;
-import { GuidResolverResponseToTempFile                                                                      } from './GuidResolverResponseToTempFile';
-import { initStaticContent                                                                                   } from './extensionStaticContent'        ;
-import { jwtDecode                                                                                           } from "jwt-decode"                      ;
-import { TokenCredential                                                                                     } from '@azure/identity'                 ;
+import { CachingAzureCliCredential                                                                                              } from './CachingAzureCliCredential'     ;
+import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Tab, TabInputText, Uri,  window, workspace } from 'vscode'                          ;
+import { Events                                                                                                                 } from './Events'                        ;
+import { EOL                                                                                                                    } from 'os'                              ;
+import { GuidCache                                                                                                              } from './GuidCache'                     ;
+import { GuidLinkProvider                                                                                                       } from './GuidLinkProvider'              ;
+import { GuidResolverResponse                                                                                                   } from './Models/GuidResolverResponse'   ;
+import { GuidResolverResponseToTempFile                                                                                         } from './GuidResolverResponseToTempFile';
+import { initStaticContent                                                                                                      } from './extensionStaticContent'        ;
+import { jwtDecode                                                                                                              } from "jwt-decode"                      ;
+import { TokenCredential                                                                                                        } from '@azure/identity'                 ;
 
 const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
@@ -230,13 +230,26 @@ async function handle(
             'utf8'
         );
 
-        // missing directories are created automatically
         await workspace.fs.writeFile(tempFileUri.uri, fileContent);
         const textDocument = await workspace.openTextDocument(tempFileUri.uri);
         await window.showTextDocument(textDocument, { preview: false });
     }
 
     const { guidResolverResponse, filePath, error } = await guidResolverResponseToTempFile.toTempFile(value, resolutionType, tokenCredential);
+
+    // show file loading - update temp file
+    if (tempFileUri.uri) {
+        const fileContent = Buffer.from(
+            JSON.stringify(value, null, 2),
+            'utf8'
+        );
+
+        await workspace.fs.writeFile(tempFileUri.uri, fileContent);
+        const textDocument = await workspace.openTextDocument(tempFileUri.uri);
+        await window.showTextDocument(textDocument, { preview: false });
+
+        await closeFileIfOpen(tempFileUri.uri);
+    }
 
     if (error) {
         outputChannel.appendLine(`${Events.export} : ${error}`);
@@ -259,5 +272,13 @@ async function handle(
     }
     else {
         outputChannel.appendLine(`${Events.export} : ${error}`);
+    }
+}
+
+async function closeFileIfOpen(file: Uri): Promise<void> {
+    const tabs: Tab[] = window.tabGroups.all.map(tg => tg.tabs).flat();
+    const tabIndex = tabs.findIndex(tab => tab.input instanceof TabInputText && tab.input.uri.path === file.path);
+    if (tabIndex !== -1) {
+        await window.tabGroups.close(tabs[tabIndex]);
     }
 }

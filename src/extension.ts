@@ -1,4 +1,3 @@
-import { AbortController                                                                             } from "@azure/abort-controller"                ;
 import { createOutputChannel                                                                         } from './extensionCreateOutputChannel'         ;
 import { ExtensionContext, window                                                                    } from 'vscode'                                 ;
 import { GuidResolver                                                                                } from './GuidResolver'                         ;
