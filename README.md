@@ -25,18 +25,21 @@ in
 
 files.
 
+Please report bugs/findings/requests at
+
+- [GitHub Issues](https://github.com/expecting-snow/ohmyguid/issues)
+- [Visual Studio Maketplace Reviews](https://marketplace.visualstudio.com/items?itemName=expecting-snow.ohmyguid&ssr=false#review-details)
+
+as this extension collects !!!NO!!! telemetry.
+
+All and any feedback is welcome.
+
 ## Features
 
 Use the command 'OhMyGuid: LookUp' to enter a guid and look it up.
 
-## Telemetry
+Use the command 'OhMyGuid: Refresg' when switching Microsoft Entra ID tenants.
 
-Telemetry collecting follows guidelines in [Telemetry extension authors guide](https://code.visualstudio.com/api/extension-guides/telemetry) using [@vscode/extension-telemetry](https://www.npmjs.com/package/@vscode/extension-telemetry).
-
-Configure the `telemetry.telemetryLevel` in [user settings](vscode://settings/telemetry.telemetryLevel).
- 
-
-Dump of all Visual Studio Code telemetry on the command line with `code --telemetry`.
 
 
 ## Requirements

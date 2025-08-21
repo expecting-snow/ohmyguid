@@ -8,8 +8,9 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
 
     private readonly guidResolverMicrosoftEntraIdUser: GuidResolverMicrosoftEntraIdUser;
     constructor(
-        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
-        private readonly onToBeResolved : (guid                 : string              ) => void,
+        private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved  : (guid                 : string              ) => void,
+        private readonly onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential); 
@@ -19,11 +20,11 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.guidResolverMicrosoftEntraIdUser.resolve(guid, new AbortController());
-            const memberOf           = await this.resolveAll(`/users/${guid}/memberOf`          , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
-            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, abortController);
-            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
-            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, abortController);
-            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
+            const memberOf           = await this.resolveAll(`/users/${guid}/memberOf`          , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, abortController);
+            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
 
             if (response && response.displayName) {
                 

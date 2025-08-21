@@ -32,6 +32,7 @@ export class GuidResolverMicrosoftEntraIdBase {
         onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         mapper          : (response             : any                 ) => any,
         onToBeResolved  : (guid                 : string              ) => void,
+        onProgressUpdate: (value                : string              ) => void,
         abortController : AbortController,
         defaultVersion? : string
     ): Promise<any[] | undefined> {
@@ -40,12 +41,19 @@ export class GuidResolverMicrosoftEntraIdBase {
 
             const client = this.getClient(abortController, defaultVersion);
 
+            onProgressUpdate(url);
+            let counter = 0;
+
             const response: PageCollection = await client.api(url).get();
 
             const callback: PageIteratorCallback = (item: any) => {
-                 this.processResponses(mapper(item), onResponse, onToBeResolved);
-                 collection.push(item); 
-                 return true;
+                counter++;
+                if (counter % 50 === 0) {
+                    onProgressUpdate(url + ' ' + '.'.repeat(counter / 50));
+                }
+                this.processResponses(mapper(item), onResponse, onToBeResolved);
+                collection.push(item);
+                return true;
             };
 
             const pageIterator = new PageIterator(client, response, callback);

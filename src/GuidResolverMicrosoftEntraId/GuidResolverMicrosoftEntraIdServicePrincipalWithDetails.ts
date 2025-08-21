@@ -13,8 +13,9 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
     private readonly guidResolverMicrosoftEntraIdAppRegistrationClientId  : GuidResolverMicrosoftEntraIdAppRegistrationClientId;
     
     constructor(
-        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
-        private readonly onToBeResolved : (guid                 : string              ) => void,
+        private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved  : (guid                 : string              ) => void,
+        private readonly onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential); 
@@ -27,10 +28,10 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
         try {
             const servicePrincipal   = await this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, new AbortController())
                                     ?? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, new AbortController());
-            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, abortController);
-            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
-            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
-            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, abortController);
+            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, abortController);
+            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
 
             if (servicePrincipal && servicePrincipal.displayName) {
 
