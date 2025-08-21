@@ -23,7 +23,7 @@ export class GuidResolverMicrosoftEntraIdBase {
                 ]
             }
             ),
-            defaultVersion: defaultVersion || 'v1.0',
+            defaultVersion: defaultVersion || 'beta' || 'v1.0',
         });
     }
 
