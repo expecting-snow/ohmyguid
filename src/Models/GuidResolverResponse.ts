@@ -32,6 +32,7 @@ export type GuidResolverResponseType =
   | 'Microsoft Entra ID AppRegistration'
   | 'Microsoft Entra ID AppRegistration FederatedIdentityCredential'
   | 'Microsoft Entra ID AppRoleDefinition'
+  | 'Microsoft Entra ID ClaimIssuancePolicy'
   | 'Microsoft Entra ID DirectoryRole'
   | 'Microsoft Entra ID Group Details'
   | 'Microsoft Entra ID Group'
