@@ -138,10 +138,10 @@ export function registerCommandInfo(
 }
 
 export function registerCommandLookup(
-    context          : ExtensionContext,
-    guidCache        : GuidCache,
-    tokenCredential  : TokenCredential,
-    outputChannel    : OutputChannel
+    context         : ExtensionContext,
+    guidCache       : GuidCache,
+    tokenCredential : TokenCredential,
+    outputChannel   : OutputChannel
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.lookup',
