@@ -15,6 +15,10 @@ export interface IGuidResolverInits {
     resolve(abortController: AzureAbortController): Promise<void>;
 }
 
+export interface IMicrosoftEntraIdInits {
+    resolve(abortController: AbortController): Promise<void>;
+}
+
 export class GuidResolver implements IGuidResolver {
         private readonly guidResolverAzure           : GuidResolverAzure           ;
         private readonly guidResolverMicrosoftEntraId: GuidResolverMicrosoftEntraId;
@@ -22,11 +26,12 @@ export class GuidResolver implements IGuidResolver {
     constructor(
         onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         onToBeResolved  : (guid                 : string              ) => void,
+        onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential,
         callbackError: (error: string) => void
     ) { 
-        this.guidResolverAzure            = new GuidResolverAzure           (onResponse, onToBeResolved, tokenCredential, callbackError);
-        this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(onResponse, onToBeResolved, tokenCredential, callbackError);
+        this.guidResolverAzure            = new GuidResolverAzure           (onResponse, onToBeResolved,                   tokenCredential, callbackError);
+        this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(onResponse, onToBeResolved, onProgressUpdate, tokenCredential, callbackError);
     }
 
     async resolve(guid: string): Promise<GuidResolverResponse | undefined> {
@@ -41,7 +46,11 @@ export class GuidResolver implements IGuidResolver {
             ?? await promiseAzure;
     }
 
-    async init(abortController: AzureAbortController): Promise<void> {
-        await this.guidResolverAzure.init(abortController);
+    async init(abortController: AbortController): Promise<void> {
+        const azureAbortController = new AzureAbortController();
+        abortController.signal.addEventListener('abort', () => azureAbortController.abort());
+
+        await this.guidResolverAzure           .init(azureAbortController);
+        await this.guidResolverMicrosoftEntraId.init(abortController);
     }
 }

@@ -38,6 +38,11 @@
         "command": "ohmyguid.info",
         "title": "Info",
         "category": "OhMyGuid"
+      },
+      {
+        "command": "ohmyguid.preLoad",
+        "title": "PreLoad",
+        "category": "OhMyGuid"
       }
     ],
     "codeLens": [

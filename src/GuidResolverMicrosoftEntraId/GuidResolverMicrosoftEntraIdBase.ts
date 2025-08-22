@@ -126,7 +126,7 @@ export class GuidResolverMicrosoftEntraIdBase {
                             onToBeResolved(item.resourceId);
                         }
                     }
-                }   
+                }
             }
             else if (response['@odata.type'] === '#microsoft.graph.servicePrincipal' || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#servicePrincipals/$entity' || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#servicePrincipals/$entity') {
                 onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ServicePrincipal', response, new Date()));
