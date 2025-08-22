@@ -12,8 +12,9 @@ export interface IGuidResolverAzure {
 }
 
 export interface IGuidResolverInits {
-    resolve( abortController: AzureAbortController): Promise<void>;
+    resolve(abortController: AzureAbortController): Promise<void>;
 }
+
 export class GuidResolver implements IGuidResolver {
         private readonly guidResolverAzure           : GuidResolverAzure           ;
         private readonly guidResolverMicrosoftEntraId: GuidResolverMicrosoftEntraId;
