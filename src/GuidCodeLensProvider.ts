@@ -12,7 +12,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
     ) { }
 
     provideCodeLenses(document: TextDocument): GuidCodeLens[] {
-        const codeLenses = new Map<string, GuidCodeLens>();
+        const codeLenses : GuidCodeLens[] = [];
         const text = document.getText();
 
         while (true) {
@@ -32,11 +32,6 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                 )
             );
 
-            if(codeLenses.has(guid)) {
-                // Skip if already added
-                continue;
-            }
-
             if (response) {
                 codeLens.command = {
                     title: this.renderer.render(response) || '',
@@ -44,11 +39,11 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                     arguments: [ response ]
                 };
                 
-                codeLenses.set(guid, codeLens);
+                codeLenses.push(codeLens);
             }
         }
 
-        return [...codeLenses.values()];
+        return codeLenses;
     }
 
     async resolveCodeLens(codeLens: GuidCodeLens, token: CancellationToken) : Promise<GuidCodeLens> {
