@@ -1,6 +1,7 @@
 import { CancellationToken, CodeLens, CodeLensProvider, Command, Range, TextDocument } from 'vscode';
 import { GuidCache                                                                   } from './GuidCache';
 import { GuidResolverResponseRenderer                                                } from "./GuidResolverResponseRenderer";
+import { GuidResolverResponse                                                        } from './Models/GuidResolverResponse';
 
 export class GuidCodeLensProvider implements CodeLensProvider {
 
@@ -12,6 +13,8 @@ export class GuidCodeLensProvider implements CodeLensProvider {
     ) { }
 
     provideCodeLenses(document: TextDocument): GuidCodeLens[] {
+        console.log('provideCodeLenses ' + new Date().toISOString());
+
         const codeLenses : GuidCodeLens[] = [];
         const text = document.getText();
 
@@ -22,24 +25,48 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
             const guid = match[0];
 
-            const response = this.guidCache.getResolvedOrEnqueuePromise(guid);
+            if(guid === GuidResolverResponse.EMPTY_GUID) {
+                continue;
+            }
 
-            const codeLens = new GuidCodeLens(
-                guid,
-                new Range(
-                    document.positionAt(match.index),
-                    document.positionAt(match.index + guid.length)
-                )
-            );
+            const response = this.guidCache.getResolved(guid);
 
             if (response) {
-                codeLens.command = {
-                    title: this.renderer.render(response) || '',
-                    command: 'ohmyguid.openLink',
-                    arguments: [ response ]
-                };
-                
-                codeLenses.push(codeLens);
+                if (response.type === 'Not Found') {
+                    continue;
+                }
+
+                if (response.type === 'Empty') {
+                    continue;
+                }
+
+                codeLenses.push(
+                    new GuidCodeLens(
+                        guid,
+                        new Range(
+                            document.positionAt(match.index),
+                            document.positionAt(match.index + guid.length)
+                        ),
+                        {
+                            title: this.renderer.render(response) || '',
+                            command: 'ohmyguid.openLink',
+                            arguments: [response]
+                        }
+                    )
+                );
+            }
+            else{
+                this.guidCache.enqueuePromise(guid);
+
+                codeLenses.push(
+                    new GuidCodeLens(
+                        guid,
+                        new Range(
+                            document.positionAt(match.index),
+                            document.positionAt(match.index + guid.length)
+                        )
+                    )
+                );
             }
         }
 
@@ -47,9 +74,21 @@ export class GuidCodeLensProvider implements CodeLensProvider {
     }
 
     async resolveCodeLens(codeLens: GuidCodeLens, token: CancellationToken) : Promise<GuidCodeLens> {
+        console.log('resolveCodeLens ' + codeLens.guid);
+
         const promise = this.guidCache.getResolvedOrResolvePromise(codeLens.guid);
         if (promise) {
             const resolvedValue = await promise;
+
+            if (resolvedValue && resolvedValue.type === 'Not Found') {
+                codeLens.command = {
+                    title: '',
+                    command: '',
+                    arguments: []
+                };
+
+                return codeLens;
+            }
 
             if (resolvedValue) {
                 codeLens.command = {

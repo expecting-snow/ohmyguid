@@ -20,12 +20,12 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.guidResolverMicrosoftEntraIdGroup.resolve(guid, new AbortController());
-            const owners             = await this.resolveAll(`/groups/${guid}/owners`            , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const members            = await this.resolveAll(`/groups/${guid}/members`           , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const memberOf           = await this.resolveAll(`/groups/${guid}/memberOf`          , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const transitiveMemberOf = await this.resolveAll(`/groups/${guid}/transitiveMemberOf`, this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const transitiveMembers  = await this.resolveAll(`/groups/${guid}/transitiveMembers` , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const owners             = await this.resolveAll(`/groups/${guid}/owners`            , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController        );
+            const members            = await this.resolveAll(`/groups/${guid}/members`           , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController, 'beta');
+            const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment , this.onToBeResolved, this.onProgressUpdate, abortController        );
+            const memberOf           = await this.resolveAll(`/groups/${guid}/memberOf`          , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController        );
+            const transitiveMemberOf = await this.resolveAll(`/groups/${guid}/transitiveMemberOf`, this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController        );
+            const transitiveMembers  = await this.resolveAll(`/groups/${guid}/transitiveMembers` , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, abortController, 'beta');
 
             if (response && response.displayName) {
 

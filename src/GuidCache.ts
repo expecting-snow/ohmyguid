@@ -28,21 +28,24 @@ export class GuidCache {
             return GuidResolverResponse.EMPTY_RESPONSE;
         }
 
-        return this.memento.get<GuidResolverResponse>(guidTransformed);
-    }
-
-    getResolvedOrEnqueuePromise(guid: string): GuidResolverResponse | undefined {
-        const response = this.getResolved(guid);
+        const response = this.memento.get<GuidResolverResponse>(guidTransformed);
 
         if (response) {
-            return response;
+            this.callbackInfo(`${guidTransformed} - getResolved - in cache`);
+        }
+        else {
+            this.callbackInfo(`${guidTransformed} - getResolved - not in cache`);
         }
 
+        return response;
+    }
+
+    enqueuePromise(guid: string): void {
         const guidTransformed = this.guidTransform(guid);
 
-        if (!this.cache.has(guidTransformed)) {
-            this.callbackInfo(`${guidTransformed} - set`);
+        this.callbackInfo(`${guidTransformed} - enqueue`);
 
+        if (!this.cache.has(guidTransformed)) {
             this.cache.set(
                 guidTransformed, 
                 this.guidResolver.resolve(guidTransformed)
@@ -51,7 +54,8 @@ export class GuidCache {
                                         if (resolvedValue) {
                                              this.update(guidTransformed, resolvedValue);
                                          } else {
-                                             this.callbackInfo(`${guidTransformed} - NOT FOUND`);
+                                             this.callbackInfo(`${guidTransformed} - enqueue     - NOT FOUND`);
+                                             this.update(guidTransformed, new GuidResolverResponse(guidTransformed, 'Not Found', 'Not Found', {}, new Date()));
                                          }
                                          
                                          this.cache.delete(guidTransformed);
@@ -61,6 +65,16 @@ export class GuidCache {
                                  )
             );
         }
+    }
+
+    getResolvedOrEnqueuePromise(guid: string): GuidResolverResponse | undefined {
+        const response = this.getResolved(guid);
+
+        if (response) {
+            return response;
+        }
+
+        this.enqueuePromise(guid);
 
         return undefined;
     }
@@ -124,7 +138,7 @@ export class GuidCache {
             return;
         }
 
-        this.callbackInfo(`${guidTransformed} - ${guidResolverResponse.type} - ${guidResolverResponse.displayName}`);
+        this.callbackInfo(`${guidTransformed} - update      - ${guidResolverResponse.type} - ${guidResolverResponse.displayName}`);
         this.memento.update(guidTransformed, guidResolverResponse);
     }
 
