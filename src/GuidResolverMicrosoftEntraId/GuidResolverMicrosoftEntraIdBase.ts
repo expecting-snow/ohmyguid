@@ -34,7 +34,8 @@ export class GuidResolverMicrosoftEntraIdBase {
         onToBeResolved  : (guid                 : string              ) => void,
         onProgressUpdate: (value                : string              ) => void,
         abortController : AbortController,
-        defaultVersion? : string
+        defaultVersion? : string,
+        returnCollection?: boolean
     ): Promise<any[] | undefined> {
         try {
             var collection: any[] = [];
@@ -52,7 +53,10 @@ export class GuidResolverMicrosoftEntraIdBase {
                     onProgressUpdate(url + ' ' + '.'.repeat(counter / 50));
                 }
                 this.processResponses(mapper(item), onResponse, onToBeResolved);
-                collection.push(item);
+                
+                if(returnCollection !== false){
+                    collection.push(item);
+                }
                 return true;
             };
 
@@ -60,7 +64,9 @@ export class GuidResolverMicrosoftEntraIdBase {
 
             await pageIterator.iterate();
 
-            return collection;
+            if (returnCollection !== false) {
+                return collection;
+            }
         } catch (e: any) {
             console.error(`Error ${url} ${e.message}`);
         }
@@ -131,9 +137,16 @@ export class GuidResolverMicrosoftEntraIdBase {
                             }
                         ]
                     */
-                    const resourceIds = Array.from(new Set(response.appRoleAssignments.select((p: any) => p.resourceId).filter((p: any) => p)));
+                    const resourceIds = Array.from(
+                        new Set<string>(
+                            response.appRoleAssignments
+                                .select((p: any) => p.resourceId)
+                                .filter((p: any) => p)
+                                .map((p: any) => `${p}`)
+                        )
+                    );
 
-                    for (const resourceId of response.resourceIds) {
+                    for (const resourceId of resourceIds) {
                         onToBeResolved(resourceId);
                     }
                 }

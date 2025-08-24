@@ -8,12 +8,12 @@ import { GuidResolverAzureSubscription                          } from "./GuidRe
 import { GuidResolverAzureSubscriptions                         } from "./GuidResolverAzureSubscriptions"                        ;
 import { GuidResolverAzureTag                                   } from "./GuidResolverAzureTag"                                  ;
 import { GuidResolverResponse                                   } from "../Models/GuidResolverResponse"                          ;
-import { IGuidResolverAzure, IGuidResolverInits                 } from "../GuidResolver"                                         ;
+import { IGuidResolverAzure, IGuidResolverInitsAzure            } from "../GuidResolver"                                         ;
 import { TokenCredential                                        } from "@azure/identity"                                         ;
 
 export class GuidResolverAzure {
-    private readonly guidResolvers    : IGuidResolverAzure[];
-    private readonly guidResolverInits: IGuidResolverInits[];
+    private readonly guidResolvers    : IGuidResolverAzure     [];
+    private readonly guidResolverInits: IGuidResolverInitsAzure[];
 
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,

@@ -11,11 +11,11 @@ export interface IGuidResolverAzure {
     resolve(guid: string, abortController: AzureAbortController): Promise<GuidResolverResponse | undefined>;
 }
 
-export interface IGuidResolverInits {
+export interface IGuidResolverInitsAzure {
     resolve(abortController: AzureAbortController): Promise<void>;
 }
 
-export interface IMicrosoftEntraIdInits {
+export interface IGuidResolverInitsMicrosoftEntraId {
     resolve(abortController: AbortController): Promise<void>;
 }
 

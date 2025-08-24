@@ -11,12 +11,12 @@ import { GuidResolverMicrosoftEntraIdTenant                   } from "./GuidReso
 import { GuidResolverMicrosoftEntraIdUser                     } from "./GuidResolverMicrosoftEntraIdUser"                    ;
 import { GuidResolverMicrosoftEntraIdUsers                    } from "./GuidResolverMicrosoftEntraIdUsers"                   ;
 import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse"                        ;
-import { IGuidResolver, IMicrosoftEntraIdInits                } from "../GuidResolver"                                       ;
+import { IGuidResolver, IGuidResolverInitsMicrosoftEntraId    } from "../GuidResolver"                                       ;
 import { TokenCredential                                      } from "@azure/identity"                                       ;
 
 export class GuidResolverMicrosoftEntraId {
     private readonly guidResolvers        : IGuidResolver         [];
-    private readonly microsoftEntraIdInits: IMicrosoftEntraIdInits[];
+    private readonly microsoftEntraIdInits: IGuidResolverInitsMicrosoftEntraId[];
 
     constructor(
         onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
@@ -55,8 +55,12 @@ export class GuidResolverMicrosoftEntraId {
     }
 
     async init(abortController: AbortController): Promise<void> {
-        for (const microsoftEntraIdInit of this.microsoftEntraIdInits) {
-            await microsoftEntraIdInit.resolve(abortController);
+        try {
+            for (const microsoftEntraIdInit of this.microsoftEntraIdInits) {
+                await microsoftEntraIdInit.resolve(abortController);
+            }
+        } catch (e: any) {
+            console.error('GuidResolverMicrosoftEntraId', e);
         }
     }
 }
