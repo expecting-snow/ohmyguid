@@ -10,7 +10,9 @@ import { resolveTokenProvider                                                   
 
 export async function activate(context: ExtensionContext) {
     const outputChannel = createOutputChannel(context);
-    
+
+    outputChannel.appendLine('activate');
+
     process.on('uncaughtException', (err) => {
         console.log(`Uncaught Exception: ${err.message}`);
     });
@@ -18,9 +20,6 @@ export async function activate(context: ExtensionContext) {
     process.on('unhandledRejection', (reason, promise) => {
         console.log(`unhandledRejection: ${reason}`);
     });
-
-
-    outputChannel.appendLine('activate');
 
     const tokenCredential = resolveTokenProvider(outputChannel.appendLine, window.showInformationMessage);
 
@@ -51,5 +50,3 @@ export async function activate(context: ExtensionContext) {
 export function deactivate() {
     window.createOutputChannel('ohmyguid').appendLine('Extension "ohmyguid" - deactivate');
 }
-
-
