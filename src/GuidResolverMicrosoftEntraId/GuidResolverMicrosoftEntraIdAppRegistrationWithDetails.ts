@@ -36,8 +36,6 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                                        ? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(application.object.appId, new AbortController())
                                        : undefined;
 
-                abortController.abort();
-
                 return new GuidResolverResponse(
                     guid,
                     application.displayName,

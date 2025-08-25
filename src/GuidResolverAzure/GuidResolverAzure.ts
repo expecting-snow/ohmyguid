@@ -35,13 +35,15 @@ export class GuidResolverAzure {
             new GuidResolverAzureSubscriptions   (this.onResponse, this.onToBeResolved, tokenCredential, this.callbackError),
         ];
     }
-    
+
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         for (const guidResolver of this.guidResolvers) {
-            const response = await guidResolver.resolve(guid, abortController);
-            if (response) {
-                return response;
-            }
+            try {
+                const response = await guidResolver.resolve(guid, abortController);
+                if (response) {
+                    return response;
+                }
+            } catch { }
         }
         return undefined;
     }

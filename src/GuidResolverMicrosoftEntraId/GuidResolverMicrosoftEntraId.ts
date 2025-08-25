@@ -1,3 +1,4 @@
+import { GuidResolverMicrosoftEntraIdAdminsitrativeUnit       } from "./GuidResolverMicrosoftEntraIdAdminsitrativeUnit";
 import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration"         ;
 import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId" ;
 import { GuidResolverMicrosoftEntraIdAppRegistrations         } from "./GuidResolverMicrosoftEntraIdAppRegistrations"        ;
@@ -33,6 +34,7 @@ export class GuidResolverMicrosoftEntraId {
             new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdGroup                   (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdUser                    (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdAdminsitrativeUnit      (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdDirectoryObject         (onResponse, onToBeResolved, tokenCredential, callbackError),
         ];
 
@@ -43,13 +45,16 @@ export class GuidResolverMicrosoftEntraId {
             new GuidResolverMicrosoftEntraIdServicePrincipals(onResponse, _ => {}, onProgressUpdate, tokenCredential),
         ];
      }
-   
+
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         for (const guidResolver of this.guidResolvers) {
-            const response = await guidResolver.resolve(guid, abortController);
-            if (response) {
-                return response;
+            try {
+                const response = await guidResolver.resolve(guid, abortController);
+                if (response) {
+                    return response;
+                }
             }
+            catch { }
         }
         return undefined;
     }
