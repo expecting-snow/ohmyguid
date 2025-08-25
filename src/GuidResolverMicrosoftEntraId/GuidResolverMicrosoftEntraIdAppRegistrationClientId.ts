@@ -8,8 +8,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationClientId extends GuidRes
     private readonly guidResolverMicrosoftEntraIdAppRegistration : GuidResolverMicrosoftEntraIdAppRegistration;
 
     constructor(
-        onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
-        onToBeResolved : (guid                 : string              ) => void,
+        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential);
@@ -24,6 +24,10 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationClientId extends GuidRes
 
             if (id) {
                 const response = await this.guidResolverMicrosoftEntraIdAppRegistration.resolve(id, abortController);
+
+                if(response && response.displayName) {
+                    this.processResponses(response, this.onResponse, this.onToBeResolved);
+                }
 
                 return response;
             }

@@ -9,8 +9,8 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalClientId extends GuidRe
     private readonly guidResolverMicrosoftEntraIdServicePrincipal : GuidResolverMicrosoftEntraIdServicePrincipal;
 
     constructor(
-        onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
-        onToBeResolved : (guid                 : string              ) => void,
+        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        private readonly onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential); 
@@ -25,6 +25,10 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalClientId extends GuidRe
 
             if (id) {
                 const response = await this.guidResolverMicrosoftEntraIdServicePrincipal.resolve(id, abortController);
+
+                if(response) {
+                    this.processResponses(response, this.onResponse, this.onToBeResolved);
+                }
 
                 return response;
             }

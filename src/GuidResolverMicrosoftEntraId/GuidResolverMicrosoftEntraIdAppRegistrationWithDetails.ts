@@ -32,9 +32,15 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
 
             if (application && application.displayName) {
 
+                this.onResponse(application);
+
                 const servicePrincipal = application.object.appId
                                        ? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(application.object.appId, new AbortController())
                                        : undefined;
+
+                if (servicePrincipal) {
+                    this.onResponse(servicePrincipal);
+                }
 
                 return new GuidResolverResponse(
                     guid,

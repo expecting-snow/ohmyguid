@@ -28,6 +28,7 @@ export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMic
                 // todo #microsoft.graph.administrativeUnit
                 else {
                     this.callbackError(`DirectoryObject: Unknown response type: ${response["@odata.type"]}`);
+                    console.log('DirectoryObject: Unknown response type', response);
                     return undefined;
                 }
             }

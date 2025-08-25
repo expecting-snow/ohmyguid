@@ -28,6 +28,9 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
             const transitiveMembers  = await this.resolveAll(`/groups/${guid}/transitiveMembers` , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController(), 'beta');
 
             if (response && response.displayName) {
+
+                this.processResponses(response, this.onResponse, this.onToBeResolved);
+
                 return new GuidResolverResponse(
                     guid,
                     response.displayName,
