@@ -20,16 +20,13 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response           = await this.guidResolverMicrosoftEntraIdUser.resolve(guid, new AbortController());
-            const memberOf           = await this.resolveAll(`/users/${guid}/memberOf`          , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
-            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, abortController);
-            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, abortController);
+            const memberOf           = await this.resolveAll(`/users/${guid}/memberOf`          , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const transitiveMemberOf = await this.resolveAll(`/users/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const ownedObjects       = await this.resolveAll(`/users/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const appRoleAssignments = await this.resolveAll(`/users/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 
             if (response && response.displayName) {
-                
-                abortController.abort();
-
                 return new GuidResolverResponse(
                     guid,
                     response.displayName,
@@ -50,7 +47,6 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
                 );
             }
         } catch { }
-
         return undefined;
     }
 }

@@ -2,7 +2,7 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Azure and Microsoft Entra ID guids look up",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "engines": {
     "vscode": "^1.103.0"
   },
@@ -38,6 +38,11 @@
         "command": "ohmyguid.info",
         "title": "Info",
         "category": "OhMyGuid"
+      },
+      {
+        "command": "ohmyguid.preLoad",
+        "title": "PreLoad",
+        "category": "OhMyGuid"
       }
     ],
     "codeLens": [
@@ -71,7 +76,8 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "local-install": "packageJsonVersion=$(grep '\"version\"' package.json | head -1 | sed -E 's/.*\\\"version\\\": *\\\"([^\\\"]+)\\\".*/\\1/') && vsce package && code --install-extension ohmyguid-$packageJsonVersion.vsix"
   },
   "devDependencies": {
     "@azure/arm-authorization": "^9.0.0",

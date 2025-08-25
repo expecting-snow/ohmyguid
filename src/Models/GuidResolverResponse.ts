@@ -13,7 +13,7 @@ export class GuidResolverResponse {
 }
 
 export type GuidResolverResponseType =
-  'Empty' | 'Test'
+  'Empty' | 'Test' | 'Not Found'
   | 'Azure Advisor Recommendation'
   | 'Azure Application Insights Instrumentation Key'
   | 'Azure Log Analytics Workspace Customer Id'
@@ -27,11 +27,14 @@ export type GuidResolverResponseType =
   | 'Azure RoleDefinition CustomRole'
   | 'Azure Subscription'
   | 'Azure Subscription Details'
+  | 'Microsoft Entra ID Administrative Unit'
+  | 'Microsoft Entra ID Administrative Unit Details'
   | 'Microsoft Entra ID AppRegistration Details'
   | 'Microsoft Entra ID AppRegistration OAuth2PermissionScope'
   | 'Microsoft Entra ID AppRegistration'
   | 'Microsoft Entra ID AppRegistration FederatedIdentityCredential'
   | 'Microsoft Entra ID AppRoleDefinition'
+  | 'Microsoft Entra ID ClaimIssuancePolicy'
   | 'Microsoft Entra ID DirectoryRole'
   | 'Microsoft Entra ID Group Details'
   | 'Microsoft Entra ID Group'
