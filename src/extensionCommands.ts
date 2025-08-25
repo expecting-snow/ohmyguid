@@ -1,10 +1,11 @@
 
 import { CachingAzureCliCredential                                                                                              } from './CachingAzureCliCredential'     ;
 import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Tab, TabInputText, Uri,  window, workspace } from 'vscode'                          ;
-import { Events                                                                                                                 } from './Events'                        ;
 import { EOL                                                                                                                    } from 'os'                              ;
+import { Events                                                                                                                 } from './Events'                        ;
 import { GuidCache                                                                                                              } from './GuidCache'                     ;
 import { GuidLinkProvider                                                                                                       } from './GuidLinkProvider'              ;
+import { GuidResolver                                                                                                           } from './GuidResolver'                  ;
 import { GuidResolverResponse                                                                                                   } from './Models/GuidResolverResponse'   ;
 import { GuidResolverResponseToTempFile                                                                                         } from './GuidResolverResponseToTempFile';
 import { initStaticContent                                                                                                      } from './extensionStaticContent'        ;
@@ -27,6 +28,20 @@ export function registerCommandOpenLink(
                 const resolutionType = 'details';
 
                 return handle(value, guidCache, tokenCredential, outputChannel, resolutionType);
+            }
+        )
+    );
+}
+
+export function registerCommandPreLoad(
+    context     : ExtensionContext,
+    guidResolver: GuidResolver
+) {
+    context.subscriptions.push(
+        commands.registerCommand('ohmyguid.preLoad',
+            async () => {
+                window.showInformationMessage(`${context.extension.id} - preloading`);
+                await guidResolver.init(new AbortController());
             }
         )
     );
@@ -138,10 +153,10 @@ export function registerCommandInfo(
 }
 
 export function registerCommandLookup(
-    context          : ExtensionContext,
-    guidCache        : GuidCache,
-    tokenCredential  : TokenCredential,
-    outputChannel    : OutputChannel
+    context         : ExtensionContext,
+    guidCache       : GuidCache,
+    tokenCredential : TokenCredential,
+    outputChannel   : OutputChannel
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.lookup',

@@ -1,10 +1,10 @@
-import { AbortController      } from "@azure/abort-controller"       ;
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { ResourceGraphClient  } from "@azure/arm-resourcegraph"      ;
-import { ResourceManagementClient } from "@azure/arm-resources";
-import { TokenCredential      } from "@azure/identity"               ;
-import { SubscriptionClient } from "@azure/arm-subscriptions";
-import { GuidResolverAzureSubscription } from "./GuidResolverAzureSubscription";
+import { AbortController          } from "@azure/abort-controller"       ;
+import { GuidResolverResponse     } from "../Models/GuidResolverResponse";
+import { ResourceGraphClient      } from "@azure/arm-resourcegraph"      ;
+import { ResourceManagementClient } from "@azure/arm-resources"          ;
+import { SubscriptionClient       } from "@azure/arm-subscriptions"      ;
+import { TokenCredential          } from "@azure/identity"               ;
+
 
 export class GuidResolverAzureSubscriptionDetails {
     private readonly subscriptionClient: SubscriptionClient;

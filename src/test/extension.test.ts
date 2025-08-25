@@ -57,6 +57,7 @@ suite('Extension Test Suite', () => {
                 new GuidResolver(
                     _ => { },
                     _ => { },
+                    _ => { },
                     new CachingAzureCliCredential(
                         _ => { },
                         _ => { }
