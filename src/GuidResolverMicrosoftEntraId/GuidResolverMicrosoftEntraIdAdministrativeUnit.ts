@@ -1,9 +1,9 @@
 import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
-import { IGuidResolver                    } from "../GuidResolver";
-import { TokenCredential                  } from "@azure/identity";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse"    ;
+import { IGuidResolver                    } from "../GuidResolver"                   ;
+import { TokenCredential                  } from "@azure/identity"                   ;
 
-export class GuidResolverMicrosoftEntraIdAdminsitrativeUnit extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
+export class GuidResolverMicrosoftEntraIdAdministrativeUnit extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     constructor(
         private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved : (guid                 : string              ) => void,

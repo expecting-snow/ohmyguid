@@ -28,6 +28,7 @@ export type GuidResolverResponseType =
   | 'Azure Subscription'
   | 'Azure Subscription Details'
   | 'Microsoft Entra ID Administrative Unit'
+  | 'Microsoft Entra ID Administrative Unit Details'
   | 'Microsoft Entra ID AppRegistration Details'
   | 'Microsoft Entra ID AppRegistration OAuth2PermissionScope'
   | 'Microsoft Entra ID AppRegistration'

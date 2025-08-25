@@ -275,6 +275,9 @@ export class GuidResolverMicrosoftEntraIdBase {
             else if (response['@odata.type'] === '#microsoft.graph.policy' && response.displayName === 'ClaimIssuancePolicy') {
                 onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ClaimIssuancePolicy', response, new Date()));
             }
+            else if(response['@odata.type'] === '#microsoft.graph.administrativeUnit' || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#directory/administrativeUnits/$entity' ){
+                onResponse(new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID Administrative Unit', response, new Date()));
+            }
             else {
                 console.warn(`Unknown response type: ${response['@odata.type']} for id: ${response.id}`);
             }

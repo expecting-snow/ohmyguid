@@ -1,4 +1,4 @@
-import { GuidResolverMicrosoftEntraIdAdminsitrativeUnit       } from "./GuidResolverMicrosoftEntraIdAdminsitrativeUnit";
+import { GuidResolverMicrosoftEntraIdAdministrativeUnit       } from "./GuidResolverMicrosoftEntraIdAdministrativeUnit";
 import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration"         ;
 import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId" ;
 import { GuidResolverMicrosoftEntraIdAppRegistrations         } from "./GuidResolverMicrosoftEntraIdAppRegistrations"        ;
@@ -34,7 +34,7 @@ export class GuidResolverMicrosoftEntraId {
             new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdGroup                   (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdUser                    (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdAdminsitrativeUnit      (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdAdministrativeUnit      (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdDirectoryObject         (onResponse, onToBeResolved, tokenCredential, callbackError),
         ];
 
