@@ -1,8 +1,11 @@
-import { GuidResolverMicrosoftEntraIdAdministrativeUnit       } from "./GuidResolverMicrosoftEntraIdAdministrativeUnit";
+import { GuidResolverMicrosoftEntraIdAdministrativeUnit       } from "./GuidResolverMicrosoftEntraIdAdministrativeUnit"      ;
+import { GuidResolverMicrosoftEntraIdAdminstrativeUnits       } from "./GuidResolverMicrosoftEntraIdAdminstrativeUnits"      ;
 import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration"         ;
 import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId" ;
 import { GuidResolverMicrosoftEntraIdAppRegistrations         } from "./GuidResolverMicrosoftEntraIdAppRegistrations"        ;
 import { GuidResolverMicrosoftEntraIdDirectoryObject          } from "./GuidResolverMicrosoftEntraIdDirectoryObject"         ;
+import { GuidResolverMicrosoftEntraIdDirectoryRole            } from "./GuidResolverMicrosoftEntraIdDirectoryRole"           ;
+import { GuidResolverMicrosoftEntraIdDirectoryRoles           } from "./GuidResolverMicrosoftEntraIdDirectoryRoles"          ;
 import { GuidResolverMicrosoftEntraIdGroup                    } from "./GuidResolverMicrosoftEntraIdGroup"                   ;
 import { GuidResolverMicrosoftEntraIdGroups                   } from "./GuidResolverMicrosoftEntraIdGroups"                  ;
 import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidResolverMicrosoftEntraIdServicePrincipal"        ;
@@ -35,14 +38,17 @@ export class GuidResolverMicrosoftEntraId {
             new GuidResolverMicrosoftEntraIdGroup                   (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdUser                    (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdAdministrativeUnit      (onResponse, onToBeResolved, tokenCredential               ),
+            new GuidResolverMicrosoftEntraIdDirectoryRole           (onResponse, onToBeResolved, tokenCredential               ),
             new GuidResolverMicrosoftEntraIdDirectoryObject         (onResponse, onToBeResolved, tokenCredential, callbackError),
         ];
 
         this.microsoftEntraIdInits = [
-            new GuidResolverMicrosoftEntraIdUsers            (onResponse, _ => {}, onProgressUpdate, tokenCredential),
-            new GuidResolverMicrosoftEntraIdGroups           (onResponse, _ => {}, onProgressUpdate, tokenCredential),
-            new GuidResolverMicrosoftEntraIdAppRegistrations (onResponse, _ => {}, onProgressUpdate, tokenCredential),
-            new GuidResolverMicrosoftEntraIdServicePrincipals(onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdAdminstrativeUnits(onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdUsers             (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGroups            (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdAppRegistrations  (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdServicePrincipals (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdDirectoryRoles    (onResponse, _ => {}, onProgressUpdate, tokenCredential),
         ];
      }
 
