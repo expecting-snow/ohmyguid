@@ -26,7 +26,6 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
             this.onProgressUpdate(`/tenantRelationships/findTenantInformationByTenantId(tenantId='${guid}')`);
             const tenant = await this.getClient(abortController).api(`/tenantRelationships/findTenantInformationByTenantId(tenantId='${guid}')`).get();
 
-
             this.onProgressUpdate('managementGroupsAPI.entities.list');
             const managementGroups = [];
             for await (const managementGroup of this.managementGroupsAPI.entities.list({ abortSignal: abortController.signal })) {
@@ -37,19 +36,12 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
                 managementGroups.push(managementGroup);
             }
-            this.onProgressUpdate('/organization');
-            const organization = await this.getClient(abortController, 'beta').api('/organization').get();
-
-            this.onProgressUpdate('/subscribedSkus');
-            const subscribedSkus = await this.getClient(abortController, 'beta').api('/subscribedSkus').get();
-
+            this.onProgressUpdate('/organization'       ); const organization      = await this.getClient(abortController, 'beta').api('/organization'                                             ).get();
+            this.onProgressUpdate('/subscribedSkus'     ); const subscribedSkus    = await this.getClient(abortController, 'beta').api('/subscribedSkus'                                           ).get();
             this.onProgressUpdate('/devices/$count'     ); const devicesCount      = await this.getClient(abortController, 'beta').api('/devices/$count'     ).header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/applications/$count'); const applicationsCount = await this.getClient(abortController, 'beta').api('/applications/$count').header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/groups/$count'      ); const groupsCount       = await this.getClient(abortController, 'beta').api('/groups/$count'      ).header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/users/$count'       ); const usersCount        = await this.getClient(abortController, 'beta').api('/users/$count'       ).header('ConsistencyLevel', 'eventual').get();
-            // /policies/authenticationmethodspolicy
-            // /directory/recommendations
-            // /reports/healthmonitoring/alerts
  
             if (tenant && tenant.displayName) {
                 this.processResponses(tenant, this.onResponse, this.onToBeResolved);
