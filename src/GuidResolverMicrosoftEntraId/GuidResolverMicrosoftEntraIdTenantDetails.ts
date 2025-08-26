@@ -36,12 +36,13 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
                 managementGroups.push(managementGroup);
             }
-            this.onProgressUpdate('/organization'       ); const organization      = await this.getClient(abortController, 'beta').api('/organization'                                             ).get();
-            this.onProgressUpdate('/subscribedSkus'     ); const subscribedSkus    = await this.getClient(abortController, 'beta').api('/subscribedSkus'                                           ).get();
-            this.onProgressUpdate('/devices/$count'     ); const devicesCount      = await this.getClient(abortController, 'beta').api('/devices/$count'     ).header('ConsistencyLevel', 'eventual').get();
-            this.onProgressUpdate('/applications/$count'); const applicationsCount = await this.getClient(abortController, 'beta').api('/applications/$count').header('ConsistencyLevel', 'eventual').get();
-            this.onProgressUpdate('/groups/$count'      ); const groupsCount       = await this.getClient(abortController, 'beta').api('/groups/$count'      ).header('ConsistencyLevel', 'eventual').get();
-            this.onProgressUpdate('/users/$count'       ); const usersCount        = await this.getClient(abortController, 'beta').api('/users/$count'       ).header('ConsistencyLevel', 'eventual').get();
+            this.onProgressUpdate('/organization'            ); const organization           = await this.getClient(abortController, 'beta').api('/organization'                                                   ).get();
+            this.onProgressUpdate('/subscribedSkus'          ); const subscribedSkus         = await this.getClient(abortController, 'beta').api('/subscribedSkus'                                                 ).get();
+            this.onProgressUpdate('/devices/$count'          ); const devicesCount           = await this.getClient(abortController, 'beta').api('/devices/$count'          ).header('ConsistencyLevel', 'eventual').get();
+            this.onProgressUpdate('/applications/$count'     ); const applicationsCount      = await this.getClient(abortController, 'beta').api('/applications/$count'     ).header('ConsistencyLevel', 'eventual').get();
+            this.onProgressUpdate('/servicePrincipals/$count'); const servicePrincipalsCount = await this.getClient(abortController, 'beta').api('/servicePrincipals/$count').header('ConsistencyLevel', 'eventual').get();
+            this.onProgressUpdate('/groups/$count'           ); const groupsCount            = await this.getClient(abortController, 'beta').api('/groups/$count'           ).header('ConsistencyLevel', 'eventual').get();
+            this.onProgressUpdate('/users/$count'            ); const usersCount             = await this.getClient(abortController, 'beta').api('/users/$count'            ).header('ConsistencyLevel', 'eventual').get();
  
             if (tenant && tenant.displayName) {
                 this.processResponses(tenant, this.onResponse, this.onToBeResolved);
@@ -59,10 +60,11 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
                     {
                         tenant,
                         count: {
-                            devices     : devicesCount,
-                            applications: applicationsCount,
-                            groups      : groupsCount,
-                            users       : usersCount
+                            devices           : devicesCount,
+                            applications      : applicationsCount,
+                            servicePrincipals : servicePrincipalsCount,
+                            groups            : groupsCount,
+                            users             : usersCount
                         },
                         managementGroupsFlat,
                         organization,
