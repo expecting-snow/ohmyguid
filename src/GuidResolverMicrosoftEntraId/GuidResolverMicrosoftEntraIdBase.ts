@@ -27,6 +27,27 @@ export class GuidResolverMicrosoftEntraIdBase {
         });
     }
 
+    protected async resolveGuid(
+        path           : string,
+        onResponse     : (guidResolverResponse: GuidResolverResponse) => void,
+        onToBeResolved : (guid                : string              ) => void,
+        abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+        try {
+            const response = await this.getClient(abortController).api(path).get();
+
+            const responseMapped = this.processResponse(response, onResponse, onToBeResolved);
+
+            if (responseMapped) {
+
+                abortController.abort();
+
+                return responseMapped;
+            }
+        } catch { }
+
+        return undefined;
+    }
+
     protected async resolveAll(
         url             : string, 
         onResponse      : (guidResolverResponse : GuidResolverResponse) => void,

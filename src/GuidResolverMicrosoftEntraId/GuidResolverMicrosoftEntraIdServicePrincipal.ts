@@ -10,20 +10,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipal extends GuidResolverMi
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
-    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
-        try {
-            const response = await this.getClient(abortController).api(`/servicePrincipals/${guid}`).get();
-
-            const responseMapped = this.processResponse(response, this.onResponse, this.onToBeResolved);
-
-            if (responseMapped) {
-
-                abortController.abort();
-
-                return responseMapped;
-            }
-        } catch { }
-
-        return undefined;
+    resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+        return this.resolveGuid(`/servicePrincipals/${guid}`, this.onResponse, this.onToBeResolved, abortController);
     }
 }

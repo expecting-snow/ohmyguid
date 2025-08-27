@@ -10,25 +10,7 @@ export class GuidResolverMicrosoftEntraIdGroup extends GuidResolverMicrosoftEntr
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
-    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
-        try {
-            const response = await this.getClient(abortController).api(`/groups/${guid}`).get();
-
-            if (response && response.displayName) {
-                this.processResponse(response, this.onResponse, this.onToBeResolved);
-
-                abortController.abort();
-
-                return new GuidResolverResponse(
-                    guid,
-                    response.displayName,
-                    'Microsoft Entra ID Group',
-                    response,
-                    new Date()
-                );
-            }
-        } catch { }
-
-        return undefined;
+    resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+        return this.resolveGuid(`/groups/${guid}`, this.onResponse, this.onToBeResolved, abortController);
     }
 }

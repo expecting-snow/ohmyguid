@@ -10,20 +10,7 @@ export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMic
         tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
-    async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
-        try {
-            const response = await this.getClient(abortController).api(`/directoryObjects/${guid}`).get();
-
-            const responseMapped = this.processResponse(response, this.onResponse, this.onToBeResolved);
-
-            if (responseMapped) {
-
-                abortController.abort();
-
-                return responseMapped;
-            }
-        } catch { }
-
-        return undefined;
+    resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+        return this.resolveGuid(`/directoryObjects/${guid}`, this.onResponse, this.onToBeResolved, abortController);
     }
 }
