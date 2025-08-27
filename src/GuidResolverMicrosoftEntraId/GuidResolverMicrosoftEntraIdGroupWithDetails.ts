@@ -1,12 +1,12 @@
 import { GuidResolverMicrosoftEntraIdBase  } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverMicrosoftEntraIdGroup } from "./GuidResolverMicrosoftEntraIdGroup";
 import { GuidResolverResponse              } from "../Models/GuidResolverResponse";
 import { IGuidResolver                     } from "../GuidResolver";
 import { TokenCredential                   } from "@azure/identity";
+import { GuidResolverMicrosoftEntraIdGet   } from "./GuidResolverMicrosoftEntraIdGet";
 
 export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver{
 
-    private readonly guidResolverMicrosoftEntraIdGroup: GuidResolverMicrosoftEntraIdGroup;
+    private readonly guidResolverMicrosoftEntraIdGroup: GuidResolverMicrosoftEntraIdGet;
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved  : (guid                 : string              ) => void,
@@ -14,7 +14,7 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
         tokenCredential: TokenCredential,
     ) { 
         super(tokenCredential); 
-        this.guidResolverMicrosoftEntraIdGroup = new GuidResolverMicrosoftEntraIdGroup(onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdGroup = new GuidResolverMicrosoftEntraIdGet (guid => `/groups/${guid}` , onResponse, onToBeResolved, tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {

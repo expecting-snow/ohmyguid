@@ -1,20 +1,20 @@
-import { GuidResolverMicrosoftEntraIdBase             } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverMicrosoftEntraIdServicePrincipal } from "./GuidResolverMicrosoftEntraIdServicePrincipal";
-import { GuidResolverResponse                         } from "../Models/GuidResolverResponse";
-import { IGuidResolver                                } from "../GuidResolver";
-import { TokenCredential                              } from "@azure/identity";
+import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
+import { GuidResolverMicrosoftEntraIdGet  } from "./GuidResolverMicrosoftEntraIdGet";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
+import { IGuidResolver                    } from "../GuidResolver";
+import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdServicePrincipalClientId extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     
-    private readonly guidResolverMicrosoftEntraIdServicePrincipal : GuidResolverMicrosoftEntraIdServicePrincipal;
+    private readonly guidResolverMicrosoftEntraIdServicePrincipal : GuidResolverMicrosoftEntraIdGet;
 
     constructor(
-        private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
-        private readonly onToBeResolved : (guid                 : string              ) => void,
+        onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
+        onToBeResolved : (guid                 : string              ) => void,
         tokenCredential: TokenCredential
     ) { 
-        super(tokenCredential); 
-        this.guidResolverMicrosoftEntraIdServicePrincipal = new GuidResolverMicrosoftEntraIdServicePrincipal(onResponse, onToBeResolved, tokenCredential);
+        super(tokenCredential);
+        this.guidResolverMicrosoftEntraIdServicePrincipal = new GuidResolverMicrosoftEntraIdGet(guid => `/servicePrincipals/${guid}`, onResponse, onToBeResolved, tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {

@@ -1,12 +1,12 @@
 import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverMicrosoftEntraIdUser } from "./GuidResolverMicrosoftEntraIdUser";
+import { GuidResolverMicrosoftEntraIdGet  } from "./GuidResolverMicrosoftEntraIdGet";
 import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
 import { IGuidResolver                    } from "../GuidResolver";
 import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
 
-    private readonly guidResolverMicrosoftEntraIdUser: GuidResolverMicrosoftEntraIdUser;
+    private readonly guidResolverMicrosoftEntraIdUser: GuidResolverMicrosoftEntraIdGet;
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved  : (guid                 : string              ) => void,
@@ -14,7 +14,7 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential); 
-        this.guidResolverMicrosoftEntraIdUser = new GuidResolverMicrosoftEntraIdUser(onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdUser = new GuidResolverMicrosoftEntraIdGet(guid => `/users/${guid}` , onResponse, onToBeResolved, tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
