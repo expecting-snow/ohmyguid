@@ -25,10 +25,6 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationClientId extends GuidRes
             if (id) {
                 const response = await this.guidResolverMicrosoftEntraIdAppRegistration.resolve(id, abortController);
 
-                if(response && response.displayName) {
-                    this.processResponses(response, this.onResponse, this.onToBeResolved);
-                }
-
                 return response;
             }
         } catch (error) { }

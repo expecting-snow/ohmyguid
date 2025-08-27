@@ -19,7 +19,7 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response           = await this.guidResolverMicrosoftEntraIdGroup.resolve(guid, new AbortController());
+            const group              = await this.guidResolverMicrosoftEntraIdGroup.resolve(guid, new AbortController());
             const owners             = await this.resolveAll(`/groups/${guid}/owners`            , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController()        );
             const members            = await this.resolveAll(`/groups/${guid}/members`           , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController(), 'beta');
             const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment , this.onToBeResolved, this.onProgressUpdate, new AbortController()        );
@@ -27,25 +27,25 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
             const transitiveMemberOf = await this.resolveAll(`/groups/${guid}/transitiveMemberOf`, this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController()        );
             const transitiveMembers  = await this.resolveAll(`/groups/${guid}/transitiveMembers` , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController(), 'beta');
 
-            if (response && response.displayName) {
+            if (group && group.displayName) {
 
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+                this.processResponse(group, this.onResponse, this.onToBeResolved);
 
                 return new GuidResolverResponse(
                     guid,
-                    response.displayName,
+                    group.displayName,
                     'Microsoft Entra ID Group Details',
                     {
                         ids               : {
-                                                id   : response.object?.id,
-                                                name : response.displayName
+                                                id   : group.object?.id,
+                                                name : group.displayName
                                             },
                         owners            : (owners             as any[])?.map(this.mapIdDisplayName).sort(),
                         members           : (members            as any[])?.map(this.mapIdDisplayName).sort(),
                         transitiveMembers : (transitiveMembers  as any[])?.map(this.mapIdDisplayName).sort(),
                         memberOf          : (memberOf           as any[])?.map(this.mapIdDisplayName).sort(),
                         transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName).sort(),
-                        group             : response.object,
+                        group             : group.object,
                         appRoleAssignments: appRoleAssignments,
                     },
                     new Date()

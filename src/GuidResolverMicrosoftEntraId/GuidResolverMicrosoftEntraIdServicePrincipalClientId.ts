@@ -26,10 +26,6 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalClientId extends GuidRe
             if (id) {
                 const response = await this.guidResolverMicrosoftEntraIdServicePrincipal.resolve(id, abortController);
 
-                if(response) {
-                    this.processResponses(response, this.onResponse, this.onToBeResolved);
-                }
-
                 return response;
             }
         } catch { }

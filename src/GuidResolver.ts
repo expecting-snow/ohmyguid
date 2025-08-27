@@ -7,6 +7,11 @@ import { TokenCredential                         } from "@azure/identity";
 export interface IGuidResolver {
     resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined>;
 }
+
+export interface IGuidBatchResolver {
+    resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined>;
+}
+
 export interface IGuidResolverAzure {
     resolve(guid: string, abortController: AzureAbortController): Promise<GuidResolverResponse | undefined>;
 }
@@ -19,7 +24,7 @@ export interface IGuidResolverInitsMicrosoftEntraId {
     resolve(abortController: AbortController): Promise<void>;
 }
 
-export class GuidResolver implements IGuidResolver {
+export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
         private readonly guidResolverAzure           : GuidResolverAzure           ;
         private readonly guidResolverMicrosoftEntraId: GuidResolverMicrosoftEntraId;
 
@@ -52,5 +57,9 @@ export class GuidResolver implements IGuidResolver {
 
         await this.guidResolverAzure           .init(azureAbortController);
         await this.guidResolverMicrosoftEntraId.init(abortController);
+    }
+
+    resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined> {
+        return this.guidResolverMicrosoftEntraId.resolveBatch(guids, abortController);
     }
 }

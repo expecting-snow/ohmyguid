@@ -28,7 +28,7 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
 
             if (response && response.displayName) {
 
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+                this.processResponse(response, this.onResponse, this.onToBeResolved);
 
                 return new GuidResolverResponse(
                     guid,

@@ -35,7 +35,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
 
             if (servicePrincipal && servicePrincipal.displayName) {
 
-                this.processResponses(servicePrincipal, this.onResponse, this.onToBeResolved);
+                this.processResponse(servicePrincipal, this.onResponse, this.onToBeResolved);
 
                 const appRegistration = servicePrincipal.object?.appId
                                       ? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(servicePrincipal.object.appId, new AbortController())

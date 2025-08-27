@@ -15,7 +15,7 @@ export class GuidResolverMicrosoftEntraIdGroup extends GuidResolverMicrosoftEntr
             const response = await this.getClient(abortController).api(`/groups/${guid}`).get();
 
             if (response && response.displayName) {
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+                this.processResponse(response, this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
 

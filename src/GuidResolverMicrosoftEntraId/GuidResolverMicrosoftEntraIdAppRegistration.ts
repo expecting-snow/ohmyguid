@@ -14,18 +14,13 @@ export class GuidResolverMicrosoftEntraIdAppRegistration extends GuidResolverMic
         try {
             const response = await this.getClient(abortController).api(`/applications/${guid}`).get();
 
-            if (response && response.displayName) {
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+            const responseMapped =  this.processResponse(response, this.onResponse, this.onToBeResolved);
+
+            if (responseMapped) {
 
                 abortController.abort();
 
-                return new GuidResolverResponse(
-                    guid,
-                    response.displayName,
-                    'Microsoft Entra ID AppRegistration',
-                    response,
-                    new Date()
-                );
+                return responseMapped;
             }
         } catch { }
 

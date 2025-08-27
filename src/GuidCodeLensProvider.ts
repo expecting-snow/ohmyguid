@@ -16,6 +16,8 @@ export class GuidCodeLensProvider implements CodeLensProvider {
         console.log('provideCodeLenses ' + new Date().toISOString());
 
         const codeLenses : GuidCodeLens[] = [];
+        const unresolvedGuids = new Set<string>();
+
         const text = document.getText();
 
         while (true) {
@@ -56,7 +58,8 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                 );
             }
             else{
-                this.guidCache.enqueuePromise(guid);
+                //this.guidCache.enqueuePromise(guid);
+                unresolvedGuids.add(guid);
 
                 codeLenses.push(
                     new GuidCodeLens(
@@ -68,6 +71,10 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                     )
                 );
             }
+        }
+        
+        if (unresolvedGuids.size > 0) {
+            this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuids));
         }
 
         return codeLenses;

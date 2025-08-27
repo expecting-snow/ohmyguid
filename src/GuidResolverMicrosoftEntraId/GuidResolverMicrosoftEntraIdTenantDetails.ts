@@ -45,7 +45,7 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
             this.onProgressUpdate('/users/$count'            ); const usersCount             = await this.getClient(abortController, 'beta').api('/users/$count'            ).header('ConsistencyLevel', 'eventual').get();
  
             if (tenant && tenant.displayName) {
-                this.processResponses(tenant, this.onResponse, this.onToBeResolved);
+                this.processResponse(tenant, this.onResponse, this.onToBeResolved);
 
                 abortController.abort();
 

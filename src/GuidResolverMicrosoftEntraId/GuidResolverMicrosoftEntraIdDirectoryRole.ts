@@ -14,16 +14,13 @@ export class GuidResolverMicrosoftEntraIdDirectoryRole extends GuidResolverMicro
         try {
             const response = await this.getClient(abortController).api(`/directoryRoles/${guid}`).get();
 
-            if (response && response.displayName) {
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+            const responseMapped = this.processResponse(response, this.onResponse, this.onToBeResolved);
+
+            if (responseMapped) {
+
                 abortController.abort();
 
-                return new GuidResolverResponse(
-                    response.id,
-                    response.displayName,
-                    'Microsoft Entra ID DirectoryRole',
-                    response,
-                    new Date());
+                return responseMapped;
             }
         } catch { }
 

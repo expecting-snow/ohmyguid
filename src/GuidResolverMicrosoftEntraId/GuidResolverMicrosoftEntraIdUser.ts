@@ -14,18 +14,13 @@ export class GuidResolverMicrosoftEntraIdUser extends GuidResolverMicrosoftEntra
         try {
             const response = await this.getClient(abortController).api(`/users/${guid}`).get();
 
-            if (response && response.displayName) {
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+            const responseMapped = this.processResponse(response, this.onResponse, this.onToBeResolved);
+
+            if (responseMapped) {
 
                 abortController.abort();
 
-                return new GuidResolverResponse(
-                    guid,
-                    response.displayName,
-                    'Microsoft Entra ID User',
-                    response,
-                    new Date()
-                );
+                return responseMapped;
             }
         } catch { }
 

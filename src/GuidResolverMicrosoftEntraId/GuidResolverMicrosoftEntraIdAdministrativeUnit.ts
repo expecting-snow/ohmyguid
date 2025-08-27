@@ -14,18 +14,13 @@ export class GuidResolverMicrosoftEntraIdAdministrativeUnit extends GuidResolver
         try {
             const response = await this.getClient(abortController).api(`/directory/administrativeUnits/${guid}`).get();
 
-            if (response && response.displayName) {
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+            const responseMapped = this.processResponse(response, this.onResponse, this.onToBeResolved);
+
+            if (responseMapped) {
 
                 abortController.abort();
 
-                return new GuidResolverResponse(
-                    guid,
-                    response.displayName,
-                    'Microsoft Entra ID Administrative Unit',
-                    response,
-                    new Date()
-                );
+                return responseMapped;
             }
         } catch { }
 

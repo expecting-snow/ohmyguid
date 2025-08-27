@@ -7,30 +7,20 @@ export class GuidResolverMicrosoftEntraIdDirectoryObject extends GuidResolverMic
     constructor(
         private readonly onResponse     : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved : (guid                 : string              ) => void,
-        tokenCredential: TokenCredential,
-        private readonly callbackError: (error: any) => void
+        tokenCredential: TokenCredential
     ) { super(tokenCredential); }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             const response = await this.getClient(abortController).api(`/directoryObjects/${guid}`).get();
 
-            if (response && response.displayName && response['@odata.type']) {
-                this.processResponses(response, this.onResponse, this.onToBeResolved);
+            const responseMapped = this.processResponse(response, this.onResponse, this.onToBeResolved);
 
-                     if (response['@odata.type'] === '#microsoft.graph.group'              ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID Group'              , response, new Date()); }
-                else if (response['@odata.type'] === '#microsoft.graph.user'               ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID User'               , response, new Date()); }
-                else if (response['@odata.type'] === '#microsoft.graph.servicePrincipal'   ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ServicePrincipal'   , response, new Date()); }
-                else if (response['@odata.type'] === '#microsoft.graph.application'        ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID AppRegistration'    , response, new Date()); }
-                else if (response['@odata.type'] === '#microsoft.graph.tokenLifetimePolicy') { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID TokenLifetimePolicy', response, new Date()); }
-                else if (response['@odata.type'] === '#microsoft.graph.tokenIssuancePolicy') { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID TokenIssuancePolicy', response, new Date()); }
-                else if (response['@odata.type'] === '#microsoft.graph.directoryRole'      ) { abortController.abort(); return new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID DirectoryRole'      , response, new Date()); }
-                // todo #microsoft.graph.administrativeUnit
-                else {
-                    this.callbackError(`DirectoryObject: Unknown response type: ${response["@odata.type"]}`);
-                    console.log('DirectoryObject: Unknown response type', response);
-                    return undefined;
-                }
+            if (responseMapped) {
+
+                abortController.abort();
+
+                return responseMapped;
             }
         } catch { }
 

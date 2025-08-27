@@ -1,6 +1,6 @@
-import { Memento } from "vscode";
-import { GuidResolver } from "./GuidResolver";
+import { GuidResolver         } from "./GuidResolver"               ;
 import { GuidResolverResponse } from "./Models/GuidResolverResponse";
+import { Memento              } from "vscode"                       ;
 
 export class GuidCache {
 
@@ -53,10 +53,11 @@ export class GuidCache {
                                     (resolvedValue: GuidResolverResponse | undefined) => {
                                         if (resolvedValue) {
                                              this.update(guidTransformed, resolvedValue);
-                                         } else {
-                                             this.callbackInfo(`${guidTransformed} - enqueue     - NOT FOUND`);
-                                             this.update(guidTransformed, new GuidResolverResponse(guidTransformed, 'Not Found', 'Not Found', {}, new Date()));
-                                         }
+                                        }
+                                        //   else {
+                                        //      this.callbackInfo(`${guidTransformed} - enqueue     - NOT FOUND`);
+                                        //      this.update(guidTransformed, new GuidResolverResponse(guidTransformed, 'Not Found', 'Not Found', {}, new Date()));
+                                        //  }
                                          
                                          this.cache.delete(guidTransformed);
 
@@ -65,6 +66,20 @@ export class GuidCache {
                                  )
             );
         }
+    }
+
+    async enqueueBatchResolve(guids: string[]): Promise<string[] | undefined> {
+        const resolvedGuids = await this.guidResolver.resolveBatch(guids, new AbortController());
+
+        if (resolvedGuids) {
+            for (const guid of guids) {
+                if (resolvedGuids.indexOf(guid) === -1) {
+                    this.enqueuePromise(guid);
+                }
+            }
+        }
+
+        return resolvedGuids;
     }
 
     getResolvedOrEnqueuePromise(guid: string): GuidResolverResponse | undefined {
