@@ -61,6 +61,14 @@
       {
         "language": "json",
         "pattern": "**/*.json"
+      },
+      {
+        "language": "shellscript",
+        "pattern": "**/*.sh"
+      },
+      {
+        "language": "powershell",
+        "pattern": "**/*.ps1"
       }
     ]
   },

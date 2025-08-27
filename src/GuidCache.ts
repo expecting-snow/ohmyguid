@@ -54,10 +54,6 @@ export class GuidCache {
                                         if (resolvedValue) {
                                              this.update(guidTransformed, resolvedValue);
                                         }
-                                        //   else {
-                                        //      this.callbackInfo(`${guidTransformed} - enqueue     - NOT FOUND`);
-                                        //      this.update(guidTransformed, new GuidResolverResponse(guidTransformed, 'Not Found', 'Not Found', {}, new Date()));
-                                        //  }
                                          
                                          this.cache.delete(guidTransformed);
 
