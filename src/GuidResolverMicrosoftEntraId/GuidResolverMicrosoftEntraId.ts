@@ -1,22 +1,20 @@
-import { GuidResolverMicrosoftEntraIdAdministrativeUnit       } from "./GuidResolverMicrosoftEntraIdAdministrativeUnit";
-import { GuidResolverMicrosoftEntraIdAppRegistration          } from "./GuidResolverMicrosoftEntraIdAppRegistration"         ;
-import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId" ;
-import { GuidResolverMicrosoftEntraIdAppRegistrations         } from "./GuidResolverMicrosoftEntraIdAppRegistrations"        ;
-import { GuidResolverMicrosoftEntraIdDirectoryObject          } from "./GuidResolverMicrosoftEntraIdDirectoryObject"         ;
-import { GuidResolverMicrosoftEntraIdGroup                    } from "./GuidResolverMicrosoftEntraIdGroup"                   ;
-import { GuidResolverMicrosoftEntraIdGroups                   } from "./GuidResolverMicrosoftEntraIdGroups"                  ;
-import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidResolverMicrosoftEntraIdServicePrincipal"        ;
-import { GuidResolverMicrosoftEntraIdServicePrincipalClientId } from "./GuidResolverMicrosoftEntraIdServicePrincipalClientId";
-import { GuidResolverMicrosoftEntraIdServicePrincipals        } from "./GuidResolverMicrosoftEntraIdServicePrincipals"       ;
-import { GuidResolverMicrosoftEntraIdTenant                   } from "./GuidResolverMicrosoftEntraIdTenant"                  ;
-import { GuidResolverMicrosoftEntraIdUser                     } from "./GuidResolverMicrosoftEntraIdUser"                    ;
-import { GuidResolverMicrosoftEntraIdUsers                    } from "./GuidResolverMicrosoftEntraIdUsers"                   ;
-import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse"                        ;
-import { IGuidResolver, IGuidResolverInitsMicrosoftEntraId    } from "../GuidResolver"                                       ;
-import { TokenCredential                                      } from "@azure/identity"                                       ;
+import { GuidResolverMicrosoftEntraIdAdminstrativeUnits                        } from "./GuidResolverMicrosoftEntraIdAdminstrativeUnits"      ;
+import { GuidResolverMicrosoftEntraIdAppRegistrationClientId                   } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId" ;
+import { GuidResolverMicrosoftEntraIdAppRegistrations                          } from "./GuidResolverMicrosoftEntraIdAppRegistrations"        ;
+import { GuidResolverMicrosoftEntraIdDirectoryObjects                          } from "./GuidResolverMicrosoftEntraIdDirectoryObjects"        ;
+import { GuidResolverMicrosoftEntraIdDirectoryRoles                            } from "./GuidResolverMicrosoftEntraIdDirectoryRoles"          ;
+import { GuidResolverMicrosoftEntraIdGroups                                    } from "./GuidResolverMicrosoftEntraIdGroups"                  ;
+import { GuidResolverMicrosoftEntraIdServicePrincipalClientId                  } from "./GuidResolverMicrosoftEntraIdServicePrincipalClientId";
+import { GuidResolverMicrosoftEntraIdServicePrincipals                         } from "./GuidResolverMicrosoftEntraIdServicePrincipals"       ;
+import { GuidResolverMicrosoftEntraIdUsers                                     } from "./GuidResolverMicrosoftEntraIdUsers"                   ;
+import { GuidResolverResponse                                                  } from "../Models/GuidResolverResponse"                        ;
+import { IGuidBatchResolver, IGuidResolver, IGuidResolverInitsMicrosoftEntraId } from "../GuidResolver"                                       ;
+import { TokenCredential                                                       } from "@azure/identity"                                       ;
+import { GuidResolverMicrosoftEntraIdGet                                       } from "./GuidResolverMicrosoftEntraIdGet"                     ;
 
-export class GuidResolverMicrosoftEntraId {
-    private readonly guidResolvers        : IGuidResolver         [];
+export class GuidResolverMicrosoftEntraId implements IGuidBatchResolver{
+    private readonly guidResolvers        : IGuidResolver                     [];
+    private readonly guidBatchResolvers   : IGuidBatchResolver                [];
     private readonly microsoftEntraIdInits: IGuidResolverInitsMicrosoftEntraId[];
 
     constructor(
@@ -27,22 +25,32 @@ export class GuidResolverMicrosoftEntraId {
         callbackError   : (error: any) => void
     ) {
         this.guidResolvers = [
-            new GuidResolverMicrosoftEntraIdTenant                  (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdAppRegistration         (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdServicePrincipal        (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdGroup                   (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdUser                    (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdAdministrativeUnit      (onResponse, onToBeResolved, tokenCredential               ),
-            new GuidResolverMicrosoftEntraIdDirectoryObject         (onResponse, onToBeResolved, tokenCredential, callbackError),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/directoryObjects/${guid}`                                               , onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/tenantRelationships/findTenantInformationByTenantId(tenantId='${guid}')`, onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/applications/${guid}`                                                   , onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/servicePrincipals/${guid}`                                              , onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/groups/${guid}`                                                         , onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/users/${guid}`                                                          , onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/directory/administrativeUnits/${guid}`                                  , onResponse, onToBeResolved, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGet                     (guid => `/directoryRoles/${guid}`                                                 , onResponse, onToBeResolved, tokenCredential),
+
+            // https://learn.microsoft.com/en-us/graph/api/cloudpc-get | permissions: CloudPC.Read.All
+            // new GuidResolverMicrosoftEntraIdGet                     (guid => `/deviceManagement/virtualEndpoint/cloudPCs/${guid}`                      , onResponse, onToBeResolved, tokenCredential),
         ];
 
         this.microsoftEntraIdInits = [
-            new GuidResolverMicrosoftEntraIdUsers            (onResponse, _ => {}, onProgressUpdate, tokenCredential),
-            new GuidResolverMicrosoftEntraIdGroups           (onResponse, _ => {}, onProgressUpdate, tokenCredential),
-            new GuidResolverMicrosoftEntraIdAppRegistrations (onResponse, _ => {}, onProgressUpdate, tokenCredential),
-            new GuidResolverMicrosoftEntraIdServicePrincipals(onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdAdminstrativeUnits(onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdUsers             (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdGroups            (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdAppRegistrations  (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdServicePrincipals (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+            new GuidResolverMicrosoftEntraIdDirectoryRoles    (onResponse, _ => {}, onProgressUpdate, tokenCredential),
+        ];
+
+        this.guidBatchResolvers = [
+            new GuidResolverMicrosoftEntraIdDirectoryObjects(onResponse, onToBeResolved, tokenCredential)
         ];
      }
 
@@ -57,6 +65,26 @@ export class GuidResolverMicrosoftEntraId {
             catch { }
         }
         return undefined;
+    }
+
+    async resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined> {
+        const resolvedGuids = new Set<string>();
+
+        try {
+            for (const guidBatchResolver of this.guidBatchResolvers) {
+                const collection = await guidBatchResolver.resolveBatch(guids, abortController);
+
+                if (collection) {
+                    for (const item of collection) {
+                        resolvedGuids.add(item);
+                    }
+                }
+            }
+        } catch (e: any) {
+            console.error(e);
+        }
+
+        return Array.from(resolvedGuids.keys());
     }
 
     async init(abortController: AbortController): Promise<void> {

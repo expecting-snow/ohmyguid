@@ -1,20 +1,20 @@
 import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverMicrosoftEntraIdUser } from "./GuidResolverMicrosoftEntraIdUser";
+import { GuidResolverMicrosoftEntraIdGet  } from "./GuidResolverMicrosoftEntraIdGet";
 import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
 import { IGuidResolver                    } from "../GuidResolver";
 import { TokenCredential                  } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
 
-    private readonly guidResolverMicrosoftEntraIdUser: GuidResolverMicrosoftEntraIdUser;
+    private readonly guidResolverMicrosoftEntraIdUser: GuidResolverMicrosoftEntraIdGet;
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved  : (guid                 : string              ) => void,
         private readonly onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential
-    ) { 
-        super(tokenCredential); 
-        this.guidResolverMicrosoftEntraIdUser = new GuidResolverMicrosoftEntraIdUser(onResponse, onToBeResolved, tokenCredential);
+    ) {
+        super(tokenCredential);
+        this.guidResolverMicrosoftEntraIdUser = new GuidResolverMicrosoftEntraIdGet(guid => `/users/${guid}` , onResponse, onToBeResolved, tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
@@ -27,6 +27,9 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
             const createdObjects     = await this.resolveAll(`/users/${guid}/createdObjects`    , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 
             if (response && response.displayName) {
+
+                this.processResponse(response, this.onResponse, this.onToBeResolved);
+
                 return new GuidResolverResponse(
                     guid,
                     response.displayName,
@@ -46,7 +49,9 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
                     new Date()
                 );
             }
-        } catch { }
+        } catch (e: any) {
+            console.error('GuidResolverMicrosoftEntraIdUserWithDetails', e);
+        }
         return undefined;
     }
 }

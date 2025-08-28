@@ -1,5 +1,5 @@
 import { createOutputChannel                                                                                                 } from './extensionCreateOutputChannel'         ;
-import { ExtensionContext, window                                                                                            } from 'vscode'                                 ;
+import { ExtensionContext, Uri, window, workspace                                                                            } from 'vscode'                                 ;
 import { GuidResolver                                                                                                        } from './GuidResolver'                         ;
 import { GuidResolverResponse                                                                                                } from './Models/GuidResolverResponse'          ;
 import { initStaticContent                                                                                                   } from './extensionStaticContent'               ;
@@ -35,7 +35,17 @@ export async function activate(context: ExtensionContext) {
 
     const guidCache = registerCache(context, guidResolver, outputChannel);
 
-    await initStaticContent(context, guidCache);
+    // initStaticContent on first run for this version
+    const packageJsonUri = Uri.joinPath(context.extensionUri, 'package.json');
+    const packageJsonBytes = await workspace.fs.readFile(packageJsonUri);
+    const packageJson = JSON.parse(Buffer.from(packageJsonBytes).toString('utf8'));
+    if (packageJson.version) {
+        const storedVersion = context.globalState.get<string>('extensionVersion');
+        if (storedVersion !== packageJson.version) {
+            await initStaticContent(context, guidCache);
+            context.globalState.update('extensionVersion', packageJson.version);
+        }
+    }
 
     registerGuidCodeLensProvider(context, guidCache                                );
     registerCommandPreLoad      (context, guidResolver                             );

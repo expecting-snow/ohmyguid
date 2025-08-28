@@ -1,12 +1,12 @@
 import { GuidResolverMicrosoftEntraIdBase  } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverMicrosoftEntraIdGroup } from "./GuidResolverMicrosoftEntraIdGroup";
 import { GuidResolverResponse              } from "../Models/GuidResolverResponse";
 import { IGuidResolver                     } from "../GuidResolver";
 import { TokenCredential                   } from "@azure/identity";
+import { GuidResolverMicrosoftEntraIdGet   } from "./GuidResolverMicrosoftEntraIdGet";
 
 export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver{
 
-    private readonly guidResolverMicrosoftEntraIdGroup: GuidResolverMicrosoftEntraIdGroup;
+    private readonly guidResolverMicrosoftEntraIdGroup: GuidResolverMicrosoftEntraIdGet;
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved  : (guid                 : string              ) => void,
@@ -14,12 +14,12 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
         tokenCredential: TokenCredential,
     ) { 
         super(tokenCredential); 
-        this.guidResolverMicrosoftEntraIdGroup = new GuidResolverMicrosoftEntraIdGroup(onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdGroup = new GuidResolverMicrosoftEntraIdGet (guid => `/groups/${guid}` , onResponse, onToBeResolved, tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const response           = await this.guidResolverMicrosoftEntraIdGroup.resolve(guid, new AbortController());
+            const group              = await this.guidResolverMicrosoftEntraIdGroup.resolve(guid, new AbortController());
             const owners             = await this.resolveAll(`/groups/${guid}/owners`            , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController()        );
             const members            = await this.resolveAll(`/groups/${guid}/members`           , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController(), 'beta');
             const appRoleAssignments = await this.resolveAll(`/groups/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment , this.onToBeResolved, this.onProgressUpdate, new AbortController()        );
@@ -27,22 +27,25 @@ export class GuidResolverMicrosoftEntraIdGroupWithDetails extends GuidResolverMi
             const transitiveMemberOf = await this.resolveAll(`/groups/${guid}/transitiveMemberOf`, this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController()        );
             const transitiveMembers  = await this.resolveAll(`/groups/${guid}/transitiveMembers` , this.onResponse, _ => _                          , this.onToBeResolved, this.onProgressUpdate, new AbortController(), 'beta');
 
-            if (response && response.displayName) {
+            if (group && group.displayName) {
+
+                this.processResponse(group, this.onResponse, this.onToBeResolved);
+
                 return new GuidResolverResponse(
                     guid,
-                    response.displayName,
+                    group.displayName,
                     'Microsoft Entra ID Group Details',
                     {
                         ids               : {
-                                                id   : response.object?.id,
-                                                name : response.displayName
+                                                id   : group.object?.id,
+                                                name : group.displayName
                                             },
                         owners            : (owners             as any[])?.map(this.mapIdDisplayName).sort(),
                         members           : (members            as any[])?.map(this.mapIdDisplayName).sort(),
                         transitiveMembers : (transitiveMembers  as any[])?.map(this.mapIdDisplayName).sort(),
                         memberOf          : (memberOf           as any[])?.map(this.mapIdDisplayName).sort(),
                         transitiveMemberOf: (transitiveMemberOf as any[])?.map(this.mapIdDisplayName).sort(),
-                        group             : response.object,
+                        group             : group.object,
                         appRoleAssignments: appRoleAssignments,
                     },
                     new Date()

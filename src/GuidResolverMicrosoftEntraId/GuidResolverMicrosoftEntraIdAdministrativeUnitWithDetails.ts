@@ -1,12 +1,12 @@
 
-import { GuidResolverMicrosoftEntraIdAdministrativeUnit } from "./GuidResolverMicrosoftEntraIdAdministrativeUnit";
-import { GuidResolverMicrosoftEntraIdBase               } from "./GuidResolverMicrosoftEntraIdBase"                    ;
-import { GuidResolverResponse                           } from "../Models/GuidResolverResponse"                        ;
-import { IGuidResolver                                  } from "../GuidResolver"                                       ;
-import { TokenCredential                                } from "@azure/identity"                                       ;
+import { GuidResolverMicrosoftEntraIdGet  } from "./GuidResolverMicrosoftEntraIdGet" ;
+import { GuidResolverMicrosoftEntraIdBase } from "./GuidResolverMicrosoftEntraIdBase";
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse"    ;
+import { IGuidResolver                    } from "../GuidResolver"                   ;
+import { TokenCredential                  } from "@azure/identity"                   ;
 
 export class GuidResolverMicrosoftEntraIdAdministrativeUnitWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
-    private readonly guidResolverMicrosoftEntraIdAdministrativeUnit: GuidResolverMicrosoftEntraIdAdministrativeUnit;
+    private readonly guidResolverMicrosoftEntraIdGet: GuidResolverMicrosoftEntraIdGet;
 
     constructor(
         private readonly onResponse      : (guidResolverResponse: GuidResolverResponse) => void,
@@ -15,13 +15,13 @@ export class GuidResolverMicrosoftEntraIdAdministrativeUnitWithDetails extends G
         tokenCredential: TokenCredential
     ) {
         super(tokenCredential);
-        this.guidResolverMicrosoftEntraIdAdministrativeUnit = new GuidResolverMicrosoftEntraIdAdministrativeUnit(onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdGet = new GuidResolverMicrosoftEntraIdGet(guid => `/directory/administrativeUnits/${guid}`, onResponse, onToBeResolved, tokenCredential);
     }
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
             // https://learn.microsoft.com/en-us/graph/api/resources/administrativeunit?view=graph-rest-1.0
-            const administrativeUnit = await this.guidResolverMicrosoftEntraIdAdministrativeUnit.resolve(guid, new AbortController());
+            const administrativeUnit = await this.guidResolverMicrosoftEntraIdGet.resolve(guid, new AbortController());
             const members            = await this.resolveAll(`/directory/administrativeUnits/${guid}/members`          , this.onResponse, _ => _, this.onToBeResolved, this.onProgressUpdate, new AbortController());
             const scopedRoleMembers  = await this.resolveAll(`/directory/administrativeUnits/${guid}/scopedRoleMembers`, this.onResponse, _ => _, this.onToBeResolved, this.onProgressUpdate, new AbortController());
 

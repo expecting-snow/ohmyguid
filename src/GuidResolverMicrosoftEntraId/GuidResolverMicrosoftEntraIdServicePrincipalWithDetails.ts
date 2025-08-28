@@ -1,6 +1,6 @@
 import { GuidResolverMicrosoftEntraIdAppRegistrationClientId  } from "./GuidResolverMicrosoftEntraIdAppRegistrationClientId";
 import { GuidResolverMicrosoftEntraIdBase                     } from "./GuidResolverMicrosoftEntraIdBase";
-import { GuidResolverMicrosoftEntraIdServicePrincipal         } from "./GuidResolverMicrosoftEntraIdServicePrincipal";
+import { GuidResolverMicrosoftEntraIdGet                      } from "./GuidResolverMicrosoftEntraIdGet";
 import { GuidResolverMicrosoftEntraIdServicePrincipalClientId } from "./GuidResolverMicrosoftEntraIdServicePrincipalClientId";
 import { GuidResolverResponse                                 } from "../Models/GuidResolverResponse";
 import { IGuidResolver                                        } from "../GuidResolver";
@@ -9,7 +9,7 @@ import { TokenCredential                                      } from "@azure/ide
 export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
     
     private readonly guidResolverMicrosoftEntraIdServicePrincipalClientId : GuidResolverMicrosoftEntraIdServicePrincipalClientId;
-    private readonly guidResolverMicrosoftEntraIdServicePrincipal         : GuidResolverMicrosoftEntraIdServicePrincipal;
+    private readonly guidResolverMicrosoftEntraIdServicePrincipal         : GuidResolverMicrosoftEntraIdGet;
     private readonly guidResolverMicrosoftEntraIdAppRegistrationClientId  : GuidResolverMicrosoftEntraIdAppRegistrationClientId;
     
     constructor(
@@ -19,7 +19,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
         tokenCredential: TokenCredential
     ) { 
         super(tokenCredential); 
-        this.guidResolverMicrosoftEntraIdServicePrincipal         = new GuidResolverMicrosoftEntraIdServicePrincipal        (onResponse, onToBeResolved, tokenCredential);
+        this.guidResolverMicrosoftEntraIdServicePrincipal         = new GuidResolverMicrosoftEntraIdGet(guid => `/servicePrincipals/${guid}`, onResponse, onToBeResolved, tokenCredential),
         this.guidResolverMicrosoftEntraIdServicePrincipalClientId = new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential);
         this.guidResolverMicrosoftEntraIdAppRegistrationClientId  = new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential);
     }
@@ -35,9 +35,15 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
 
             if (servicePrincipal && servicePrincipal.displayName) {
 
+                this.processResponse(servicePrincipal, this.onResponse, this.onToBeResolved);
+
                 const appRegistration = servicePrincipal.object?.appId
                                       ? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(servicePrincipal.object.appId, new AbortController())
                                       : undefined;
+
+                if (appRegistration) {
+                    this.onResponse(appRegistration);
+                }
 
                 return new GuidResolverResponse(
                     guid,

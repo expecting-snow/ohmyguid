@@ -13,7 +13,14 @@ export class GuidResolverMicrosoftEntraIdServicePrincipals extends GuidResolverM
 
     async resolve(abortController: AbortController): Promise<void> {
         try {
-            await this.resolveAll('/servicePrincipals', this.onResponse, _ => {_['@odata.type'] = '#microsoft.graph.servicePrincipal'; return _; }, this.onToBeResolved, this.onProgressUpdate, abortController, 'v1.0', false);
+            this.onProgressUpdate('/servicePrincipals/$count');
+            const count = await this.getClient(abortController, 'beta').api('/servicePrincipals/$count').header('ConsistencyLevel', 'eventual').get();
+
+            if (count > 1000) {
+                this.onProgressUpdate(`Too many servicePrincipals (${count}). Skipping detailed resolution.`);
+            } else {
+                await this.resolveAll('/servicePrincipals', this.onResponse, _ => {_['@odata.type'] = '#microsoft.graph.servicePrincipal'; return _; }, this.onToBeResolved, this.onProgressUpdate, abortController, 'v1.0', false);
+            }
         } catch (e: any) {
             console.error('GuidResolverMicrosoftEntraIdServicePrincipals', e);
         }
