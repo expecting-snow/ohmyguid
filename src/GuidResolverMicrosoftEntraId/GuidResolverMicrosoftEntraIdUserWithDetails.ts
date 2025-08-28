@@ -12,8 +12,8 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
         private readonly onToBeResolved  : (guid                 : string              ) => void,
         private readonly onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential
-    ) { 
-        super(tokenCredential); 
+    ) {
+        super(tokenCredential);
         this.guidResolverMicrosoftEntraIdUser = new GuidResolverMicrosoftEntraIdGet(guid => `/users/${guid}` , onResponse, onToBeResolved, tokenCredential);
     }
 
@@ -49,7 +49,9 @@ export class GuidResolverMicrosoftEntraIdUserWithDetails extends GuidResolverMic
                     new Date()
                 );
             }
-        } catch { }
+        } catch (e: any) {
+            console.error('GuidResolverMicrosoftEntraIdUserWithDetails', e);
+        }
         return undefined;
     }
 }

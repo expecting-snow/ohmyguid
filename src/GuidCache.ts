@@ -46,9 +46,7 @@ export class GuidCache {
         this.callbackInfo(`${guidTransformed} - enqueue`);
 
         if (!this.cache.has(guidTransformed)) {
-            this.cache.set(
-                guidTransformed, 
-                this.guidResolver.resolve(guidTransformed)
+            const promise =  this.guidResolver.resolve(guidTransformed)
                                  .then(
                                     (resolvedValue: GuidResolverResponse | undefined) => {
                                         if (resolvedValue) {
@@ -59,8 +57,9 @@ export class GuidCache {
 
                                          return resolvedValue;
                                      }
-                                 )
-            );
+                                 );
+
+            this.cache.set(guidTransformed, promise);
         }
     }
 

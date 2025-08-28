@@ -35,6 +35,9 @@ export class GuidResolverMicrosoftEntraId implements IGuidBatchResolver{
             new GuidResolverMicrosoftEntraIdGet                     (guid => `/users/${guid}`                                                          , onResponse, onToBeResolved, tokenCredential),
             new GuidResolverMicrosoftEntraIdGet                     (guid => `/directory/administrativeUnits/${guid}`                                  , onResponse, onToBeResolved, tokenCredential),
             new GuidResolverMicrosoftEntraIdGet                     (guid => `/directoryRoles/${guid}`                                                 , onResponse, onToBeResolved, tokenCredential),
+
+            // https://learn.microsoft.com/en-us/graph/api/cloudpc-get | permissions: CloudPC.Read.All
+            // new GuidResolverMicrosoftEntraIdGet                     (guid => `/deviceManagement/virtualEndpoint/cloudPCs/${guid}`                      , onResponse, onToBeResolved, tokenCredential),
         ];
 
         this.microsoftEntraIdInits = [
