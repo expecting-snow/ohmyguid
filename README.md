@@ -18,10 +18,12 @@ This extension provides CodeLens support for guids within text files by looking 
 
 in
 
-- yaml
 - bicep
-- markdown
 - json
+- markdown
+- powershell
+- shellscript
+- yaml
 
 files.
 
@@ -38,7 +40,7 @@ All and any feedback is welcome.
 
 Use the command 'OhMyGuid: LookUp' to enter a guid and look it up.
 
-Use the command 'OhMyGuid: Refresg' when switching Microsoft Entra ID tenants.
+Use the command 'OhMyGuid: Refresh' when switching Microsoft Entra ID tenants.
 
 
 
