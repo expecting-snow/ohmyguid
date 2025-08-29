@@ -1,6 +1,9 @@
-import { GuidResolver         } from "./GuidResolver"               ;
-import { GuidResolverResponse } from "./Models/GuidResolverResponse";
-import { Memento              } from "vscode"                       ;
+import { AbortController as AzureAbortController } from "@azure/abort-controller"                             ;
+import { GuidResolver                            } from "./GuidResolver"                                      ;
+import { GuidResolverAzureManagementGroup        } from "./GuidResolverAzure/GuidResolverAzureManagementGroup";
+import { GuidResolverAzureSubscription           } from "./GuidResolverAzure/GuidResolverAzureSubscription"   ;
+import { GuidResolverResponse                    } from "./Models/GuidResolverResponse"                       ;
+import { Memento                                 } from "vscode"                                              ;
 
 export class GuidCache {
 
@@ -8,9 +11,11 @@ export class GuidCache {
     private readonly guidTransform : (guid: string) => string;
 
     constructor(
-        private readonly guidResolver: GuidResolver,
-        private readonly memento: Memento,
-        private readonly callbackInfo: (value: any) => void
+        private readonly guidResolver                     : GuidResolver,
+        private readonly guidResolverAzureSubscription    : GuidResolverAzureSubscription,
+        private readonly guidResolverAzureManagementGroup : GuidResolverAzureManagementGroup,
+        private readonly memento                          : Memento,
+        private readonly callbackInfo                     : (value: any) => void
     ) {
         this.cache = new Map<string, Promise<GuidResolverResponse | undefined>>();
         this.guidTransform = (guid: string) => guid.toLowerCase().trim();
@@ -52,7 +57,53 @@ export class GuidCache {
                                         if (resolvedValue) {
                                              this.update(guidTransformed, resolvedValue);
                                         }
-                                         
+
+                                         this.cache.delete(guidTransformed);
+
+                                         return resolvedValue;
+                                     }
+                                 );
+
+            this.cache.set(guidTransformed, promise);
+        }
+    }
+
+    enqueuePromiseAzureSubscription(guid: string): void {
+        const guidTransformed = this.guidTransform(guid);
+
+        this.callbackInfo(`${guidTransformed} - enqueue AzureSubscription`);
+
+        if (!this.cache.has(guidTransformed)) {
+            const promise =  this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
+                                 .then(
+                                    (resolvedValue: GuidResolverResponse | undefined) => {
+                                        if (resolvedValue) {
+                                             this.update(guidTransformed, resolvedValue);
+                                        }
+
+                                         this.cache.delete(guidTransformed);
+
+                                         return resolvedValue;
+                                     }
+                                 );
+
+            this.cache.set(guidTransformed, promise);
+        }
+    }
+
+    enqueuePromiseAzureManagementGroup(guid: string): void {
+        const guidTransformed = this.guidTransform(guid);
+
+        this.callbackInfo(`${guidTransformed} - enqueue AzureManagementGroup`);
+
+        if (!this.cache.has(guidTransformed)) {
+            const promise =  this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
+                                 .then(
+                                    (resolvedValue: GuidResolverResponse | undefined) => {
+                                        if (resolvedValue) {
+                                             this.update(guidTransformed, resolvedValue);
+                                        }
+
                                          this.cache.delete(guidTransformed);
 
                                          return resolvedValue;

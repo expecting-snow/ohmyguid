@@ -1,25 +1,27 @@
-import { AzureManagementGroups        } from '../AzureManagementGroups'       ;
-import { CachingAzureCliCredential    } from '../CachingAzureCliCredential'   ;
-import { EntityInfo                   } from '@azure/arm-managementgroups'    ;
-import { GuidCache                    } from '../GuidCache'                   ;
-import { GuidCodeLensProvider         } from '../GuidCodeLensProvider'        ;
-import { GuidResolver                 } from '../GuidResolver'                ;
-import { GuidResolverResponseRenderer } from '../GuidResolverResponseRenderer';
-import { InMemoryMemento              } from './InMemoryMemento'              ;
-import { window, workspace            } from 'vscode'                         ;
-import * as assert                      from 'assert'                         ;
-import { GuidResolverResponse } from '../Models/GuidResolverResponse';
+import { AzureManagementGroups            } from '../AzureManagementGroups'                             ;
+import { CachingAzureCliCredential        } from '../CachingAzureCliCredential'                         ;
+import { EntityInfo                       } from '@azure/arm-managementgroups'                          ;
+import { GuidCache                        } from '../GuidCache'                                         ;
+import { GuidCodeLensProvider             } from '../GuidCodeLensProvider'                              ;
+import { GuidResolver                     } from '../GuidResolver'                                      ;
+import { GuidResolverAzureManagementGroup } from '../GuidResolverAzure/GuidResolverAzureManagementGroup';
+import { GuidResolverAzureSubscription    } from '../GuidResolverAzure/GuidResolverAzureSubscription'   ;
+import { GuidResolverResponse             } from '../Models/GuidResolverResponse'                       ;
+import { GuidResolverResponseRenderer     } from '../GuidResolverResponseRenderer'                      ;
+import { InMemoryMemento                  } from './InMemoryMemento'                                    ;
+import { window, workspace                } from 'vscode'                                               ;
+import * as assert                          from 'assert'                                               ;
 
 suite('Extension Test Suite', () => {
     window.showInformationMessage('Start all tests.');
 
     test('AzureManagementGroups', () => {
         const _0     = "_0";
-    
+
         const _0_1   = "_0_1";
         const _0_1_a = "_0_1_a";
         const _0_1_b = "_0_1_b";
-    
+
         const _0_2   = "_0_2";
         const _0_2_a = "_0_2_a";
         const _0_2_b = "_0_2_b";
@@ -52,17 +54,22 @@ suite('Extension Test Suite', () => {
     test('GuidCodeLensProvider', async () => {
         const cache = new InMemoryMemento();
 
+        const tokenCredential = new CachingAzureCliCredential(_ => { }, _ => { });
+
         const guidCodeLensProvider = new GuidCodeLensProvider(
             new GuidCache(
                 new GuidResolver(
                     _ => { },
                     _ => { },
                     _ => { },
-                    new CachingAzureCliCredential(
-                        _ => { },
-                        _ => { }
-                    ),
+                    tokenCredential,
                     _ => { }
+                ),
+                new GuidResolverAzureSubscription(
+                    tokenCredential
+                ),
+                new GuidResolverAzureManagementGroup(
+                    tokenCredential
                 ),
                 new InMemoryMemento(),
                 _ => { }
@@ -71,8 +78,8 @@ suite('Extension Test Suite', () => {
         );
 
         const data: { input: string, expected: string[] }[] = [
-            { 
-                input: '', 
+            {
+                input: '',
                 expected: []
             },
             {
@@ -102,7 +109,7 @@ suite('Extension Test Suite', () => {
             },
         ];
 
-   
+
         for (const datum of data) {
             cache.update(datum.input, new GuidResolverResponse(datum.input, 'test' + datum.input, 'Test', {}, new Date()));
         }
