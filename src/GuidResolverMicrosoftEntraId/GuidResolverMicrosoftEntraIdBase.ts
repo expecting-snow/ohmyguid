@@ -49,7 +49,7 @@ export class GuidResolverMicrosoftEntraIdBase {
     }
 
     protected async resolveAll(
-        url             : string, 
+        url             : string,
         onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         mapper          : (response             : any                 ) => any,
         onToBeResolved  : (guid                 : string              ) => void,
@@ -75,7 +75,7 @@ export class GuidResolverMicrosoftEntraIdBase {
                 }
 
                 this.processResponse(mapper(item), onResponse, onToBeResolved);
-                
+
                 if(returnCollection !== false){
                     collection.push(item);
                 }
@@ -124,10 +124,14 @@ export class GuidResolverMicrosoftEntraIdBase {
     }
 
     protected processResponse(
-        response       : any, 
+        response       : any,
         onResponse     : (guidResolverResponse : any   ) => void,
         onToBeResolved : (guid                 : string) => void
     ): GuidResolverResponse | undefined {
+        if (response && response.object && response.object["@odata.context"]) {
+            return this.processResponse(response.object, onResponse, onToBeResolved);
+        }
+
         if (response && response.tenantId && response.displayName && (response['@odata.type'] === '#microsoft.graph.tenantInformation'|| response['@odata.context'] === 'https://graph.microsoft.com/v1.0/$metadata#microsoft.graph.tenantInformation')
         ) {
             const responseMapped = new GuidResolverResponse(response.tenantId, response.displayName, 'Microsoft Entra ID Tenant', response, new Date());
@@ -186,8 +190,8 @@ export class GuidResolverMicrosoftEntraIdBase {
                 return responseMapped;
             }
             else if (
-                   response['@odata.type'   ] === '#microsoft.graph.servicePrincipal' 
-                || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#servicePrincipals/$entity' 
+                   response['@odata.type'   ] === '#microsoft.graph.servicePrincipal'
+                || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#servicePrincipals/$entity'
                 || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#servicePrincipals/$entity') {
                 const responseMapped = new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ServicePrincipal', response, new Date());
                 onResponse(responseMapped);
@@ -245,13 +249,13 @@ export class GuidResolverMicrosoftEntraIdBase {
                 return responseMapped;
             }
             else if (
-                   response['@odata.type'   ] === '#microsoft.graph.application' 
-                || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#applications/$entity' 
+                   response['@odata.type'   ] === '#microsoft.graph.application'
+                || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#applications/$entity'
                 || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#applications/$entity') {
-                
+
                 const responseMapped = new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID AppRegistration', response, new Date());
                 onResponse(responseMapped);
-                
+
                 if(response.appId){
                     onResponse(new GuidResolverResponse(response.appId, response.displayName, 'Microsoft Entra ID AppRegistration', response, new Date()));
                 }
@@ -264,7 +268,14 @@ export class GuidResolverMicrosoftEntraIdBase {
                                 appRole.metadata = {};
                                 appRole.metadata.appId = response.appId;
                             }
-                            onResponse(new GuidResolverResponse(appRole.id, appRole.displayName, 'Microsoft Entra ID AppRoleDefinition', appRole, new Date()));
+                            onResponse(
+                                new GuidResolverResponse(
+                                    appRole.id,
+                                    appRole.displayName,
+                                    'Microsoft Entra ID AppRoleDefinition',
+                                    appRole, new Date()
+                                )
+                            );
                         }
                     }
                 }
@@ -331,7 +342,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             }
         }
         else if (response && response.resourceId && response['@odata.type'] === 'microsoft.graph.appRoleAssignment') {
-            /*  
+            /*
                 {
                      id: "...not a guid...",
                      deletedDateTime: null,
@@ -345,9 +356,17 @@ export class GuidResolverMicrosoftEntraIdBase {
                 }
             */
             onToBeResolved(response.resourceId);
+
+            return new GuidResolverResponse(
+                response.appRoleId,
+                this.mapAppRoleAssignment(response),
+                'Microsoft Entra ID AppRoleDefinition',
+                response,
+                new Date()
+            );
         }
         else if (response && response.subject && response['@odata.type'] === 'microsoft.graph.application.federatedIdentityCredentials') {
-            /*  
+            /*
                 {
                     "@odata.type": "microsoft.graph.application.federatedIdentityCredentials"
                     "id": "<guid>",
@@ -368,7 +387,7 @@ export class GuidResolverMicrosoftEntraIdBase {
 
             return responseMapped;
         }
-        
+
         console.warn(`Unknown response type: ${response}`);
 
         return undefined;

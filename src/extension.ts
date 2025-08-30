@@ -1,12 +1,14 @@
-import { createOutputChannel                                                                                                 } from './extensionCreateOutputChannel'         ;
-import { ExtensionContext, Uri, window, workspace                                                                            } from 'vscode'                                 ;
-import { GuidResolver                                                                                                        } from './GuidResolver'                         ;
-import { GuidResolverResponse                                                                                                } from './Models/GuidResolverResponse'          ;
-import { initStaticContent                                                                                                   } from './extensionStaticContent'               ;
-import { registerCache                                                                                                       } from './extensionCache'                       ;
-import { registerCommandInfo, registerCommandLookup, registerCommandOpenLink, registerCommandPreLoad, registerCommandRefresh } from './extensionCommands'                    ;
-import { registerGuidCodeLensProvider                                                                                        } from './extensionRegisterGuidCodeLensProvider';
-import { resolveTokenProvider                                                                                                } from './extensionTokenCredential'             ;
+import { createOutputChannel                                                                                                 } from './extensionCreateOutputChannel'                      ;
+import { ExtensionContext, Uri, window, workspace                                                                            } from 'vscode'                                              ;
+import { GuidResolver                                                                                                        } from './GuidResolver'                                      ;
+import { GuidResolverAzureManagementGroup                                                                                    } from './GuidResolverAzure/GuidResolverAzureManagementGroup';
+import { GuidResolverAzureSubscription                                                                                       } from './GuidResolverAzure/GuidResolverAzureSubscription'   ;
+import { GuidResolverResponse                                                                                                } from './Models/GuidResolverResponse'                       ;
+import { initStaticContent                                                                                                   } from './extensionStaticContent'                            ;
+import { registerCache                                                                                                       } from './extensionCache'                                    ;
+import { registerCommandInfo, registerCommandLookup, registerCommandOpenLink, registerCommandPreLoad, registerCommandRefresh } from './extensionCommands'                                 ;
+import { registerGuidCodeLensProvider                                                                                        } from './extensionRegisterGuidCodeLensProvider'             ;
+import { resolveTokenProvider                                                                                                } from './extensionTokenCredential'                          ;
 
 export async function activate(context: ExtensionContext) {
     const outputChannel = createOutputChannel(context);
@@ -33,7 +35,13 @@ export async function activate(context: ExtensionContext) {
         }
     );
 
-    const guidCache = registerCache(context, guidResolver, outputChannel);
+    const guidCache = registerCache(
+        context,
+        guidResolver,
+        new GuidResolverAzureSubscription   (tokenCredential),
+        new GuidResolverAzureManagementGroup(tokenCredential),
+        outputChannel
+    );
 
     // initStaticContent on first run for this version
     const packageJsonUri = Uri.joinPath(context.extensionUri, 'package.json');
@@ -53,7 +61,7 @@ export async function activate(context: ExtensionContext) {
     registerCommandInfo         (context, guidCache, tokenCredential, outputChannel);
     registerCommandOpenLink     (context, guidCache, tokenCredential, outputChannel);
     registerCommandLookup       (context, guidCache, tokenCredential, outputChannel);
-    
+
     outputChannel.appendLine('activated');
 }
 
