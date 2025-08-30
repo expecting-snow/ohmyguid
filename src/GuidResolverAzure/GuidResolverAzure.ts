@@ -22,12 +22,12 @@ export class GuidResolverAzure {
         private readonly callbackError   : (error: any) => void
     ) {
         this.guidResolvers = [
-            new GuidResolverAzureSubscription                         (tokenCredential),
-            new GuidResolverAzureManagementGroup                      (tokenCredential),
-            new GuidResolverAzureRoleDefinition                       (tokenCredential),
-            new GuidResolverAzureApplicationInsightsInstrumentationKey(tokenCredential),
-            new GuidResolverAzureLogAnalyticsWorkspaceCustomerId      (tokenCredential),
-            new GuidResolverAzureTag                                  (tokenCredential),
+            new GuidResolverAzureSubscription                         (            tokenCredential),
+            new GuidResolverAzureManagementGroup                      (            tokenCredential),
+            new GuidResolverAzureRoleDefinition                       (            tokenCredential),
+            new GuidResolverAzureApplicationInsightsInstrumentationKey(onResponse, tokenCredential),
+            new GuidResolverAzureLogAnalyticsWorkspaceCustomerId      (onResponse, tokenCredential),
+            new GuidResolverAzureTag                                  (            tokenCredential),
         ];
 
         this.guidResolverInits = [
