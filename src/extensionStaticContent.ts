@@ -3,6 +3,15 @@ import { GuidCache                        } from './GuidCache';
 import { GuidResolverResponse             } from './Models/GuidResolverResponse';
 
 export async function initStaticContent(context: ExtensionContext, guidCache: GuidCache) {
+
+    guidCache.update(GuidResolverResponse.EMPTY_GUID, new GuidResolverResponse(
+        GuidResolverResponse.EMPTY_GUID,
+        GuidResolverResponse.EMPTY_GUID,
+        'Empty',
+        {},
+        new Date()
+    ));
+
     await workspace.fs.readFile(
         Uri.joinPath(context.extensionUri, 'static/azure-policies-builtin.json')
     )

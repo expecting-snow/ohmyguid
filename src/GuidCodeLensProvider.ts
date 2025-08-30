@@ -1,14 +1,9 @@
-import { CancellationToken, CodeLens, CodeLensProvider, Command, Range, TextDocument } from 'vscode'                        ;
-import { GuidCache                                                                   } from './GuidCache'                   ;
-import { GuidResolverResponseRenderer                                                } from "./GuidResolverResponseRenderer";
-import { GuidResolverResponse                                                        } from './Models/GuidResolverResponse' ;
+import { CancellationToken, CodeLens, CodeLensProvider, Command, Position, Range, TextDocument } from 'vscode'                        ;
+import { GuidCache                                                                             } from './GuidCache'                   ;
+import { GuidResolverResponseRenderer                                                          } from "./GuidResolverResponseRenderer";
+import { GuidResolverResponse                                                                  } from './Models/GuidResolverResponse' ;
 
 export class GuidCodeLensProvider implements CodeLensProvider {
-
-    private readonly guidRegex                     = /(?<!\/)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g           ;
-    private readonly guidRegexAzureSubscription    = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g   ;
-    private readonly guidRegexAzureManagementGroup = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
-
     constructor(
         readonly guidCache: GuidCache,
         readonly renderer: GuidResolverResponseRenderer
@@ -18,197 +13,95 @@ export class GuidCodeLensProvider implements CodeLensProvider {
         console.log('provideCodeLenses ' + new Date().toISOString());
 
         const codeLenses : GuidCodeLens[] = [];
-        const unresolvedGuids                      = new Set<string>();
-        const unresolvedGuidsAzureSubscription     = new Set<string>();
-        const unresolvedGuidsAzureManagementGroups = new Set<string>();
 
         const text = document.getText();
 
-        // process guidRegex
-        while (true) {
-            const match = this.guidRegex.exec(text);
+        // process xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        {
+            const regex = /(?<!\/)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+            const unresolvedGuids = new Set<string>();
+            while (true) {
+                const match = regex.exec(text);
 
-            if (!match) { break; }
+                if (!match) { break; }
 
-            const guid = match[0];
+                const guid = match[0];
 
-            if(guid === GuidResolverResponse.EMPTY_GUID) {
-                continue;
-            }
+                const response = this.guidCache.getResolved(guid);
 
-            const response = this.guidCache.getResolved(guid);
-
-            if (response) {
-                if (response.type === 'Not Found') {
+                if (!response) {
+                    unresolvedGuids.add(guid);
+                }
+                else if (response.type === 'Not Found' || response.type === 'Empty') {
                     continue;
                 }
 
-                if (response.type === 'Empty') {
-                    continue;
-                }
-
-                codeLenses.push(
-                    new GuidCodeLens(
-                        guid,
-                        new Range(
-                            document.positionAt(match.index),
-                            document.positionAt(match.index + guid.length)
-                        ),
-                        {
-                            title: this.renderer.render(response) || '',
-                            command: 'ohmyguid.openLink',
-                            arguments: [response]
-                        }
-                    )
-                );
+                codeLenses.push(this.getGuidCodeLens(guid, document.positionAt(match.index), response));
             }
-            else{
-                //this.guidCache.enqueuePromise(guid);
-                unresolvedGuids.add(guid);
 
-                codeLenses.push(
-                    new GuidCodeLens(
-                        guid,
-                        new Range(
-                            document.positionAt(match.index),
-                            document.positionAt(match.index + guid.length)
-                        )
-                    )
-                );
+            if (unresolvedGuids.size > 0) {
+                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuids));
             }
         }
 
-        if (unresolvedGuids.size > 0) {
-            this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuids));
-        }
+        // process subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        {
+            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+            const unresolvedGuidsAzureSubscription = new Set<string>();
+            while (true) {
+                const match = regex.exec(text);
 
-        // process guidRegexAzureSubscription
-        while (true) {
-            const match = this.guidRegexAzureSubscription.exec(text);
+                if (!match) { break; }
 
-            if (!match) { break; }
+                const guid = match[0].split('/').at(1);
 
-            const guid = match[0].split('/').at(1);
+                if (!guid) { continue; }
 
-            if(!guid) {
-                continue;
-            }
+                const response = this.guidCache.getResolved(guid);
 
-            if(guid === GuidResolverResponse.EMPTY_GUID) {
-                continue;
-            }
-
-            const response = this.guidCache.getResolved(guid);
-
-            if (response) {
-                if (response.type === 'Not Found') {
+                if (!response) {
+                    unresolvedGuidsAzureSubscription.add(guid);
+                }
+                else if (response.type === 'Not Found' || response.type === 'Empty') {
                     continue;
                 }
 
-                if (response.type === 'Empty') {
-                    continue;
-                }
-
-                codeLenses.push(
-                    new GuidCodeLens(
-                        guid,
-                        new Range(
-                            document.positionAt(match.index),
-                            document.positionAt(match.index + guid.length)
-                        ),
-                        {
-                            title: this.renderer.render(response) || '',
-                            command: 'ohmyguid.openLink',
-                            arguments: [response]
-                        }
-                    )
-                );
+                codeLenses.push(this.getGuidCodeLens(guid, document.positionAt(match.index), response));
             }
-            else{
-                unresolvedGuidsAzureSubscription.add(guid);
 
-                codeLenses.push(
-                    new GuidCodeLens(
-                        guid,
-                        new Range(
-                            document.positionAt(match.index),
-                            document.positionAt(match.index + guid.length)
-                        )
-                    )
-                );
+            if (unresolvedGuidsAzureSubscription.size > 0) {
+                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuidsAzureSubscription), 'Azure ManagementGroup');
             }
         }
 
-        if (unresolvedGuidsAzureSubscription.size > 0) {
-            const guids = Array.from(unresolvedGuidsAzureSubscription);
+        // process managementGroups/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        {
+            const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
 
-            for (const guid of guids) {
-                this.guidCache.enqueuePromiseAzureSubscription(guid);
-            }
-        }
+            const unresolvedGuidsAzureManagementGroups = new Set<string>();
+            while (true) {
+                const match = regex.exec(text);
 
-        // process guidRegexAzureManagementGroup
-        while (true) {
-            const match = this.guidRegexAzureManagementGroup.exec(text);
+                if (!match) { break; }
 
-            if (!match) { break; }
+                const guid = match[0].split('/').at(1);
 
-            const guid = match[0].split('/').at(1);
+                if (!guid) { continue; }
 
-            if(!guid) {
-                continue;
-            }
+                const response = this.guidCache.getResolved(guid);
 
-            if(guid === GuidResolverResponse.EMPTY_GUID) {
-                continue;
-            }
-
-            const response = this.guidCache.getResolved(guid);
-
-            if (response) {
-                if (response.type === 'Not Found') {
+                if (!response) {
+                    unresolvedGuidsAzureManagementGroups.add(guid);
+                }
+                else if (response.type === 'Not Found' || response.type === 'Empty') {
                     continue;
                 }
 
-                if (response.type === 'Empty') {
-                    continue;
-                }
-
-                codeLenses.push(
-                    new GuidCodeLens(
-                        guid,
-                        new Range(
-                            document.positionAt(match.index),
-                            document.positionAt(match.index + guid.length)
-                        ),
-                        {
-                            title: this.renderer.render(response) || '',
-                            command: 'ohmyguid.openLink',
-                            arguments: [response]
-                        }
-                    )
-                );
+                codeLenses.push(this.getGuidCodeLens(guid, document.positionAt(match.index), response));
             }
-            else{
-                unresolvedGuidsAzureManagementGroups.add(guid);
 
-                codeLenses.push(
-                    new GuidCodeLens(
-                        guid,
-                        new Range(
-                            document.positionAt(match.index),
-                            document.positionAt(match.index + guid.length)
-                        )
-                    )
-                );
-            }
-        }
-
-        if (unresolvedGuidsAzureManagementGroups.size > 0) {
-            const guids = Array.from(unresolvedGuidsAzureManagementGroups);
-
-            for (const guid of guids) {
-                this.guidCache.enqueuePromiseAzureManagementGroup(guid);
+            if (unresolvedGuidsAzureManagementGroups.size > 0) {
+                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuidsAzureManagementGroups), 'Azure ManagementGroup');
             }
         }
 
@@ -249,6 +142,23 @@ export class GuidCodeLensProvider implements CodeLensProvider {
             arguments: []
         };
         return codeLens;
+    }
+
+    private getGuidCodeLens(
+        guid: string,
+        start: Position,
+        response?: GuidResolverResponse
+    ): GuidCodeLens {
+        return new GuidCodeLens(
+            guid,
+            new Range(start, start.translate(0, guid.length)),
+            response ? undefined :
+            {
+                title     : this.renderer.render(response),
+                command   : 'ohmyguid.openLink',
+                arguments : [response]
+            }
+        );
     }
 }
 

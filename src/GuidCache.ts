@@ -45,76 +45,81 @@ export class GuidCache {
         return response;
     }
 
-    enqueuePromise(guid: string): void {
+    enqueuePromise(guid: string, type?: 'Azure ManagementGroup' | 'Azure Subscription'): void {
         const guidTransformed = this.guidTransform(guid);
 
-        this.callbackInfo(`${guidTransformed} - enqueue`);
+        if (this.cache.has(guidTransformed)) { return; }
 
-        if (!this.cache.has(guidTransformed)) {
-            const promise =  this.guidResolver.resolve(guidTransformed)
-                                 .then(
-                                    (resolvedValue: GuidResolverResponse | undefined) => {
-                                        if (resolvedValue) {
-                                             this.update(guidTransformed, resolvedValue);
-                                        }
+        if (type === 'Azure ManagementGroup') {
+            const promise = this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
+                .then(
+                    (resolvedValue: GuidResolverResponse | undefined) => {
+                        if (resolvedValue) {
+                            this.update(guidTransformed, resolvedValue);
+                        }
 
-                                         this.cache.delete(guidTransformed);
+                        this.cache.delete(guidTransformed);
 
-                                         return resolvedValue;
-                                     }
-                                 );
+                        return resolvedValue;
+                    }
+                );
+            this.callbackInfo(`${guidTransformed} - enqueue AzureManagementGroup`);
+            this.cache.set(guidTransformed, promise);
+        }
+        else if (type === 'Azure Subscription') {
+            const promise = this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
+                .then(
+                    (resolvedValue: GuidResolverResponse | undefined) => {
+                        if (resolvedValue) {
+                            this.update(guidTransformed, resolvedValue);
+                        }
 
+                        this.cache.delete(guidTransformed);
+
+                        return resolvedValue;
+                    }
+                );
+            this.callbackInfo(`${guidTransformed} - enqueue AzureSubscription`);
+            this.cache.set(guidTransformed, promise);
+        }
+        else {
+
+
+            const promise = this.guidResolver.resolve(guidTransformed)
+                .then(
+                    (resolvedValue: GuidResolverResponse | undefined) => {
+                        if (resolvedValue) {
+                            this.update(guidTransformed, resolvedValue);
+                        }
+
+                        this.cache.delete(guidTransformed);
+
+                        return resolvedValue;
+                    }
+                );
+
+            this.callbackInfo(`${guidTransformed} - enqueue`);
             this.cache.set(guidTransformed, promise);
         }
     }
 
-    enqueuePromiseAzureSubscription(guid: string): void {
-        const guidTransformed = this.guidTransform(guid);
+    async enqueueBatchResolve(guids: string[], type?: 'Azure ManagementGroup' | 'Azure Subscription'): Promise<string[] | undefined> {
+        if (type === 'Azure ManagementGroup') {
+            for (const guid of guids) {
+                this.enqueuePromise(guid, 'Azure ManagementGroup');
+            }
 
-        this.callbackInfo(`${guidTransformed} - enqueue AzureSubscription`);
-
-        if (!this.cache.has(guidTransformed)) {
-            const promise =  this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
-                                 .then(
-                                    (resolvedValue: GuidResolverResponse | undefined) => {
-                                        if (resolvedValue) {
-                                             this.update(guidTransformed, resolvedValue);
-                                        }
-
-                                         this.cache.delete(guidTransformed);
-
-                                         return resolvedValue;
-                                     }
-                                 );
-
-            this.cache.set(guidTransformed, promise);
+            return guids;
         }
-    }
 
-    enqueuePromiseAzureManagementGroup(guid: string): void {
-        const guidTransformed = this.guidTransform(guid);
+        if (type === 'Azure Subscription') {
+            for (const guid of guids) {
+                this.enqueuePromise(guid, 'Azure Subscription');
+            }
 
-        this.callbackInfo(`${guidTransformed} - enqueue AzureManagementGroup`);
-
-        if (!this.cache.has(guidTransformed)) {
-            const promise =  this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
-                                 .then(
-                                    (resolvedValue: GuidResolverResponse | undefined) => {
-                                        if (resolvedValue) {
-                                             this.update(guidTransformed, resolvedValue);
-                                        }
-
-                                         this.cache.delete(guidTransformed);
-
-                                         return resolvedValue;
-                                     }
-                                 );
-
-            this.cache.set(guidTransformed, promise);
+            return guids;
         }
-    }
 
-    async enqueueBatchResolve(guids: string[]): Promise<string[] | undefined> {
         const resolvedGuids = await this.guidResolver.resolveBatch(guids, new AbortController());
 
         if (resolvedGuids) {
