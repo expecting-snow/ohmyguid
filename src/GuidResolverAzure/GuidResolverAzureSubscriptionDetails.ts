@@ -8,7 +8,8 @@ import { TokenCredential          } from "@azure/identity"               ;
 
 export class GuidResolverAzureSubscriptionDetails {
     private readonly subscriptionClient: SubscriptionClient;
-     private readonly resourceGraphClient: ResourceGraphClient;
+    private readonly resourceGraphClient: ResourceGraphClient;
+
     constructor(
         private readonly tokenCredential: TokenCredential
     ) {
@@ -21,7 +22,7 @@ export class GuidResolverAzureSubscriptionDetails {
             const client = new ResourceManagementClient(this.tokenCredential, subscriptionId);
 
             const subscription = await this.subscriptionClient.subscriptions.get(subscriptionId, { abortSignal: abortController.signal });
- 
+
             const subscriptionsResourceGraph = await this.resourceGraphClient.resources({
                 query: `resourcecontainers | where type == 'microsoft.resources/subscriptions' and subscriptionId == '${subscriptionId}'`,
                 subscriptions: []
@@ -31,11 +32,8 @@ export class GuidResolverAzureSubscriptionDetails {
 
             const subscriptionResourceGraph = subscriptionsResourceGraph?.data.at(0);
 
-            const hierarchy = subscriptionResourceGraph 
-                            ? subscriptionResourceGraph?.properties?.managementGroupAncestorsChain?.map((p: any) => p.displayName || '')?.reverse().join(' / ') + ` / ${subscription.displayName}` 
-                            : '';
-            const tenantId = subscriptionResourceGraph 
-                            ? subscriptionResourceGraph?.tenantId 
+            const hierarchy = subscriptionResourceGraph
+                            ? subscriptionResourceGraph?.properties?.managementGroupAncestorsChain?.map((p: any) => p.displayName || '')?.reverse().join(' / ') + ` / ${subscription.displayName}`
                             : '';
 
             const resourceGroups = [];
@@ -53,10 +51,10 @@ export class GuidResolverAzureSubscriptionDetails {
                     {
                         ids: {
                             id: subscription.id,
-                            tenantId,
+                            tenantId: subscription.tenantId,
                             hierarchy,
                         },
-                        resourceGroups: resourceGroups.map(p => tenantId ? `https://portal.azure.com/#@${tenantId}/resource/${p.id}` : p.id).sort(),
+                        resourceGroups: resourceGroups.map(p => subscription.tenantId ? `https://portal.azure.com/#@${subscription.tenantId}/resource/${p.id}` : p.id).sort(),
                         resource: subscription,
                         graph: subscriptionsResourceGraph?.data.at(0)
                     },

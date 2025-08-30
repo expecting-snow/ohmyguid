@@ -1,10 +1,10 @@
 import { AbortController      } from "@azure/abort-controller"       ;
 import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { ResourceGraphClient  } from "@azure/arm-resourcegraph"      ;
+import { SubscriptionClient   } from "@azure/arm-subscriptions"      ;
 import { TokenCredential      } from "@azure/identity"               ;
 
 export class GuidResolverAzureSubscriptions {
-    private readonly client: ResourceGraphClient;
+    private readonly client: SubscriptionClient;
 
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
@@ -12,32 +12,22 @@ export class GuidResolverAzureSubscriptions {
                          tokenCredential : TokenCredential,
         private readonly callbackError   : (error: any) => void
     ) {
-        this.client = new ResourceGraphClient(tokenCredential);
+        this.client = new SubscriptionClient(tokenCredential);
     }
 
     async resolve(abortController: AbortController): Promise<void> {
         try {
-            const query = `resourcecontainers | where type == 'microsoft.resources/subscriptions'`;
-
-            const result = await this.client.resources({ query, subscriptions: [] }, { abortSignal: abortController.signal });
-
-            if (result && result.data && Array.isArray(result.data)) {
-                for (const subscription of result.data) {
-                    if (subscription.id && subscription.name) {
-                        this.onResponse(
-                            new GuidResolverResponse(
-                                subscription.id,
-                                subscription.name,
-                                "Azure Subscription",
-                                subscription,
-                                new Date()
-                            )
-                        );
-                    }
-
-                    if (abortController.signal.aborted) {
-                        break;
-                    }
+            for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal })) {
+                if (subscription.id && subscription.displayName) {
+                    this.onResponse(
+                        new GuidResolverResponse(
+                            subscription.id,
+                            subscription.displayName,
+                            "Azure Subscription",
+                            subscription,
+                            new Date()
+                        )
+                    );
                 }
             }
         }
