@@ -1,5 +1,5 @@
 import { AbortController as AzureAbortController } from "@azure/abort-controller"           ;
-import { AzureManagementGroups                   } from "../AzureManagementGroups";
+import { AzureManagementGroups                   } from "../AzureManagementGroups"          ;
 import { GuidResolverMicrosoftEntraIdBase        } from "./GuidResolverMicrosoftEntraIdBase";
 import { GuidResolverResponse                    } from "../Models/GuidResolverResponse"    ;
 import { IGuidResolver                           } from "../GuidResolver"                   ;
@@ -13,8 +13,8 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
         private readonly onToBeResolved  : (guid                 : string              ) => void,
         private readonly onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential
-    ) { 
-        super(tokenCredential); 
+    ) {
+        super(tokenCredential);
         this.managementGroupsAPI = new ManagementGroupsAPI(tokenCredential);
     }
 
@@ -36,14 +36,16 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
                 managementGroups.push(managementGroup);
             }
-            this.onProgressUpdate('/organization'            ); const organization           = await this.getClient(abortController, 'beta').api('/organization'                                                   ).get();
+            this.onProgressUpdate('/organization'            ); const organization           = await this.getClient(abortController, 'beta').api(`/organization/${guid}`                                           ).get();
             this.onProgressUpdate('/subscribedSkus'          ); const subscribedSkus         = await this.getClient(abortController, 'beta').api('/subscribedSkus'                                                 ).get();
             this.onProgressUpdate('/devices/$count'          ); const devicesCount           = await this.getClient(abortController, 'beta').api('/devices/$count'          ).header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/applications/$count'     ); const applicationsCount      = await this.getClient(abortController, 'beta').api('/applications/$count'     ).header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/servicePrincipals/$count'); const servicePrincipalsCount = await this.getClient(abortController, 'beta').api('/servicePrincipals/$count').header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/groups/$count'           ); const groupsCount            = await this.getClient(abortController, 'beta').api('/groups/$count'           ).header('ConsistencyLevel', 'eventual').get();
             this.onProgressUpdate('/users/$count'            ); const usersCount             = await this.getClient(abortController, 'beta').api('/users/$count'            ).header('ConsistencyLevel', 'eventual').get();
- 
+
+            this.processResponse(organization, this.onResponse, this.onToBeResolved);
+
             if (tenant && tenant.displayName) {
                 this.processResponse(tenant, this.onResponse, this.onToBeResolved);
 

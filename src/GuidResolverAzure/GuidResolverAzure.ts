@@ -24,7 +24,7 @@ export class GuidResolverAzure {
         this.guidResolvers = [
             new GuidResolverAzureSubscription                         (            tokenCredential),
             new GuidResolverAzureManagementGroup                      (            tokenCredential),
-            new GuidResolverAzureRoleDefinition                       (            tokenCredential),
+            new GuidResolverAzureRoleDefinition                       (onResponse, tokenCredential),
             new GuidResolverAzureApplicationInsightsInstrumentationKey(onResponse, tokenCredential),
             new GuidResolverAzureLogAnalyticsWorkspaceCustomerId      (onResponse, tokenCredential),
             new GuidResolverAzureTag                                  (            tokenCredential),

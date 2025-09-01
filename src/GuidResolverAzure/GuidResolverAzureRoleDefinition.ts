@@ -7,9 +7,10 @@ export class GuidResolverAzureRoleDefinition {
     private readonly guidResolverAzureRoleDefinitionCustomRoles: GuidResolverAzureRoleDefinitionCustomRoles;
 
     constructor(
+        onResponse : (guidResolverResponse : GuidResolverResponse) => void,
         tokenCredential: TokenCredential
     ) {
-        this.guidResolverAzureRoleDefinitionCustomRoles = new GuidResolverAzureRoleDefinitionCustomRoles(tokenCredential);
+        this.guidResolverAzureRoleDefinitionCustomRoles = new GuidResolverAzureRoleDefinitionCustomRoles(onResponse, tokenCredential);
     }
 
     resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {

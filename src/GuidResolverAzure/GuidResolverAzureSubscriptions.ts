@@ -23,7 +23,7 @@ export class GuidResolverAzureSubscriptions {
                         new GuidResolverResponse(
                             subscription.id,
                             subscription.displayName,
-                            "Azure Subscription",
+                            'Azure Subscription',
                             subscription,
                             new Date()
                         )

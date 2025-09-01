@@ -1,5 +1,6 @@
 import { Client, PageCollection, PageIterator, PageIteratorCallback } from "@microsoft/microsoft-graph-client";
 import { GuidResolverResponse                                       } from "../Models/GuidResolverResponse";
+import { Organization                                               }  from "@microsoft/microsoft-graph-types" ;
 import { TokenCredential                                            } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                      } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
@@ -137,6 +138,12 @@ export class GuidResolverMicrosoftEntraIdBase {
             const responseMapped = new GuidResolverResponse(response.tenantId, response.displayName, 'Microsoft Entra ID Tenant', response, new Date());
             onResponse(responseMapped);
             return responseMapped;
+        }
+
+        if (response && (response['@odata.type'] === '#microsoft.graph.organization' || response['@odata.context'] === 'https://graph.microsoft.com/beta/$metadata#organization/$entity')) {
+            const organization = this.processResponseMicrosoftEntraIdOrganization(response as Organization, onResponse, onToBeResolved);
+
+            if (organization) { return organization; }
         }
 
         if (response && response.id && response.displayName && (response['@odata.type'] || response["@odata.context"])) {
@@ -390,6 +397,38 @@ export class GuidResolverMicrosoftEntraIdBase {
 
         console.warn(`Unknown response type: ${response}`);
 
+        return undefined;
+    }
+
+    // https://learn.microsoft.com/en-us/graph/api/resources/organization
+    private processResponseMicrosoftEntraIdOrganization(
+        organization   : Organization | undefined,
+        onResponse     : (guidResolverResponse: any) => void,
+        onToBeResolved : (guid: string) => void
+    ): GuidResolverResponse | undefined {
+        if (organization && organization.id && organization.displayName) {
+            for (const assignedPlan of organization.assignedPlans || []) {
+                if (assignedPlan.servicePlanId) {
+                    onResponse(
+                        new GuidResolverResponse(
+                            assignedPlan.servicePlanId,
+                            assignedPlan.service ?? assignedPlan.servicePlanId,
+                            'Microsoft Entra ID AssignedPlan',
+                            assignedPlan,
+                            new Date()
+                        )
+                    );
+                }
+            }
+
+            return new GuidResolverResponse(
+                organization.id,
+                organization.displayName,
+                'Microsoft Entra ID Organization',
+                organization,
+                new Date()
+            );
+        }
         return undefined;
     }
 }
