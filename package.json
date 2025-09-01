@@ -12,7 +12,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "test": "vscode-test",
-    "local-install": "packageJsonVersion=$(grep '\"version\"' package.json | head -1 | sed -E 's/.*\\\"version\\\": *\\\"([^\\\"]+)\\\".*/\\1/') && vsce package && code --install-extension ohmyguid-$packageJsonVersion.vsix"
+    "local-install": "npm install && packageJsonVersion=$(grep '\"version\"' package.json | head -1 | sed -E 's/.*\\\"version\\\": *\\\"([^\\\"]+)\\\".*/\\1/') && vsce package && code --install-extension ohmyguid-$packageJsonVersion.vsix"
   },
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
@@ -47,6 +47,11 @@
       {
         "command": "ohmyguid.lookup",
         "title": "LookUp",
+        "category": "OhMyGuid"
+      },
+      {
+        "command": "ohmyguid.lookupUserPrincipalName",
+        "title": "LookUp User",
         "category": "OhMyGuid"
       },
       {

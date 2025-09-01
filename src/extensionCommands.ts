@@ -1,18 +1,17 @@
 
-import { CachingAzureCliCredential                                                                                              } from './CachingAzureCliCredential'     ;
-import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Tab, TabInputText, Uri,  window, workspace } from 'vscode'                          ;
-import { EOL                                                                                                                    } from 'os'                              ;
-import { Events                                                                                                                 } from './Events'                        ;
-import { GuidCache                                                                                                              } from './GuidCache'                     ;
-import { GuidLinkProvider                                                                                                       } from './GuidLinkProvider'              ;
-import { GuidResolver                                                                                                           } from './GuidResolver'                  ;
-import { GuidResolverResponse                                                                                                   } from './Models/GuidResolverResponse'   ;
-import { GuidResolverResponseToTempFile                                                                                         } from './GuidResolverResponseToTempFile';
-import { initStaticContent                                                                                                      } from './extensionStaticContent'        ;
-import { jwtDecode                                                                                                              } from "jwt-decode"                      ;
-import { TokenCredential                                                                                                        } from '@azure/identity'                 ;
-
-const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+import { CachingAzureCliCredential                                                                                              } from './CachingAzureCliCredential'                                   ;
+import { commands, env, ExtensionContext, InputBoxValidationSeverity, OutputChannel, Tab, TabInputText, Uri,  window, workspace } from 'vscode'                                                        ;
+import { EOL                                                                                                                    } from 'os'                                                            ;
+import { Events                                                                                                                 } from './Events'                                                      ;
+import { GuidCache                                                                                                              } from './GuidCache'                                                   ;
+import { GuidLinkProvider                                                                                                       } from './GuidLinkProvider'                                            ;
+import { GuidResolver                                                                                                           } from './GuidResolver'                                                ;
+import { GuidResolverMicrosoftEntraIdGet                                                                                        } from './GuidResolverMicrosoftEntraId/GuidResolverMicrosoftEntraIdGet';
+import { GuidResolverResponse                                                                                                   } from './Models/GuidResolverResponse'                                 ;
+import { GuidResolverResponseToTempFile                                                                                         } from './GuidResolverResponseToTempFile'                              ;
+import { initStaticContent                                                                                                      } from './extensionStaticContent'                                      ;
+import { jwtDecode                                                                                                              } from "jwt-decode"                                                    ;
+import { TokenCredential                                                                                                        } from '@azure/identity'                                               ;
 
 export function registerCommandOpenLink(
     context           : ExtensionContext,
@@ -22,7 +21,7 @@ export function registerCommandOpenLink(
 ) {
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.openLink',
-            (value: GuidResolverResponse) => { 
+            (value: GuidResolverResponse) => {
                 window.showInformationMessage(`${context.extension.id} - '${value.guid}'`);
 
                 const resolutionType = 'details';
@@ -57,6 +56,72 @@ export function registerCommandRefresh(context: ExtensionContext, guidCache: Gui
                 context.workspaceState.keys().forEach(key => {context.workspaceState.update(key, undefined);});
                 await initStaticContent(context, guidCache);
                 window.showInformationMessage(`${context.extension.id} - refreshed`);
+            }
+        )
+    );
+}
+
+export function registerCommandLookupUserPrincipalName(
+    context         : ExtensionContext,
+    guidCache       : GuidCache,
+    tokenCredential : TokenCredential,
+    outputChannel   : OutputChannel
+) {
+    context.subscriptions.push(
+        commands.registerCommand('ohmyguid.lookupUserPrincipalName',
+            async () => {
+                const inputRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                const value = await env.clipboard.readText();
+                const valueSanitized = value.trim().toLowerCase();
+
+                const validateInput = (value: string) => {
+                    /**
+                     * InputBoxValidationSeverity
+                     *
+                     * The severity of the validation message.
+                     * NOTE: When using `InputBoxValidationSeverity.Error`, the user will not be allowed to accept (hit ENTER) the input.
+                     * `Info` and `Warning` will still allow the InputBox to accept the input.
+                     */
+                    return value && inputRegex.test(value)
+                        ? ''
+                        : {
+                            message: 'Invalid userPrincipalName',
+                            severity: InputBoxValidationSeverity.Error
+                        };
+                };
+
+                const prompt      = 'Please enter a Microsoft Entra ID userPrincipalName to look up';
+                const placeHolder = 'xxx@xxx.xx';
+
+                const userPrincipalName = valueSanitized && inputRegex.test(valueSanitized)
+                    ? await window.showInputBox({ prompt, placeHolder, value: valueSanitized, validateInput})
+                    : await window.showInputBox({ prompt, placeHolder                       , validateInput});
+
+                if (!userPrincipalName || !inputRegex.test(userPrincipalName)) {
+                    window.showErrorMessage('Invalid userPrincipalName format. Please enter a valid userPrincipalName.');
+                    return;
+                }
+
+                window.showInformationMessage(`${context.extension.id} - '${userPrincipalName}'`);
+
+                const getPath = (value: string) => `/users/${userPrincipalName.trim()}`;
+
+                // https://learn.microsoft.com/en-us/graph/api/user-get
+                var guidResolverResponse = await new GuidResolverMicrosoftEntraIdGet(
+                    getPath,
+                    _ => _,
+                    _ => _,
+                    tokenCredential
+                ).resolve(userPrincipalName, new AbortController());
+
+                if (guidResolverResponse) {
+                    guidCache.update(guidResolverResponse.guid, guidResolverResponse);
+                    const resolutionType = '';
+                    await handle(guidResolverResponse, guidCache, tokenCredential, outputChannel, resolutionType);
+                } else {
+                    window.showErrorMessage(`${context.extension.id} - ERROR - '${userPrincipalName}'`);
+                }
             }
         )
     );
@@ -121,9 +186,9 @@ export function registerCommandInfo(
 
                 const data = JSON.stringify(
                     {
-                        extension:{                        
+                        extension:{
                             'extension.id'          : context.extension.id,
-                            extensionKind           : context.extension.extensionKind === 1 
+                            extensionKind           : context.extension.extensionKind === 1
                                                     ? 'ui' : context.extension.extensionKind === 2
                                                         ? 'workspace' : context.extension.extensionKind,
                             extensionMode           : context.extensionMode === 1
@@ -138,7 +203,7 @@ export function registerCommandInfo(
                             'workspaceState.keys'   : context.workspaceState.keys().length,
                             'extension.packageJSON' : context.extension.packageJSON,
                         },
-                        credentials : await getTokens(tokenCredential) 
+                        credentials : await getTokens(tokenCredential)
                     },
                     null,
                     2
@@ -161,6 +226,8 @@ export function registerCommandLookup(
     context.subscriptions.push(
         commands.registerCommand('ohmyguid.lookup',
             async () => {
+                const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
                 const value = await env.clipboard.readText();
 
                 const prompt      = 'Please enter a GUID to look up';
@@ -168,7 +235,7 @@ export function registerCommandLookup(
                 const validateInput = (value: string) => {
                     /**
                      * InputBoxValidationSeverity
-                     * 
+                     *
                      * The severity of the validation message.
                      * NOTE: When using `InputBoxValidationSeverity.Error`, the user will not be allowed to accept (hit ENTER) the input.
                      * `Info` and `Warning` will still allow the InputBox to accept the input.
@@ -250,7 +317,7 @@ async function handle(
         await workspace.fs.writeFile(tempFileUri.uri, content);
         const textDocument = await workspace.openTextDocument(tempFileUri.uri);
         await window.showTextDocument(textDocument, { preview: false });
-        
+
     }
 
     const { guidResolverResponse, filePath, error } = await guidResolverResponseToTempFile.toTempFile(value, resolutionType, tokenCredential);
