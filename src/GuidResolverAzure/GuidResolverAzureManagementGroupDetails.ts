@@ -5,7 +5,8 @@ import { ManagementGroupsAPI  } from "@azure/arm-managementgroups"   ;
 
 export class GuidResolverAzureManagementGroupDetails {
 
-private readonly managementGroupsAPI: ManagementGroupsAPI;
+    private readonly managementGroupsAPI: ManagementGroupsAPI;
+
     constructor(
         tokenCredential: TokenCredential
     ) {

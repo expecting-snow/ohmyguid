@@ -31,14 +31,14 @@ export class GuidResolverResponseToTempFile {
     * @param guidResolverResponse - {@link GuidResolverResponse}
     * @param fileNameSuffix       - '' or 'details'. 'details' triggers the resolution of additional details for certain response types.
     * @param tokenCredential      - {@link TokenCredential}
-    * 
+    *
     * @returns - If the {@link GuidResolverResponse.type} is not supported, it will return the original {@link GuidResolverResponse}, otherwise the detailed {@link GuidResolverResponse}.
     */
     async toTempFile(guidResolverResponse: GuidResolverResponse, resolutionType: '' | 'details', tokenCredential: TokenCredential): Promise<{ guidResolverResponse: GuidResolverResponse, filePath?: string, error?: Error }>{
         if(resolutionType === '') {
             return this.toTempFileInternal(guidResolverResponse);
         }
-        
+
         const responseType         = guidResolverResponse.type;
         const guid                 = guidResolverResponse.guid;
         const abortController      = new AbortController();
@@ -53,7 +53,7 @@ export class GuidResolverResponseToTempFile {
             case 'Azure Policy Definition Static'         : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                                                         );
             case 'Azure RoleDefinition BuiltInRole'       : return this.toTempFileInternal(guidResolverResponse                                                                                                                                                                                         );
  /* todo */ case 'Azure ManagementGroup'                  : return this.toTempFileInternal(await new GuidResolverAzureManagementGroupDetails                  (                                                             tokenCredential).resolve(guid, azureAbortController) ?? guidResolverResponse);
-            case 'Azure RoleDefinition CustomRole'        : return this.toTempFileInternal(await new GuidResolverAzureRoleDefinitionCustomRoles               (                                                             tokenCredential).resolve(guid, azureAbortController) ?? guidResolverResponse);
+            case 'Azure RoleDefinition CustomRole'        : return this.toTempFileInternal(await new GuidResolverAzureRoleDefinitionCustomRoles               (this.onResponse,                                             tokenCredential).resolve(guid, azureAbortController) ?? guidResolverResponse);
             case 'Azure Subscription'                     : return this.toTempFileInternal(await new GuidResolverAzureSubscriptionDetails                     (                                                             tokenCredential).resolve(guid, azureAbortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID Administrative Unit' : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdAdministrativeUnitWithDetails(this.onResponse, this.onToBeResolved, this.onProgressUpdate, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);
             case 'Microsoft Entra ID AppRegistration'     : return this.toTempFileInternal(await new GuidResolverMicrosoftEntraIdAppRegistrationWithDetails   (this.onResponse, this.onToBeResolved, this.onProgressUpdate, tokenCredential).resolve(guid,      abortController) ?? guidResolverResponse);

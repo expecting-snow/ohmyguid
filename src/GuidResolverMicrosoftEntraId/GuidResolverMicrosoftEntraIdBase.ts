@@ -1,5 +1,6 @@
 import { Client, PageCollection, PageIterator, PageIteratorCallback } from "@microsoft/microsoft-graph-client";
 import { GuidResolverResponse                                       } from "../Models/GuidResolverResponse";
+import { AppRoleAssignment, NullableOption, Organization            }  from "@microsoft/microsoft-graph-types" ;
 import { TokenCredential                                            } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                      } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
@@ -139,6 +140,12 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
+        if (response && (response['@odata.type'] === '#microsoft.graph.organization' || response['@odata.context'] === 'https://graph.microsoft.com/beta/$metadata#organization/$entity')) {
+            const organization = this.processResponseMicrosoftEntraIdOrganization(response as Organization, onResponse, onToBeResolved);
+
+            if (organization) { return organization; }
+        }
+
         if (response && response.id && response.displayName && (response['@odata.type'] || response["@odata.context"])) {
             if (
                 response['@odata.type'   ] === '#microsoft.graph.group'
@@ -176,9 +183,9 @@ export class GuidResolverMicrosoftEntraIdBase {
                     const resourceIds = Array.from(
                         new Set<string>(
                             response.appRoleAssignments
-                                .select((p: any) => p.resourceId)
-                                .filter((p: any) => p)
-                                .map((p: any) => `${p}`)
+                                .select((p: AppRoleAssignment) => p.resourceId)
+                                .filter((p: NullableOption<string> | undefined) => p)
+                                .map((p: string) => `${p}`)
                         )
                     );
 
@@ -208,7 +215,16 @@ export class GuidResolverMicrosoftEntraIdBase {
                                 appRole.metadata = {};
                                 appRole.metadata.appId = response.appId;
                             }
-                            onResponse(new GuidResolverResponse(appRole.id, appRole.displayName, 'Microsoft Entra ID AppRoleDefinition', appRole, new Date()));
+
+                            onResponse(
+                                new GuidResolverResponse(
+                                    appRole.id,
+                                    appRole.displayName,
+                                    'Microsoft Entra ID AppRoleDefinition',
+                                    appRole,
+                                    new Date()
+                                )
+                            );
                         }
                     }
                 }
@@ -216,9 +232,9 @@ export class GuidResolverMicrosoftEntraIdBase {
                 if (response.oauth2PermissionScopes) {
                     //  "oauth2PermissionScopes": [
                     //    {
-                    //      "adminConsentDescription": "Access the DTCNOW Web API",
-                    //      "adminConsentDisplayName": "Access DTCNOW Web API",
-                    //      "id": "3fed33cf-a131-4f1d-99e5-546f23f01058",
+                    //      "adminConsentDescription": "Access xyz",
+                    //      "adminConsentDisplayName": "Access xyz",
+                    //      "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                     //      "isEnabled": true,
                     //      "type": "User",
                     //      "userConsentDescription": null,
@@ -241,7 +257,15 @@ export class GuidResolverMicrosoftEntraIdBase {
                                              || oauth2PermissionScope.userConsentDescription
                                              || oauth2PermissionScope.value
                                              || oauth2PermissionScope.id;
-                            onResponse(new GuidResolverResponse(oauth2PermissionScope.id, displayName, 'Microsoft Entra ID AppRegistration OAuth2PermissionScope', oauth2PermissionScope, new Date()));
+                            onResponse(
+                                new GuidResolverResponse(
+                                    oauth2PermissionScope.id,
+                                    displayName,
+                                    'Microsoft Entra ID AppRegistration OAuth2PermissionScope',
+                                    oauth2PermissionScope,
+                                    new Date()
+                                )
+                            );
                         }
                     }
                 }
@@ -284,9 +308,9 @@ export class GuidResolverMicrosoftEntraIdBase {
                     //  "api": {
                     //    "oauth2PermissionScopes": [
                     //      {
-                    //        "adminConsentDescription": "Access the DTCNOW Web API",
-                    //        "adminConsentDisplayName": "Access DTCNOW Web API",
-                    //        "id": "3fed33cf-a131-4f1d-99e5-546f23f01058",
+                    //        "adminConsentDescription": "Access xyz",
+                    //        "adminConsentDisplayName": "Access xyz",
+                    //        "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                     //        "isEnabled": true,
                     //        "type": "User",
                     //        "userConsentDescription": null,
@@ -390,6 +414,38 @@ export class GuidResolverMicrosoftEntraIdBase {
 
         console.warn(`Unknown response type: ${response}`);
 
+        return undefined;
+    }
+
+    // https://learn.microsoft.com/en-us/graph/api/resources/organization
+    private processResponseMicrosoftEntraIdOrganization(
+        organization   : Organization | undefined,
+        onResponse     : (guidResolverResponse: any) => void,
+        onToBeResolved : (guid: string) => void
+    ): GuidResolverResponse | undefined {
+        if (organization && organization.id && organization.displayName) {
+            for (const assignedPlan of organization.assignedPlans || []) {
+                if (assignedPlan.servicePlanId) {
+                    onResponse(
+                        new GuidResolverResponse(
+                            assignedPlan.servicePlanId,
+                            assignedPlan.service ?? assignedPlan.servicePlanId,
+                            'Microsoft Entra ID AssignedPlan',
+                            assignedPlan,
+                            new Date()
+                        )
+                    );
+                }
+            }
+
+            return new GuidResolverResponse(
+                organization.id,
+                organization.displayName,
+                'Microsoft Entra ID Organization',
+                organization,
+                new Date()
+            );
+        }
         return undefined;
     }
 }
