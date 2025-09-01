@@ -46,7 +46,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         // process subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         {
-            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?!\/)/g;
             const unresolvedGuidsAzureSubscription = new Set<string>();
             while (true) {
                 const match = regex.exec(text);
