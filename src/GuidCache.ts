@@ -51,55 +51,58 @@ export class GuidCache {
         if (this.cache.has(guidTransformed)) { return; }
 
         if (type === 'Azure ManagementGroup') {
-            const promise = this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
-                .then(
-                    (resolvedValue: GuidResolverResponse | undefined) => {
-                        if (resolvedValue) {
-                            this.update(guidTransformed, resolvedValue);
-                        }
-
-                        this.cache.delete(guidTransformed);
-
-                        return resolvedValue;
-                    }
-                );
             this.callbackInfo(`${guidTransformed} - enqueue AzureManagementGroup`);
-            this.cache.set(guidTransformed, promise);
+            this.cache.set(
+                guidTransformed,
+                this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
+                    .then(
+                        (resolvedValue: GuidResolverResponse | undefined) => {
+                            if (resolvedValue) {
+                                this.update(guidTransformed, resolvedValue);
+                            }
+
+                            this.cache.delete(guidTransformed);
+
+                            return resolvedValue;
+                        }
+                    )
+            );
         }
         else if (type === 'Azure Subscription') {
-            const promise = this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
-                .then(
-                    (resolvedValue: GuidResolverResponse | undefined) => {
-                        if (resolvedValue) {
-                            this.update(guidTransformed, resolvedValue);
-                        }
-
-                        this.cache.delete(guidTransformed);
-
-                        return resolvedValue;
-                    }
-                );
             this.callbackInfo(`${guidTransformed} - enqueue AzureSubscription`);
-            this.cache.set(guidTransformed, promise);
+            this.cache.set(
+                guidTransformed,
+                this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
+                    .then(
+                        (resolvedValue: GuidResolverResponse | undefined) => {
+                            if (resolvedValue) {
+                                this.update(guidTransformed, resolvedValue);
+                            }
+
+                            this.cache.delete(guidTransformed);
+
+                            return resolvedValue;
+                        }
+                    )
+            );
         }
         else {
-
-
-            const promise = this.guidResolver.resolve(guidTransformed)
-                .then(
-                    (resolvedValue: GuidResolverResponse | undefined) => {
-                        if (resolvedValue) {
-                            this.update(guidTransformed, resolvedValue);
-                        }
-
-                        this.cache.delete(guidTransformed);
-
-                        return resolvedValue;
-                    }
-                );
-
             this.callbackInfo(`${guidTransformed} - enqueue`);
-            this.cache.set(guidTransformed, promise);
+            this.cache.set(
+                guidTransformed,
+                this.guidResolver.resolve(guidTransformed)
+                    .then(
+                        (resolvedValue: GuidResolverResponse | undefined) => {
+                            if (resolvedValue) {
+                                this.update(guidTransformed, resolvedValue);
+                            }
+
+                            this.cache.delete(guidTransformed);
+
+                            return resolvedValue;
+                        }
+                    )
+            );
         }
     }
 
