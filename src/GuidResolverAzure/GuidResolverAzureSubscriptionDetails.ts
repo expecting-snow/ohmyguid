@@ -7,13 +7,13 @@ import { TokenCredential          } from "@azure/identity"               ;
 
 
 export class GuidResolverAzureSubscriptionDetails {
-    private readonly subscriptionClient: SubscriptionClient;
+    private readonly subscriptionClient : SubscriptionClient ;
     private readonly resourceGraphClient: ResourceGraphClient;
 
     constructor(
         private readonly tokenCredential: TokenCredential
     ) {
-        this.subscriptionClient = new SubscriptionClient(tokenCredential);
+        this.subscriptionClient  = new SubscriptionClient (tokenCredential);
         this.resourceGraphClient = new ResourceGraphClient(tokenCredential);
     }
 
