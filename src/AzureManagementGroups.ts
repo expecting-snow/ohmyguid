@@ -27,7 +27,7 @@ export class EntityNode {
         return this.deepCloneExclude(flat, ['entity', 'descendants']);;
     }
 
-    flattenInternal(node: EntityNode): any {
+    private flattenInternal(node: EntityNode): any {
         const descendants = node.getDescendants();
 
         if (descendants.length > 0) {
@@ -43,7 +43,7 @@ export class EntityNode {
         }
     }
 
-    deepCloneExclude<T extends object>(obj: T, exclude: string[]): T {
+    private deepCloneExclude<T extends object>(obj: T, exclude: string[]): T {
         if (Array.isArray(obj)) {
             return obj.map(item => this.deepCloneExclude(item, exclude)) as any;
         } else if (obj && typeof obj === 'object') {
