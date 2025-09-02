@@ -1,8 +1,8 @@
-import { AbortController               } from "@azure/abort-controller"       ;
-import { AuthorizationManagementClient } from "@azure/arm-authorization"      ;
-import { Mutex                         } from 'async-mutex'                   ;
-import { GuidResolverResponse          } from "../Models/GuidResolverResponse";
-import { TokenCredential               } from "@azure/identity"               ;
+import { AbortController                               } from "@azure/abort-controller"       ;
+import { AuthorizationManagementClient, RoleDefinition } from "@azure/arm-authorization"      ;
+import { Mutex                                         } from 'async-mutex'                   ;
+import { GuidResolverResponse                          } from "../Models/GuidResolverResponse";
+import { TokenCredential                               } from "@azure/identity"               ;
 
 export class GuidResolverAzureRoleDefinitionCustomRoles {
     private readonly client : AuthorizationManagementClient    ;
@@ -22,7 +22,7 @@ export class GuidResolverAzureRoleDefinitionCustomRoles {
         return this.mutex.runExclusive(async () => {
             try {
                 if (this.items.size === 0) {
-                    for await (const item of this.client.roleDefinitions.list('', { abortSignal: abortController.signal })) {
+                    for await (const item of this.client.roleDefinitions.list('', { abortSignal: abortController.signal }) as AsyncIterableIterator<RoleDefinition>) {
                         if (item.name && item.roleName) {
                             const response = new GuidResolverResponse(
                                 item.name,

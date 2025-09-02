@@ -24,6 +24,26 @@ export class GuidResolverResponseRenderer {
              return `${response.type}${response.object.userPrincipalName ? ` ${this.separator} ${response.object.userPrincipalName}` : ` ${this.separator} ${response.displayName}`}`;
         }
 
+        if (response.type === 'Microsoft Entra ID AppRegistration') {
+            if (response.object?.id === response.guid) {
+                return `${response.type} ${this.separator} ${response.displayName} ${this.separator} id`;
+            }
+
+            if (response.object?.appId === response.guid) {
+                return `${response.type} ${this.separator} ${response.displayName} ${this.separator} appId`;
+            }
+        }
+
+        if (response.type === 'Microsoft Entra ID ServicePrincipal') {
+            if (response.object?.id === response.guid) {
+                return `${response.type} ${this.separator} ${response.displayName} ${this.separator} id`;
+            }
+
+            if (response.object?.appId === response.guid) {
+                return `${response.type} ${this.separator} ${response.displayName} ${this.separator} appId`;
+            }
+        }
+
         return `${response.type} ${this.separator} ${response.displayName}`;
     }
 }

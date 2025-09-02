@@ -1,14 +1,14 @@
-import { AbortController      } from "@azure/abort-controller"       ;
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { PolicyClient         } from "@azure/arm-policy"             ;
-import { TokenCredential      } from "@azure/identity"               ;
+import { AbortController                } from "@azure/abort-controller"       ;
+import { GuidResolverResponse           } from "../Models/GuidResolverResponse";
+import { PolicyClient, PolicyDefinition } from "@azure/arm-policy"             ;
+import { TokenCredential                } from "@azure/identity"               ;
 
 export class GuidResolverAzurePolicyDefinition {
 
     constructor(
         private readonly tokenCredential: TokenCredential
     ) { }
-    
+
     async resolve(guid: string, subscriptionIds: string[], abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         for (const subscriptionId of subscriptionIds) {
             const response = await this.resolveInternal(guid, subscriptionId, this.tokenCredential, abortController);
@@ -25,7 +25,7 @@ export class GuidResolverAzurePolicyDefinition {
     private async resolveInternal(guid: string, subscriptionId: string, tokenCredential: TokenCredential, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         console.log('resolveInternal');
         try {
-            for await (const policyDefinition of new PolicyClient(tokenCredential, subscriptionId).policyDefinitions.list({ abortSignal: abortController.signal })) {
+            for await (const policyDefinition of new PolicyClient(tokenCredential, subscriptionId).policyDefinitions.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<PolicyDefinition>) {
                 console.log(policyDefinition);
                 if (policyDefinition.id === guid && policyDefinition.displayName) {
 
@@ -34,9 +34,9 @@ export class GuidResolverAzurePolicyDefinition {
                     return new GuidResolverResponse(
                         guid,
                         policyDefinition.displayName,
-                        policyDefinition.policyType === 'BuiltIn' 
+                        policyDefinition.policyType === 'BuiltIn'
                         ? 'Azure Policy Definition BuiltIn'
-                        : policyDefinition.policyType === 'Static' 
+                        : policyDefinition.policyType === 'Static'
                           ? "Azure Policy Definition Static"
                           : "Azure Policy Definition Custom",
                         policyDefinition,

@@ -7,18 +7,18 @@ import { IGuidResolver                                        } from "../GuidRes
 import { TokenCredential                                      } from "@azure/identity";
 
 export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
-    
+
     private readonly guidResolverMicrosoftEntraIdServicePrincipalClientId : GuidResolverMicrosoftEntraIdServicePrincipalClientId;
     private readonly guidResolverMicrosoftEntraIdServicePrincipal         : GuidResolverMicrosoftEntraIdGet;
     private readonly guidResolverMicrosoftEntraIdAppRegistrationClientId  : GuidResolverMicrosoftEntraIdAppRegistrationClientId;
-    
+
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
         private readonly onToBeResolved  : (guid                 : string              ) => void,
         private readonly onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential
-    ) { 
-        super(tokenCredential); 
+    ) {
+        super(tokenCredential);
         this.guidResolverMicrosoftEntraIdServicePrincipal         = new GuidResolverMicrosoftEntraIdGet(guid => `/servicePrincipals/${guid}`, onResponse, onToBeResolved, tokenCredential),
         this.guidResolverMicrosoftEntraIdServicePrincipalClientId = new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential);
         this.guidResolverMicrosoftEntraIdAppRegistrationClientId  = new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential);
@@ -61,7 +61,8 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                         servicePrincipal   : servicePrincipal.object,
                         appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
                         ownedObjects       : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
-                        appRoleAssignedTo  : appRoleAssignedTo
+                        appRoleAssignedTo  : appRoleAssignedTo,
+                        appRegistration
                     },
                     new Date()
                 );

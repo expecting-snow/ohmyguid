@@ -7,7 +7,7 @@ import { Memento                                 } from "vscode"                
 
 export class GuidCache {
 
-    private readonly cache         : Map<string, Promise<GuidResolverResponse | undefined>>;
+    private readonly promisesWip         : Map<string, Promise<GuidResolverResponse | undefined>>;
     private readonly guidTransform : (guid: string) => string;
 
     constructor(
@@ -17,11 +17,11 @@ export class GuidCache {
         private readonly memento                          : Memento,
         private readonly callbackInfo                     : (value: any) => void
     ) {
-        this.cache = new Map<string, Promise<GuidResolverResponse | undefined>>();
+        this.promisesWip = new Map<string, Promise<GuidResolverResponse | undefined>>();
         this.guidTransform = (guid: string) => guid.toLowerCase().trim();
     }
 
-    dispose(): any {
+    dispose(): void {
         this.callbackInfo('Cache - dispose');
         this.clear();
     }
@@ -48,58 +48,61 @@ export class GuidCache {
     enqueuePromise(guid: string, type?: 'Azure ManagementGroup' | 'Azure Subscription'): void {
         const guidTransformed = this.guidTransform(guid);
 
-        if (this.cache.has(guidTransformed)) { return; }
+        if (this.promisesWip.has(guidTransformed)) { return; }
 
         if (type === 'Azure ManagementGroup') {
-            const promise = this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
-                .then(
-                    (resolvedValue: GuidResolverResponse | undefined) => {
-                        if (resolvedValue) {
-                            this.update(guidTransformed, resolvedValue);
-                        }
-
-                        this.cache.delete(guidTransformed);
-
-                        return resolvedValue;
-                    }
-                );
             this.callbackInfo(`${guidTransformed} - enqueue AzureManagementGroup`);
-            this.cache.set(guidTransformed, promise);
+            this.promisesWip.set(
+                guidTransformed,
+                this.guidResolverAzureManagementGroup.resolve(guidTransformed, new AzureAbortController())
+                    .then(
+                        (resolvedValue: GuidResolverResponse | undefined) => {
+                            if (resolvedValue) {
+                                this.update(guidTransformed, resolvedValue);
+                            }
+
+                            this.promisesWip.delete(guidTransformed);
+
+                            return resolvedValue;
+                        }
+                    )
+            );
         }
         else if (type === 'Azure Subscription') {
-            const promise = this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
-                .then(
-                    (resolvedValue: GuidResolverResponse | undefined) => {
-                        if (resolvedValue) {
-                            this.update(guidTransformed, resolvedValue);
-                        }
-
-                        this.cache.delete(guidTransformed);
-
-                        return resolvedValue;
-                    }
-                );
             this.callbackInfo(`${guidTransformed} - enqueue AzureSubscription`);
-            this.cache.set(guidTransformed, promise);
+            this.promisesWip.set(
+                guidTransformed,
+                this.guidResolverAzureSubscription.resolve(guidTransformed, new AzureAbortController())
+                    .then(
+                        (resolvedValue: GuidResolverResponse | undefined) => {
+                            if (resolvedValue) {
+                                this.update(guidTransformed, resolvedValue);
+                            }
+
+                            this.promisesWip.delete(guidTransformed);
+
+                            return resolvedValue;
+                        }
+                    )
+            );
         }
         else {
-
-
-            const promise = this.guidResolver.resolve(guidTransformed)
-                .then(
-                    (resolvedValue: GuidResolverResponse | undefined) => {
-                        if (resolvedValue) {
-                            this.update(guidTransformed, resolvedValue);
-                        }
-
-                        this.cache.delete(guidTransformed);
-
-                        return resolvedValue;
-                    }
-                );
-
             this.callbackInfo(`${guidTransformed} - enqueue`);
-            this.cache.set(guidTransformed, promise);
+            this.promisesWip.set(
+                guidTransformed,
+                this.guidResolver.resolve(guidTransformed)
+                    .then(
+                        (resolvedValue: GuidResolverResponse | undefined) => {
+                            if (resolvedValue) {
+                                this.update(guidTransformed, resolvedValue);
+                            }
+
+                            this.promisesWip.delete(guidTransformed);
+
+                            return resolvedValue;
+                        }
+                    )
+            );
         }
     }
 
@@ -159,7 +162,7 @@ export class GuidCache {
         {
             const guidTransformed = this.guidTransform(guid);
 
-            const promise = this.cache.get(guidTransformed);
+            const promise = this.promisesWip.get(guidTransformed);
 
             if (promise) {
                 const response = await promise;
@@ -183,7 +186,7 @@ export class GuidCache {
         {
             const guidTransformed = this.guidTransform(guid);
 
-            const promise = this.cache.get(guidTransformed);
+            const promise = this.promisesWip.get(guidTransformed);
 
             if (promise) {
                 const response = await promise;
@@ -210,7 +213,7 @@ export class GuidCache {
 
     clear() {
         try {
-            this.cache.clear();
+            this.promisesWip.clear();
         } catch (e: any) {
             this.callbackInfo(`clear - error ${e}`);
         }

@@ -32,7 +32,8 @@ export class GuidResolverMicrosoftEntraIdBase {
         path           : string,
         onResponse     : (guidResolverResponse: GuidResolverResponse) => void,
         onToBeResolved : (guid                : string              ) => void,
-        abortController: AbortController): Promise<GuidResolverResponse | undefined> {
+        abortController: AbortController
+    ) : Promise<GuidResolverResponse | undefined> {
         try {
             const response = await this.getClient(abortController).api(path).get();
 
