@@ -16,8 +16,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
         private readonly onToBeResolved  : (guid                : string              ) => void,
         private readonly onProgressUpdate: (value               : string              ) => void,
         tokenCredential: TokenCredential
-    ) { 
-        super(tokenCredential); 
+    ) {
+        super(tokenCredential);
         this.guidResolverMicrosoftEntraIdAppRegistration          = new GuidResolverMicrosoftEntraIdGet                     (guid => `/applications/${guid}`, onResponse, onToBeResolved, tokenCredential);
         this.guidResolverMicrosoftEntraIdAppRegistrationClientId  = new GuidResolverMicrosoftEntraIdAppRegistrationClientId (onResponse, onToBeResolved, tokenCredential);
         this.guidResolverMicrosoftEntraIdServicePrincipalClientId = new GuidResolverMicrosoftEntraIdServicePrincipalClientId(onResponse, onToBeResolved, tokenCredential);
@@ -57,6 +57,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                         owners            : (owners as any[])?.map(this.mapIdDisplayName).sort(),
                         appRegistration   : application.object,
                         federatedIdentityCredentials,
+                        servicePrincipal
                     },
                     new Date()
                 );

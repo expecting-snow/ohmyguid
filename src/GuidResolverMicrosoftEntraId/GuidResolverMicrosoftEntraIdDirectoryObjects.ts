@@ -16,28 +16,30 @@ export class GuidResolverMicrosoftEntraIdDirectoryObjects extends GuidResolverMi
     ) { super(tokenCredential); }
 
     async resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined> {
+        if (guids.length === 0) {
+            return [];
+        }
+
         const guidsResolved: string[] = [];
+        const guidsToBeResolved = Array.from(new Set(guids));
 
-        if (guids.length > 0) {
+        try {
+            const batchSize = 1000;
+            for (let i = 0; i < guidsToBeResolved.length; i += batchSize) {
+                const guidsbatch = guidsToBeResolved.slice(i, i + batchSize);
+                const response = await this.getClient(abortController).api(`/directoryObjects/getByIds`).post({ ids: guidsbatch });
 
-            try {
-                const batchSize = 1000;
-                for (let i = 0; i < guids.length; i += batchSize) {
-                    const guidsbatch = guids.slice(i, i + batchSize);
-                    const response = await this.getClient(abortController).api(`/directoryObjects/getByIds`).post({ ids: guidsbatch });
-
-                    if (response && response.value && Array.isArray(response.value)) {
-                        for (const item of response.value) {
-                            const responseMapped = this.processResponse(item, this.onResponse, this.onToBeResolved);
-                            if (responseMapped) {
-                                guidsResolved.push(responseMapped.guid);
-                            }
+                if (response && response.value && Array.isArray(response.value)) {
+                    for (const item of response.value) {
+                        const responseMapped = this.processResponse(item, this.onResponse, this.onToBeResolved);
+                        if (responseMapped) {
+                            guidsResolved.push(responseMapped.guid);
                         }
                     }
                 }
-            } catch (e: any) {
-                console.error('GuidResolverMicrosoftEntraIdDirectoryObjects', e);
             }
+        } catch (e: any) {
+            console.error('GuidResolverMicrosoftEntraIdDirectoryObjects', e);
         }
 
         return guidsResolved;

@@ -1,9 +1,9 @@
 import { AbortController as AzureAbortController } from "@azure/abort-controller"           ;
 import { AzureManagementGroups                   } from "../AzureManagementGroups"          ;
+import { EntityInfo, ManagementGroupsAPI         } from "@azure/arm-managementgroups"       ;
 import { GuidResolverMicrosoftEntraIdBase        } from "./GuidResolverMicrosoftEntraIdBase";
 import { GuidResolverResponse                    } from "../Models/GuidResolverResponse"    ;
 import { IGuidResolver                           } from "../GuidResolver"                   ;
-import { ManagementGroupsAPI                     } from "@azure/arm-managementgroups"       ;
 import { TokenCredential                         } from "@azure/identity"                   ;
 
 export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicrosoftEntraIdBase implements IGuidResolver {
@@ -28,7 +28,7 @@ export class GuidResolverMicrosoftEntraIdTenantDetails extends GuidResolverMicro
 
             this.onProgressUpdate('managementGroupsAPI.entities.list');
             const managementGroups = [];
-            for await (const managementGroup of this.managementGroupsAPI.entities.list({ abortSignal: abortController.signal })) {
+            for await (const managementGroup of this.managementGroupsAPI.entities.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<EntityInfo>) {
                 if (managementGroup.tenantId !== guid) {
                     // not in this tenant
                     continue;

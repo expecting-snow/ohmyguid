@@ -12,6 +12,10 @@ export interface IGuidBatchResolver {
     resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined>;
 }
 
+export interface IGuidBatchResolverAzure {
+    resolveBatch(guids: string[], abortController: AzureAbortController): Promise<string[] | undefined>;
+}
+
 export interface IGuidResolverAzure {
     resolve(guid: string, abortController: AzureAbortController): Promise<GuidResolverResponse | undefined>;
 }
@@ -34,7 +38,7 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
         onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential,
         callbackError: (error: string) => void
-    ) { 
+    ) {
         this.guidResolverAzure            = new GuidResolverAzure           (onResponse, onToBeResolved,                   tokenCredential, callbackError);
         this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(onResponse, onToBeResolved, onProgressUpdate, tokenCredential, callbackError);
     }
@@ -59,7 +63,38 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
         await this.guidResolverMicrosoftEntraId.init(abortController);
     }
 
-    resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined> {
-        return this.guidResolverMicrosoftEntraId.resolveBatch(guids, abortController);
+    /**
+     * Returns the resolved guids.
+     */
+    async resolveBatch(guids: string[], abortController: AbortController): Promise<string[] | undefined> {
+        if (guids.length === 0) { return []; }
+
+        const guidsResolvedAll :string[]= [];
+        const guidToBeResolved = new Set<string>(guids);
+
+        {
+            var guidsResolved = await this.guidResolverMicrosoftEntraId.resolveBatch(Array.from(guidToBeResolved), abortController);
+            if (guidsResolved) {
+                for (const guidResolved of guidsResolved) {
+                    guidsResolvedAll.push  (guidResolved);
+                    guidToBeResolved.delete(guidResolved);
+                }
+            }
+        }
+
+        {
+            const azureAbortController = new AzureAbortController();
+            abortController.signal.addEventListener('abort', () => azureAbortController.abort());
+
+            var guidsResolved = await this.guidResolverAzure.resolveBatch(Array.from(guidToBeResolved), azureAbortController);
+            if (guidsResolved) {
+                for (const guidResolved of guidsResolved) {
+                    guidsResolvedAll.push  (guidResolved);
+                    guidToBeResolved.delete(guidResolved);
+                }
+            }
+        }
+
+        return guidsResolvedAll;
     }
 }
