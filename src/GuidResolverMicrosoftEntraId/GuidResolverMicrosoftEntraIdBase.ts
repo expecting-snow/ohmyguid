@@ -1,6 +1,6 @@
 import { Client, PageCollection, PageIterator, PageIteratorCallback   } from "@microsoft/microsoft-graph-client";
 import { GuidResolverResponse                                         } from "../Models/GuidResolverResponse";
-import { AppRoleAssignment, Group, NullableOption, Organization, User }  from "@microsoft/microsoft-graph-types" ;
+import { AppRoleAssignment, Group, NullableOption, Organization, ServicePrincipal, User }  from "@microsoft/microsoft-graph-types" ;
 import { TokenCredential                                              } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                        } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
@@ -165,78 +165,9 @@ export class GuidResolverMicrosoftEntraIdBase {
             else if (
                    response['@odata.type'   ] === '#microsoft.graph.servicePrincipal'
                 || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#servicePrincipals/$entity'
-                || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#servicePrincipals/$entity') {
-                const responseMapped = new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID ServicePrincipal', response, new Date());
-                onResponse(responseMapped);
-
-                if (response.appId) {
-                    onToBeResolved(response.appId);
-                }
-
-                if (response.appRoles) {
-                    for (const appRole of response.appRoles) {
-                        if (appRole && appRole.id && appRole.displayName) {
-                            if (response.appId) {
-                                // add a reference to the appId in the metadata to link back to the app registration that defines the appRole
-                                appRole.metadata = {};
-                                appRole.metadata.appId = response.appId;
-                            }
-
-                            onResponse(
-                                new GuidResolverResponse(
-                                    appRole.id,
-                                    appRole.displayName,
-                                    'Microsoft Entra ID AppRoleDefinition',
-                                    appRole,
-                                    new Date()
-                                )
-                            );
-                        }
-                    }
-                }
-
-                if (response.oauth2PermissionScopes) {
-                    //  "oauth2PermissionScopes": [
-                    //    {
-                    //      "adminConsentDescription": "Access xyz",
-                    //      "adminConsentDisplayName": "Access xyz",
-                    //      "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-                    //      "isEnabled": true,
-                    //      "type": "User",
-                    //      "userConsentDescription": null,
-                    //      "userConsentDisplayName": null,
-                    //      "value": "access_as_user"
-                    //    }
-                    //  ]
-
-                    for (const oauth2PermissionScope of response.oauth2PermissionScopes) {
-                        if (oauth2PermissionScope && oauth2PermissionScope.id) {
-                            if (response.appId) {
-                                // add a reference to the appId in the metadata to link back to the app registration that defines the oauth2PermissionScope
-                                oauth2PermissionScope.metadata = {};
-                                oauth2PermissionScope.metadata.appId = response.appId;
-                            }
-                            const displayName = response.displayName + ' - ' +
-                                                oauth2PermissionScope.adminConsentDisplayName
-                                             || oauth2PermissionScope.userConsentDisplayName
-                                             || oauth2PermissionScope.adminConsentDescription
-                                             || oauth2PermissionScope.userConsentDescription
-                                             || oauth2PermissionScope.value
-                                             || oauth2PermissionScope.id;
-                            onResponse(
-                                new GuidResolverResponse(
-                                    oauth2PermissionScope.id,
-                                    displayName,
-                                    'Microsoft Entra ID AppRegistration OAuth2PermissionScope',
-                                    oauth2PermissionScope,
-                                    new Date()
-                                )
-                            );
-                        }
-                    }
-                }
-
-                return responseMapped;
+                || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#servicePrincipals/$entity'
+            ) {
+                return this.processResponseMicrosoftEntraIdServicePrincipal(response, onResponse, onToBeResolved);
             }
             else if (
                    response['@odata.type'   ] === '#microsoft.graph.application'
@@ -510,6 +441,99 @@ export class GuidResolverMicrosoftEntraIdBase {
 
                 for (const resourceId of resourceIds) {
                     onToBeResolved(resourceId);
+                }
+            }
+
+            return responseMapped;
+        }
+
+        return undefined;
+    }
+
+    private processResponseMicrosoftEntraIdServicePrincipal(
+        response       : any,
+        onResponse     : (guidResolverResponse: any) => void,
+        onToBeResolved : (guid: string) => void
+    ): GuidResolverResponse | undefined {
+
+        const servicePrincipal = response as ServicePrincipal;
+
+        if(servicePrincipal && servicePrincipal.id && servicePrincipal.displayName){
+            const responseMapped = new GuidResolverResponse(
+                servicePrincipal.id,
+                servicePrincipal.displayName,
+                'Microsoft Entra ID ServicePrincipal',
+                response,
+                new Date()
+            );
+
+            onResponse(responseMapped);
+
+            if (servicePrincipal.appId) {
+                onToBeResolved(servicePrincipal.appId);
+            }
+
+            if (servicePrincipal.appRoles) {
+                for (const appRole of servicePrincipal.appRoles) {
+                    if (appRole && appRole.id && appRole.displayName) {
+                        if (servicePrincipal.appId) {
+                            // add a reference to the appId in the metadata to link back to the app registration that defines the appRole
+                            (appRole as any).metadata = {};
+                            (appRole as any).metadata.appId = servicePrincipal.appId;
+                        }
+
+                        onResponse(
+                            new GuidResolverResponse(
+                                appRole.id,
+                                appRole.displayName,
+                                'Microsoft Entra ID AppRoleDefinition',
+                                appRole,
+                                new Date()
+                            )
+                        );
+                    }
+                }
+            }
+
+            if (servicePrincipal.oauth2PermissionScopes) {
+                //  "oauth2PermissionScopes": [
+                //    {
+                //      "adminConsentDescription": "Access xyz",
+                //      "adminConsentDisplayName": "Access xyz",
+                //      "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                //      "isEnabled": true,
+                //      "type": "User",
+                //      "userConsentDescription": null,
+                //      "userConsentDisplayName": null,
+                //      "value": "access_as_user"
+                //    }
+                //  ]
+
+                for (const oauth2PermissionScope of servicePrincipal.oauth2PermissionScopes) {
+                    if (oauth2PermissionScope && oauth2PermissionScope.id) {
+                        if (response.appId) {
+                            // add a reference to the appId in the metadata to link back to the app registration that defines the oauth2PermissionScope
+                            (oauth2PermissionScope as any).metadata = {};
+                            (oauth2PermissionScope as any).metadata.appId = response.appId;
+                        }
+                        const displayName = response.displayName + ' - ' +
+                            oauth2PermissionScope.adminConsentDisplayName
+                            || oauth2PermissionScope.userConsentDisplayName
+                            || oauth2PermissionScope.adminConsentDescription
+                            || oauth2PermissionScope.userConsentDescription
+                            || oauth2PermissionScope.value
+                            || oauth2PermissionScope.id;
+
+                        onResponse(
+                            new GuidResolverResponse(
+                                oauth2PermissionScope.id,
+                                displayName,
+                                'Microsoft Entra ID AppRegistration OAuth2PermissionScope',
+                                oauth2PermissionScope,
+                                new Date()
+                            )
+                        );
+                    }
                 }
             }
 
