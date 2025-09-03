@@ -34,6 +34,7 @@ export type GuidResolverResponseType =
   | 'Microsoft Entra ID AppRegistration OAuth2PermissionScope'
   | 'Microsoft Entra ID AppRegistration'
   | 'Microsoft Entra ID AppRegistration FederatedIdentityCredential'
+  | 'Microsoft Entra ID AppRoleAssignment'
   | 'Microsoft Entra ID AppRoleDefinition'
   | 'Microsoft Entra ID AssignedPlan'
   | 'Microsoft Entra ID ClaimIssuancePolicy'
