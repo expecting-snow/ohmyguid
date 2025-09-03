@@ -1,8 +1,8 @@
-import { Client, PageCollection, PageIterator, PageIteratorCallback } from "@microsoft/microsoft-graph-client";
-import { GuidResolverResponse                                       } from "../Models/GuidResolverResponse";
-import { AppRoleAssignment, Group, NullableOption, Organization     }  from "@microsoft/microsoft-graph-types" ;
-import { TokenCredential                                            } from "@azure/identity";
-import { TokenCredentialAuthenticationProvider                      } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
+import { Client, PageCollection, PageIterator, PageIteratorCallback   } from "@microsoft/microsoft-graph-client";
+import { GuidResolverResponse                                         } from "../Models/GuidResolverResponse";
+import { AppRoleAssignment, Group, NullableOption, Organization, User }  from "@microsoft/microsoft-graph-types" ;
+import { TokenCredential                                              } from "@azure/identity";
+import { TokenCredentialAuthenticationProvider                        } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
 export class GuidResolverMicrosoftEntraIdBase {
     constructor(
@@ -160,40 +160,7 @@ export class GuidResolverMicrosoftEntraIdBase {
                 || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#users/$entity'
                 || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#users/$entity'
             ) {
-                const responseMapped = new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID User', response, new Date());
-                onResponse(responseMapped);
-
-                if (response.appRoleAssignments) {
-                    /*
-                        [
-                            {
-                                id: "...not a guid...",
-                                deletedDateTime: null,
-                                appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
-                                createdDateTime: "...",                                                       |
-                                principalDisplayName: "...",                                                  |
-                                principalId: "...",                                                           |
-                                principalType: "User | ServicePrincipal | Group",                             |
-                                resourceDisplayName: "app registration display name",                         |
-                                resourceId: "app registration guid",                  <------------------------
-                            }
-                        ]
-                    */
-                    const resourceIds = Array.from(
-                        new Set<string>(
-                            response.appRoleAssignments
-                                .select((p: AppRoleAssignment) => p.resourceId)
-                                .filter((p: NullableOption<string> | undefined) => p)
-                                .map((p: string) => `${p}`)
-                        )
-                    );
-
-                    for (const resourceId of resourceIds) {
-                        onToBeResolved(resourceId);
-                    }
-                }
-
-                return responseMapped;
+                return this.processResponseMicrosoftEntraIdUser(response, onResponse, onToBeResolved);
             }
             else if (
                    response['@odata.type'   ] === '#microsoft.graph.servicePrincipal'
@@ -448,7 +415,6 @@ export class GuidResolverMicrosoftEntraIdBase {
         return undefined;
     }
 
-    // https://learn.microsoft.com/en-us/graph/api/resources/organization
     private processResponseMicrosoftEntraIdGroup(
         response       : any,
         onResponse     : (guidResolverResponse: any) => void,
@@ -489,6 +455,61 @@ export class GuidResolverMicrosoftEntraIdBase {
                     );
 
                     onResponse(responseMailNickName);
+                }
+            }
+
+            return responseMapped;
+        }
+
+        return undefined;
+    }
+
+    private processResponseMicrosoftEntraIdUser(
+        response       : any,
+        onResponse     : (guidResolverResponse: any) => void,
+        onToBeResolved : (guid: string) => void
+    ): GuidResolverResponse | undefined {
+
+        const user = response as User;
+
+        if(user && user.id && user.userPrincipalName){
+            const responseMapped = new GuidResolverResponse(
+                user.id,
+                user.userPrincipalName,
+                'Microsoft Entra ID User',
+                response,
+                new Date()
+            );
+
+            onResponse(responseMapped);
+
+            if (user.appRoleAssignments) {
+                /*
+                    [
+                        {
+                            id: "...not a guid...",
+                            deletedDateTime: null,
+                            appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
+                            createdDateTime: "...",                                                       |
+                            principalDisplayName: "...",                                                  |
+                            principalId: "...",                                                           |
+                            principalType: "User | ServicePrincipal | Group",                             |
+                            resourceDisplayName: "app registration display name",                         |
+                            resourceId: "app registration guid",                  <------------------------
+                        }
+                    ]
+                */
+                const resourceIds = Array.from(
+                    new Set<string>(
+                        response.appRoleAssignments
+                            .select((p: AppRoleAssignment) => p.resourceId)
+                            .filter((p: NullableOption<string> | undefined) => p)
+                            .map((p: string) => `${p}`)
+                    )
+                );
+
+                for (const resourceId of resourceIds) {
+                    onToBeResolved(resourceId);
                 }
             }
 
