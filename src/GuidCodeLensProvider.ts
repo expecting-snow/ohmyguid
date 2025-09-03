@@ -5,8 +5,17 @@ import { GuidResolverResponse                                                   
 
 export class GuidCodeLensProvider implements CodeLensProvider {
     constructor(
-        readonly guidCache: GuidCache,
-        readonly renderer: GuidResolverResponseRenderer
+        private readonly guidCache: GuidCache,
+        private readonly renderer: GuidResolverResponseRenderer,
+        private readonly options: {
+            enableCodelensesForGuids                   : boolean,
+            enableCodelensesForAzureSubscriptionIds    : boolean,
+            enableCodelensesForAzureManagementGroupIds : boolean
+        } = {
+            enableCodelensesForGuids                   : true,
+            enableCodelensesForAzureSubscriptionIds    : false,
+            enableCodelensesForAzureManagementGroupIds : false
+        }
     ) { }
 
     provideCodeLenses(document: TextDocument): GuidCodeLens[] {
@@ -16,7 +25,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         const text = document.getText();
 
-        // process xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        if(this.options.enableCodelensesForGuids)
         {
             const regex = /(?<!\/)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
             const unresolvedGuids = new Set<string>();
@@ -44,7 +53,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
             }
         }
 
-        // process subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        if(this.options.enableCodelensesForAzureSubscriptionIds)
         {
             const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?!\/)/g;
             const unresolvedGuidsAzureSubscription = new Set<string>();
@@ -74,7 +83,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
             }
         }
 
-        // process managementGroups/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        if(this.options.enableCodelensesForAzureManagementGroupIds)
         {
             const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
 

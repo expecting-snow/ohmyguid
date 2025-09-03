@@ -1,6 +1,6 @@
 import { Client, PageCollection, PageIterator, PageIteratorCallback } from "@microsoft/microsoft-graph-client";
 import { GuidResolverResponse                                       } from "../Models/GuidResolverResponse";
-import { AppRoleAssignment, NullableOption, Organization            }  from "@microsoft/microsoft-graph-types" ;
+import { AppRoleAssignment, Group, NullableOption, Organization     }  from "@microsoft/microsoft-graph-types" ;
 import { TokenCredential                                            } from "@azure/identity";
 import { TokenCredentialAuthenticationProvider                      } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
@@ -150,12 +150,10 @@ export class GuidResolverMicrosoftEntraIdBase {
         if (response && response.id && response.displayName && (response['@odata.type'] || response["@odata.context"])) {
             if (
                 response['@odata.type'   ] === '#microsoft.graph.group'
-             || response["@odata.context"] === 'https://graph.microsoft.com/v1.0/$metadata#groups/$entity'
-             || response["@odata.context"] === 'https://graph.microsoft.com/beta/$metadata#groups/$entity'
+             || response['@odata.context'] === 'https://graph.microsoft.com/v1.0/$metadata#groups/$entity'
+             || response['@odata.context'] === 'https://graph.microsoft.com/beta/$metadata#groups/$entity'
             ) {
-                const responseMapped = new GuidResolverResponse(response.id, response.displayName, 'Microsoft Entra ID Group', response, new Date());
-                onResponse(responseMapped);
-                return responseMapped;
+                return this.processResponseMicrosoftEntraIdGroup(response, onResponse, onToBeResolved);
             }
             else if (
                    response['@odata.type'   ] === '#microsoft.graph.user'
@@ -447,6 +445,56 @@ export class GuidResolverMicrosoftEntraIdBase {
                 new Date()
             );
         }
+        return undefined;
+    }
+
+    // https://learn.microsoft.com/en-us/graph/api/resources/organization
+    private processResponseMicrosoftEntraIdGroup(
+        response       : any,
+        onResponse     : (guidResolverResponse: any) => void,
+        onToBeResolved : (guid: string) => void
+    ): GuidResolverResponse | undefined {
+
+        const group = response as Group;
+
+        if(group && group.id && group.displayName){
+            const responseMapped = new GuidResolverResponse(
+                group.id,
+                group.displayName,
+                'Microsoft Entra ID Group',
+                response,
+                new Date()
+            );
+
+            onResponse(responseMapped);
+
+            if (group.mailNickname) {
+                // This regular expression (regex) pattern matches GUIDs (Globally Unique Identifiers) within a string
+                // and looks for a specific format: five groups of hexadecimal digits separated by hyphens, with the group lengths being 8-4-4-4-12 characters.
+                // The negative lookbehind (?<!\/) ensures that the matched GUID is not immediately preceded by a forward slash (/) to avoid matching GUIDs in URLs.
+                // The g flag at the end of the regex enables global matching, so it will find all occurrences of GUIDs in the input string, not just the first one.
+                const regex = /(?<!\/)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+
+                const match = regex.exec(group.mailNickname);
+
+                if (match) {
+                    const guid = match[0];
+
+                    const responseMailNickName = new GuidResolverResponse(
+                        guid,
+                        group.displayName + ' - mailNickname',
+                        'Microsoft Entra ID Group',
+                        response,
+                        new Date()
+                    );
+
+                    onResponse(responseMailNickName);
+                }
+            }
+
+            return responseMapped;
+        }
+
         return undefined;
     }
 }
