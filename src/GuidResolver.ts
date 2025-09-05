@@ -37,7 +37,14 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
         onToBeResolved  : (guid                 : string              ) => void,
         onProgressUpdate: (value                : string              ) => void,
         tokenCredential: TokenCredential,
-        callbackError: (error: string) => void
+        callbackError: (error: string) => void,
+        private readonly options: {
+            enableResolverForMicrosoftEntraId : boolean,
+            enableResolverForAzure            : boolean
+        } = {
+            enableResolverForMicrosoftEntraId : true,
+            enableResolverForAzure            : true
+        }
     ) {
         this.guidResolverAzure            = new GuidResolverAzure           (onResponse, onToBeResolved,                   tokenCredential, callbackError);
         this.guidResolverMicrosoftEntraId = new GuidResolverMicrosoftEntraId(onResponse, onToBeResolved, onProgressUpdate, tokenCredential, callbackError);
@@ -48,19 +55,23 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
         const azureAbortController = new AzureAbortController();
         abortController.signal.addEventListener('abort', () => azureAbortController.abort());
 
-        const promiseMicrosoftEntraId = this.guidResolverMicrosoftEntraId.resolve(guid, abortController     );
-        const promiseAzure            = this.guidResolverAzure           .resolve(guid, azureAbortController);
+        const promiseMicrosoftEntraId = this.options.enableResolverForMicrosoftEntraId ?  this.guidResolverMicrosoftEntraId.resolve(guid, abortController    ) : Promise.resolve(undefined);
+        const promiseAzure            = this.options.enableResolverForAzure            ? this.guidResolverAzure           .resolve(guid, azureAbortController) : Promise.resolve(undefined);
 
         return await promiseMicrosoftEntraId
             ?? await promiseAzure;
     }
 
     async init(abortController: AbortController): Promise<void> {
-        const azureAbortController = new AzureAbortController();
-        abortController.signal.addEventListener('abort', () => azureAbortController.abort());
+        if (this.options.enableResolverForAzure) {
+            const azureAbortController = new AzureAbortController();
+            abortController.signal.addEventListener('abort', () => azureAbortController.abort());
+            await this.guidResolverAzure.init(azureAbortController);
+        }
 
-        await this.guidResolverAzure           .init(azureAbortController);
-        await this.guidResolverMicrosoftEntraId.init(abortController);
+        if (this.options.enableResolverForMicrosoftEntraId) {
+            await this.guidResolverMicrosoftEntraId.init(abortController);
+        }
     }
 
     /**
@@ -72,7 +83,7 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
         const guidsResolvedAll :string[]= [];
         const guidToBeResolved = new Set<string>(guids);
 
-        {
+        if (this.options.enableResolverForMicrosoftEntraId) {
             var guidsResolved = await this.guidResolverMicrosoftEntraId.resolveBatch(Array.from(guidToBeResolved), abortController);
             if (guidsResolved) {
                 for (const guidResolved of guidsResolved) {
@@ -82,7 +93,7 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
             }
         }
 
-        {
+        if (this.options.enableResolverForAzure) {
             const azureAbortController = new AzureAbortController();
             abortController.signal.addEventListener('abort', () => azureAbortController.abort());
 
