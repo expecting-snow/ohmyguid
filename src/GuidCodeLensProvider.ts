@@ -13,8 +13,8 @@ export class GuidCodeLensProvider implements CodeLensProvider {
             enableCodelensesForAzureManagementGroupIds : boolean
         } = {
             enableCodelensesForGuids                   : true,
-            enableCodelensesForAzureSubscriptionIds    : false,
-            enableCodelensesForAzureManagementGroupIds : false
+            enableCodelensesForAzureSubscriptionIds    : true,
+            enableCodelensesForAzureManagementGroupIds : true
         }
     ) { }
 

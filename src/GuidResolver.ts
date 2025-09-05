@@ -43,7 +43,7 @@ export class GuidResolver implements IGuidResolver, IGuidBatchResolver {
             enableResolverForAzure            : boolean
         } = {
             enableResolverForMicrosoftEntraId : true,
-            enableResolverForAzure            : false
+            enableResolverForAzure            : true
         }
     ) {
         this.guidResolverAzure            = new GuidResolverAzure           (onResponse, onToBeResolved,                   tokenCredential, callbackError);
