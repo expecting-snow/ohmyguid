@@ -40,6 +40,8 @@ All and any feedback is welcome.
 
 Use the command 'OhMyGuid: LookUp' to enter a guid and look it up.
 
+Use the command 'OhMyGuid: LookUp User' to enter a userPrincipalName and look it up.
+
 Use the command 'OhMyGuid: Refresh' when switching Microsoft Entra ID tenants.
 
 
