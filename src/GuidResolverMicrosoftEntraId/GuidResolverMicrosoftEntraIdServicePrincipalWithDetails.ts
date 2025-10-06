@@ -29,7 +29,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
             const servicePrincipal   = await this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, new AbortController())
                                     ?? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, new AbortController());
             const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, new AbortController());
-            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, this.mapToTypeApproleAssignedTo, this.onToBeResolved, this.onProgressUpdate, new AbortController());
             const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
             const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 

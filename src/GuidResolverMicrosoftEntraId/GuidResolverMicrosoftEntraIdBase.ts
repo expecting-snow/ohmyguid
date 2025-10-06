@@ -113,6 +113,13 @@ export class GuidResolverMicrosoftEntraIdBase {
         return p;
     }
 
+    protected mapToTypeApproleAssignedTo(p: any): any {
+        if (p) {
+            p['@odata.type'] = 'microsoft.graph.appRoleAssignedTo';
+        }
+        return p;
+    }
+
     protected mapToTypeApplicationFederatedIdentityCredentials(resourceId: string, p: any): any {
         if (p) {
             p['@odata.type'] = 'microsoft.graph.application.federatedIdentityCredentials';
@@ -159,8 +166,9 @@ export class GuidResolverMicrosoftEntraIdBase {
         if (response['@odata.type'   ] === '#microsoft.graph.user'                                                           ) { return this.processResponseMicrosoftEntraIdUser                                   (response, onResponse, onToBeResolved); }
         if (response['@odata.type'   ] === 'microsoft.graph.application.federatedIdentityCredentials'                        ) { return this.processResponseMicrosoftEntraIdApplicationFederatedIdentityCredentials(response, onResponse, onToBeResolved); }
         if (response['@odata.type'   ] === 'microsoft.graph.appRoleAssignment'                                               ) { return this.processResponseMicrosoftEntraIdAppRoleAssignment                      (response, onResponse, onToBeResolved); }
+        if (response['@odata.type'   ] === 'microsoft.graph.appRoleAssignedTo'                                               ) { return this.processResponseMicrosoftEntraIdAppRoleAssignedTo                      (response, onResponse, onToBeResolved); }
 
-        console.warn(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -205,7 +213,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -231,11 +239,10 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
-
 
     private processResponseMicrosoftEntraIdAppRoleAssignment(
         response       : any,
@@ -271,7 +278,44 @@ export class GuidResolverMicrosoftEntraIdBase {
             );
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
+
+        return undefined;
+    }
+
+    private processResponseMicrosoftEntraIdAppRoleAssignedTo(
+        response       : any,
+        onResponse     : (guidResolverResponse: any) => void,
+        onToBeResolved : (guid: string) => void
+    ) : GuidResolverResponse | undefined {
+        const appRoleAssignment = response as AppRoleAssignment;
+
+        if (appRoleAssignment && appRoleAssignment.appRoleId) {
+            /*
+                {
+                     id: "...not a guid...",
+                     deletedDateTime: null,
+                     appRoleId: "<guid>", <-- to resolve the appRoleId, resolve the app registration
+                     createdDateTime: "...",                                                       |
+                     principalDisplayName: "...",                                                  |
+                     principalId: "...",                                                           |
+                     principalType: "User | ServicePrincipal | Group",                             |
+                     resourceDisplayName: "app registration display name",                         |
+                     resourceId: "app registration guid",                  <------------------------
+                }
+            */
+            if (appRoleAssignment.resourceId) {
+                onToBeResolved(appRoleAssignment.resourceId);
+            }
+
+            if (appRoleAssignment.principalId) {
+                onToBeResolved(appRoleAssignment.principalId);
+            }
+
+            return undefined;
+        }
+
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -297,7 +341,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -323,7 +367,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -349,7 +393,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -375,7 +419,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -417,7 +461,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -468,7 +512,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -525,7 +569,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -550,7 +594,15 @@ export class GuidResolverMicrosoftEntraIdBase {
             onResponse(responseMapped);
 
             if (servicePrincipal.appId) {
-                onToBeResolved(servicePrincipal.appId);
+                onResponse(
+                    new GuidResolverResponse(
+                        servicePrincipal.appId,
+                        servicePrincipal.displayName,
+                        'Microsoft Entra ID ServicePrincipal',
+                        response,
+                        new Date()
+                    )
+                );
             }
 
             if (servicePrincipal.appRoles) {
@@ -620,7 +672,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
@@ -723,7 +775,7 @@ export class GuidResolverMicrosoftEntraIdBase {
             return responseMapped;
         }
 
-        console.log(`Unknown response type: ${response}`);
+        console.warn(`Unknown response type: ${JSON.stringify(response)}`);
 
         return undefined;
     }
