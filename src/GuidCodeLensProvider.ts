@@ -25,6 +25,8 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         const text = document.getText();
 
+        const seen = new Set<string>();
+
         if(this.options.enableCodelensesForGuids)
         {
             const regex = /(?<!\/)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
@@ -35,6 +37,13 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                 if (!match) { break; }
 
                 const guid = match[0];
+                
+                if (!guid) { continue; }
+                
+                // de-dup logic
+                const key  = guid.toLowerCase();
+                if (seen.has(key)) { continue; }
+                seen.add(key);
 
                 const response = this.guidCache.getResolved(guid);
 
@@ -55,16 +64,21 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         if(this.options.enableCodelensesForAzureSubscriptionIds)
         {
-            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?!\/)/g;
+            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
             const unresolvedGuidsAzureSubscription = new Set<string>();
             while (true) {
                 const match = regex.exec(text);
 
                 if (!match) { break; }
 
-                const guid = match[0].split('/').at(1);
+                const guid = match[1];
 
                 if (!guid) { continue; }
+
+                // de-dup logic
+                const key  = guid.toLowerCase();
+                if (seen.has(key)) { continue; }
+                seen.add(key);
 
                 const response = this.guidCache.getResolved(guid);
 
@@ -86,16 +100,20 @@ export class GuidCodeLensProvider implements CodeLensProvider {
         if(this.options.enableCodelensesForAzureManagementGroupIds)
         {
             const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
-
             const unresolvedGuidsAzureManagementGroups = new Set<string>();
             while (true) {
                 const match = regex.exec(text);
 
                 if (!match) { break; }
 
-                const guid = match[0].split('/').at(1);
+                const guid = match[1];
 
                 if (!guid) { continue; }
+
+                // de-dup logic
+                const key  = guid.toLowerCase();
+                if (seen.has(key)) { continue; }
+                seen.add(key);
 
                 const response = this.guidCache.getResolved(guid);
 

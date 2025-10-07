@@ -102,9 +102,27 @@ suite('Extension Test Suite', () => {
                 ]
             },
             {
-                input: '/subscription/6e93d4c7-9006-4009-934e-64d5f25cf435',
+                input: '/subscriptions/6e93d4c7-9006-4009-934e-64d5f25cf435',
                 expected: [
                     '6e93d4c7-9006-4009-934e-64d5f25cf435'
+                ]
+            },
+            {
+                input: '/subscriptions/0793005f-3399-43e7-8a30-334872963f4c/resourceGroups/testgroup/',
+                expected: [
+                    '0793005f-3399-43e7-8a30-334872963f4c'
+                ]
+            },
+            {
+                input: '/managementGroups/26ad5d40-9047-4142-aaaf-61508e7e426f',
+                expected: [
+                    '26ad5d40-9047-4142-aaaf-61508e7e426f'
+                ]
+            },
+            {
+                input: '/managementGroups/c7d70608-e919-4d8c-98a8-8a397c9dbdcc/resourceGroups/testgroup/',
+                expected: [
+                    'c7d70608-e919-4d8c-98a8-8a397c9dbdcc'
                 ]
             },
         ];
