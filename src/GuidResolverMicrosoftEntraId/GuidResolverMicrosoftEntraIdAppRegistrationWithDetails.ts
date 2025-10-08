@@ -48,6 +48,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                     'Microsoft Entra ID AppRegistration Details',
                     {
                         ids               : {
+                                               'application.displayName'                 : application.displayName,
                                                'application.id'                          : application      .object?.id,
                                                'application.appId'                       : application      .object?.appId,
                                                'application.publisherDomain'             : application      .object?.publisherDomain,

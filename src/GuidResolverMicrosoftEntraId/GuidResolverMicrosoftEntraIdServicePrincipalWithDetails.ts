@@ -51,6 +51,7 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                     'Microsoft Entra ID ServicePrincipal Details',
                     {
                         ids               : {
+                                               'servicePrincipal.appDisplayName'         : servicePrincipal.displayName,
                                                'application.id'                          : appRegistration?.object?.id,
                                                'application.publisherDomain'             : appRegistration?.object?.publisherDomain,
                                                'application.appId'                       : servicePrincipal.object?.appId,
