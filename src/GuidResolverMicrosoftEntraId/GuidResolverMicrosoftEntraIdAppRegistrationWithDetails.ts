@@ -38,6 +38,10 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                                        ? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(application.object.appId, new AbortController())
                                        : undefined;
 
+                const appRoleAssignedTo = servicePrincipal?.object?.id
+                                        ? await this.resolveAll(`/servicePrincipals/${servicePrincipal?.object?.id}/appRoleAssignedTo` , this.onResponse, this.mapToTypeApproleAssignedTo, this.onToBeResolved, this.onProgressUpdate, new AbortController())
+                                        : undefined;
+
                 if (servicePrincipal) {
                     this.onResponse(servicePrincipal);
                 }
@@ -48,6 +52,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                     'Microsoft Entra ID AppRegistration Details',
                     {
                         ids               : {
+                                               'application.displayName'                 : application.displayName,
                                                'application.id'                          : application      .object?.id,
                                                'application.appId'                       : application      .object?.appId,
                                                'application.publisherDomain'             : application      .object?.publisherDomain,
@@ -57,7 +62,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                         owners            : (owners as any[])?.map(this.mapIdDisplayName).sort(),
                         appRegistration   : application.object,
                         federatedIdentityCredentials,
-                        servicePrincipal
+                        servicePrincipal,
+                        appRoleAssignedTo
                     },
                     new Date()
                 );

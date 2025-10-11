@@ -17,7 +17,7 @@
   "name": "ohmyguid",
   "displayName": "OhMyGuid",
   "description": "Azure and Microsoft Entra ID guids look up",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "engines": {
     "vscode": "^1.103.0"
   },
@@ -32,10 +32,12 @@
   },
   "main": "./dist/extension.js",
   "activationEvents": [
-    "onLanguage:yaml",
     "onLanguage:bicep",
+    "onLanguage:json",
     "onLanguage:markdown",
-    "onLanguage:json"
+    "onLanguage:powershell",
+    "onLanguage:shellscript",
+    "onLanguage:yaml"
   ],
   "contributes": {
     "commands": [
@@ -93,26 +95,26 @@
     ]
   },
   "devDependencies": {
-    "@azure/arm-authorization": "^9.0.0",
-    "@azure/arm-managementgroups": "^2.0.2",
-    "@azure/arm-policy": "^6.0.0",
-    "@azure/arm-resourcegraph": "^4.2.1",
-    "@azure/arm-resources": "^7.0.0",
-    "@azure/arm-subscriptions": "^5.1.0",
-    "@azure/identity": "^4.11.1",
-    "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@microsoft/microsoft-graph-types": "^2.40.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "24.3.1",
-    "@types/vscode": "^1.103.0",
-    "@typescript-eslint/eslint-plugin": "^8.42.0",
-    "@typescript-eslint/parser": "^8.42.0",
-    "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2",
-    "async-mutex": "^0.5.0",
-    "esbuild": "^0.25.9",
-    "eslint": "^9.34.0",
-    "jwt-decode": "^4.0.0",
-    "typescript": "^5.9.2"
+    "@azure/arm-authorization": "9.0.0",
+    "@azure/arm-managementgroups": "2.0.2",
+    "@azure/arm-policy": "6.0.0",
+    "@azure/arm-resourcegraph": "4.2.1",
+    "@azure/arm-resources": "7.0.0",
+    "@azure/arm-subscriptions": "5.1.0",
+    "@azure/identity": "4.13.0",
+    "@microsoft/microsoft-graph-client": "3.0.7",
+    "@microsoft/microsoft-graph-types": "2.43.1",
+    "@types/mocha": "10.0.10",
+    "@types/node": "24.7.1",
+    "@types/vscode": "1.103.0",
+    "@typescript-eslint/eslint-plugin": "8.46.0",
+    "@typescript-eslint/parser": "8.46.0",
+    "@vscode/test-cli": "0.0.12",
+    "@vscode/test-electron": "2.5.2",
+    "async-mutex": "0.5.0",
+    "esbuild": "0.25.10",
+    "eslint": "9.37.0",
+    "jwt-decode": "4.0.0",
+    "typescript": "5.9.3"
   }
 }
