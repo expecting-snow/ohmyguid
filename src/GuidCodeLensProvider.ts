@@ -79,7 +79,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
             }
 
             if (unresolvedGuidsAzureSubscription.size > 0) {
-                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuidsAzureSubscription), 'Azure ManagementGroup');
+                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuidsAzureSubscription), 'Azure Subscription');
             }
         }
 
