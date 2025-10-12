@@ -35,7 +35,9 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
                 if (!match) { break; }
 
-                const guid = match[0];
+                const guid = match[0]?.toLowerCase().trim();
+
+                if (!guid) { continue; }
 
                 const response = this.guidCache.getResolved(guid);
 
@@ -63,7 +65,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
                 if (!match) { break; }
 
-                const guid = match[1];
+                const guid = match[1]?.toLowerCase().trim();
 
                 if (!guid) { continue; }
 
@@ -93,7 +95,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
                 if (!match) { break; }
 
-                const guid = match[1];
+                const guid = match[1]?.toLowerCase().trim();
 
                 if (!guid) { continue; }
 
