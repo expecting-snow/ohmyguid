@@ -88,7 +88,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         if(this.options.enableCodelensesForAzureManagementGroupIds)
         {
-            const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+            const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?!\/)/g;
             const unresolvedGuids = new Set<string>();
             while (true) {
                 const match = regex.exec(text);
