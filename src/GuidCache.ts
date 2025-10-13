@@ -7,7 +7,7 @@ import { Memento                                 } from "vscode"                
 
 export class GuidCache {
 
-    private readonly promisesWip         : Map<string, Promise<GuidResolverResponse | undefined>>;
+    private readonly promisesWip   : Map<string, Promise<GuidResolverResponse | undefined>>;
     private readonly guidTransform : (guid: string) => string;
 
     constructor(

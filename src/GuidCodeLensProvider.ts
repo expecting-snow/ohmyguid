@@ -27,6 +27,7 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         if(this.options.enableCodelensesForGuids)
         {
+            // Guids that are not preceded by a forward slash ('/')
             const regex = /(?<!\/)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
             const unresolvedGuids = new Set<string>();
             while (true) {
@@ -34,7 +35,9 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
                 if (!match) { break; }
 
-                const guid = match[0];
+                const guid = match[0]?.toLowerCase().trim();
+
+                if (!guid) { continue; }
 
                 const response = this.guidCache.getResolved(guid);
 
@@ -55,21 +58,21 @@ export class GuidCodeLensProvider implements CodeLensProvider {
 
         if(this.options.enableCodelensesForAzureSubscriptionIds)
         {
-            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?!\/)/g;
-            const unresolvedGuidsAzureSubscription = new Set<string>();
+            const regex = /subscriptions\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+            const unresolvedGuids = new Set<string>();
             while (true) {
                 const match = regex.exec(text);
 
                 if (!match) { break; }
 
-                const guid = match[0].split('/').at(1);
+                const guid = match[1]?.toLowerCase().trim();
 
                 if (!guid) { continue; }
 
                 const response = this.guidCache.getResolved(guid);
 
                 if (!response) {
-                    unresolvedGuidsAzureSubscription.add(guid);
+                    unresolvedGuids.add(guid);
                 }
                 else if (response.type === 'Not Found' || response.type === 'Empty') {
                     continue;
@@ -78,29 +81,28 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                 codeLenses.push(this.getGuidCodeLens(guid, document.positionAt(match.index), response));
             }
 
-            if (unresolvedGuidsAzureSubscription.size > 0) {
-                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuidsAzureSubscription), 'Azure ManagementGroup');
+            if (unresolvedGuids.size > 0) {
+                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuids), 'Azure Subscription');
             }
         }
 
         if(this.options.enableCodelensesForAzureManagementGroupIds)
         {
-            const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
-
-            const unresolvedGuidsAzureManagementGroups = new Set<string>();
+            const regex = /managementGroups\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?!\/)/g;
+            const unresolvedGuids = new Set<string>();
             while (true) {
                 const match = regex.exec(text);
 
                 if (!match) { break; }
 
-                const guid = match[0].split('/').at(1);
+                const guid = match[1]?.toLowerCase().trim();
 
                 if (!guid) { continue; }
 
                 const response = this.guidCache.getResolved(guid);
 
                 if (!response) {
-                    unresolvedGuidsAzureManagementGroups.add(guid);
+                    unresolvedGuids.add(guid);
                 }
                 else if (response.type === 'Not Found' || response.type === 'Empty') {
                     continue;
@@ -109,8 +111,8 @@ export class GuidCodeLensProvider implements CodeLensProvider {
                 codeLenses.push(this.getGuidCodeLens(guid, document.positionAt(match.index), response));
             }
 
-            if (unresolvedGuidsAzureManagementGroups.size > 0) {
-                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuidsAzureManagementGroups), 'Azure ManagementGroup');
+            if (unresolvedGuids.size > 0) {
+                this.guidCache.enqueueBatchResolve(Array.from(unresolvedGuids), 'Azure ManagementGroup');
             }
         }
 

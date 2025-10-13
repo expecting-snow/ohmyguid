@@ -23,10 +23,12 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
         try {
             for await (const managementGroup of this.client.entities.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<EntityInfo>) {
                 if (managementGroup.id && managementGroup.name) {
+                    const guid = managementGroup.name;
+
                     this.onResponse(
                         new GuidResolverResponse(
-                            managementGroup.id,
-                            managementGroup.name,
+                            guid,
+                            managementGroup.displayName ?? managementGroup.name,
                             'Azure ManagementGroup',
                             managementGroup,
                             new Date()
@@ -46,16 +48,17 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
 
             try {
                 for await (const managementGroup of this.client.entities.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<EntityInfo>) {
-                    if (managementGroup.id && managementGroup.name) {
+                    if (managementGroup.id && managementGroup.name && managementGroup.type === 'Microsoft.Management/managementGroups')  {
+                        const guid = managementGroup.name;
 
-                        if (guids.indexOf(managementGroup.id) !== -1) {
-                            resolvedGuids.push(managementGroup.id);
+                        if (guids.indexOf(guid) !== -1) {
+                            resolvedGuids.push(guid);
                         }
 
                         this.onResponse(
                             new GuidResolverResponse(
-                                managementGroup.id,
-                                managementGroup.name,
+                                guid,
+                                managementGroup.displayName ?? managementGroup.name,
                                 'Azure ManagementGroup',
                                 managementGroup,
                                 new Date()
@@ -65,7 +68,7 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
                 }
             }
             catch (e: any) {
-                this.callbackError(`GuidResolverAzureSubscriptions ${e.message}`);
+                this.callbackError(`GuidResolverAzureManagementGroups ${e.message}`);
             }
 
             return resolvedGuids;

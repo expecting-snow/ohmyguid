@@ -16,14 +16,14 @@ export class GuidResolverAzureSubscription {
         try {
             const response = await this.client.subscriptions.get(guid, { abortSignal: abortController.signal });
 
-            if (response.id && response.displayName) {
+            if (response.subscriptionId && response.displayName) {
 
                 abortController.abort();
 
                 return new GuidResolverResponse(
-                    response.id,
+                    response.subscriptionId,
                     response.displayName,
-                    "Azure Subscription",
+                    'Azure Subscription',
                     response,
                     new Date()
                 );
