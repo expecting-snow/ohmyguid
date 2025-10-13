@@ -7,7 +7,7 @@ import { TokenCredential                  } from "@azure/identity"              
 
 export class GuidResolverAzureSubscriptions implements IGuidBatchResolverAzure {
     private readonly client: SubscriptionClient;
-    private readonly mutex  : Mutex            ;
+    private readonly mutex : Mutex            ;
 
     constructor(
         private readonly onResponse      : (guidResolverResponse : GuidResolverResponse) => void,
@@ -22,10 +22,10 @@ export class GuidResolverAzureSubscriptions implements IGuidBatchResolverAzure {
     async resolve(abortController: AbortController): Promise<void> {
         try {
             for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<Subscription>) {
-                if (subscription.id && subscription.displayName) {
+                if (subscription.subscriptionId && subscription.displayName) {
                     this.onResponse(
                         new GuidResolverResponse(
-                            subscription.id,
+                            subscription.subscriptionId,
                             subscription.displayName,
                             'Azure Subscription',
                             subscription,
@@ -46,10 +46,7 @@ export class GuidResolverAzureSubscriptions implements IGuidBatchResolverAzure {
 
             try {
                 for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<Subscription>) {
-                    if (subscription.id && subscription.displayName) {
-
-                        if(!subscription.subscriptionId) { continue; }
-
+                    if (subscription.subscriptionId && subscription.displayName) {
                         if (guids.indexOf(subscription.subscriptionId) !== -1) {
                             resolvedGuids.push(subscription.subscriptionId);
                         }
