@@ -48,13 +48,17 @@ export class GuidResolverAzureSubscriptions implements IGuidBatchResolverAzure {
                 for await (const subscription of this.client.subscriptions.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<Subscription>) {
                     if (subscription.id && subscription.displayName) {
 
-                        if (guids.indexOf(subscription.id) !== -1) {
-                            resolvedGuids.push(subscription.id);
+                        const guid = subscription.id.split('/').at(2);
+
+                        if(!guid) { continue; }
+
+                        if (guids.indexOf(guid) !== -1) {
+                            resolvedGuids.push(guid);
                         }
 
                         this.onResponse(
                             new GuidResolverResponse(
-                                subscription.id,
+                                guid,
                                 subscription.displayName,
                                 'Azure Subscription',
                                 subscription,
