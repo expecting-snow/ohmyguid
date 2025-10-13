@@ -69,7 +69,7 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
                 }
             }
             catch (e: any) {
-                this.callbackError(`GuidResolverAzureSubscriptions ${e.message}`);
+                this.callbackError(`GuidResolverAzureManagementGroups ${e.message}`);
             }
 
             return resolvedGuids;
