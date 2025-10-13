@@ -48,8 +48,7 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
 
             try {
                 for await (const managementGroup of this.client.entities.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<EntityInfo>) {
-                    if (managementGroup.id && managementGroup.name) {
-
+                    if (managementGroup.id && managementGroup.name && managementGroup.type === 'Microsoft.Management/managementGroups')  {
                         const guid = managementGroup.name;
 
                         if (guids.indexOf(guid) !== -1) {
