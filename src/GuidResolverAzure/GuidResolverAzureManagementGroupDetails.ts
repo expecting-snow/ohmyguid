@@ -20,11 +20,16 @@ export class GuidResolverAzureManagementGroupDetails {
                 managementGroups.push(managementGroup);
             }
 
+            const managementGroup = managementGroups.find(mg => mg.name?.toLowerCase() === guid.toLowerCase());
+
             return new GuidResolverResponse(
                 guid,
-                guid,
+                managementGroup?.displayName ?? guid,
                 'Azure ManagementGroup Details',
-                managementGroups,
+                {
+                    managementGroup,
+                    managementGroups
+                },
                 new Date()
             );
         }

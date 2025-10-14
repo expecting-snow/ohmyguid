@@ -47,23 +47,38 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
             const resolvedGuids: string[] = [];
 
             try {
-                for await (const managementGroup of this.client.entities.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<EntityInfo>) {
-                    if (managementGroup.id && managementGroup.name && managementGroup.type === 'Microsoft.Management/managementGroups')  {
-                        const guid = managementGroup.name;
+                for await (const entityInfo of this.client.entities.list({ abortSignal: abortController.signal }) as AsyncIterableIterator<EntityInfo>) {
+                    if (entityInfo.id && entityInfo.name && entityInfo.type)  {
+                        const guid = entityInfo.name;
 
-                        if (guids.indexOf(guid) !== -1) {
-                            resolvedGuids.push(guid);
+                        if (entityInfo.type.toLowerCase() === 'microsoft.management/managementgroups') {
+                            if (guids.indexOf(guid) !== -1) {
+                                resolvedGuids.push(guid);
+                            }
+
+                            this.onResponse(
+                                new GuidResolverResponse(
+                                    guid,
+                                    entityInfo.displayName ?? entityInfo.name,
+                                    'Azure ManagementGroup',
+                                    entityInfo,
+                                    new Date()
+                                )
+                            );
                         }
 
-                        this.onResponse(
-                            new GuidResolverResponse(
-                                guid,
-                                managementGroup.displayName ?? managementGroup.name,
-                                'Azure ManagementGroup',
-                                managementGroup,
-                                new Date()
-                            )
-                        );
+                        if (entityInfo.type.toLowerCase() === '/subscriptions') {
+                            // these are also listed here and let's use the information
+                            this.onResponse(
+                                new GuidResolverResponse(
+                                    guid,
+                                    entityInfo.displayName ?? entityInfo.name,
+                                    'Azure Subscription',
+                                    entityInfo,
+                                    new Date()
+                                )
+                            );
+                        }
                     }
                 }
             }

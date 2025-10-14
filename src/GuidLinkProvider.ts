@@ -48,6 +48,11 @@ export class GuidLinkProvider {
                 return undefined;
             case 'Microsoft Entra ID Tenant Details':
                 return 'https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagementGroupBrowseBlade/~/MGBrowse_overview';
+            case 'Azure ManagementGroup Details':
+                if(item.object?.managementGroup?.tenantId && item.object?.managementGroup?.name && item.object?.managementGroup?.displayName) {
+                    return `https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagmentGroupDrilldownMenuBlade/~/overview/tenantId/${item.object.managementGroup.tenantId}/mgId/${item.object.managementGroup.name}/mgDisplayName/${encodeURIComponent(item.object.managementGroup.displayName)}/mgCanAddOrMoveSubscription~/false/mgParentAccessLevel/Not%20Authorized/defaultMenuItemId/overview/drillDownMode~/true`;
+                }
+                return 'https://portal.azure.com/#view/HubsExtension/ServiceMenuBlade/~/managementgroups/extension/Microsoft_Azure_Resources/menuId/ResourceManager/itemId/managementgroups';
             default:
                 console.log(`No link available for type: ${item.type}`);
                 return undefined;
