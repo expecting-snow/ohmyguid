@@ -27,7 +27,9 @@ export class GuidResolverAzureLogAnalyticsWorkspaceCustomerId {
                     const result = await this.client.resources({ query, subscriptions: [] }, { abortSignal: abortController.signal });
 
                     for (const item of result.data) {
-                        const itemWithLink : any = item.id && item.tenantId ? { _linkAzurePortal: `https://portal.azure.com/#@${item.tenantId}/resource${item.id}/overview` } : {};
+                        const itemWithLink : any = item.id && item.tenantId
+                                                 ? { _linkAzurePortal: `https://portal.azure.com/#@${item.tenantId}/resource${item.id}/overview` }
+                                                 : {};
 
                         Object.assign(itemWithLink, item);
 

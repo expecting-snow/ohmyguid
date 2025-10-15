@@ -18,13 +18,19 @@ export class GuidResolverAzureManagementGroup {
 
             if (response && response.displayName) {
 
+                const responseWithLink : any = response.tenantId && response.name
+                                             ? { _linkAzurePortal: `https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagmentGroupDrilldownMenuBlade/~/overview/tenantId/${response.tenantId}/mgId/${response.name}/mgCanAddOrMoveSubscription~/false/mgParentAccessLevel/Not%20Authorized/defaultMenuItemId/overview/drillDownMode~/true` }
+                                             : {};
+
+                Object.assign(responseWithLink, response);
+
                 abortController.abort();
 
                 return new GuidResolverResponse(
                     guid,
-                    response.displayName,
+                    responseWithLink.displayName,
                     'Azure ManagementGroup',
-                    response,
+                    responseWithLink,
                     new Date()
                 );
             }

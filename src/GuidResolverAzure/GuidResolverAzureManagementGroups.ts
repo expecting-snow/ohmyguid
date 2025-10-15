@@ -56,12 +56,18 @@ export class GuidResolverAzureManagementGroups implements IGuidBatchResolverAzur
                                 resolvedGuids.push(guid);
                             }
 
+                            const entityInfoWithLink : any = entityInfo.tenantId && entityInfo.name
+                                                           ? { _linkAzurePortal: `https://portal.azure.com/#view/Microsoft_Azure_Resources/ManagmentGroupDrilldownMenuBlade/~/overview/tenantId/${entityInfo.tenantId}/mgId/${entityInfo.name}/mgCanAddOrMoveSubscription~/false/mgParentAccessLevel/Not%20Authorized/defaultMenuItemId/overview/drillDownMode~/true` }
+                                                           : {};
+
+                            Object.assign(entityInfoWithLink, entityInfo);
+
                             this.onResponse(
                                 new GuidResolverResponse(
                                     guid,
-                                    entityInfo.displayName ?? entityInfo.name,
+                                    entityInfoWithLink.displayName ?? entityInfoWithLink.name,
                                     'Azure ManagementGroup',
-                                    entityInfo,
+                                    entityInfoWithLink,
                                     new Date()
                                 )
                             );
