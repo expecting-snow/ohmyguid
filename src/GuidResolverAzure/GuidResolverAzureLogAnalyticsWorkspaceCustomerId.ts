@@ -27,12 +27,16 @@ export class GuidResolverAzureLogAnalyticsWorkspaceCustomerId {
                     const result = await this.client.resources({ query, subscriptions: [] }, { abortSignal: abortController.signal });
 
                     for (const item of result.data) {
-                        if (item.customerId && item.name) {
+                        const itemWithLink : any = item.id && item.tenantId ? { _linkAzurePortal: `https://portal.azure.com/#@${item.tenantId}/resource${item.id}/overview` } : {};
+
+                        Object.assign(itemWithLink, item);
+
+                        if (itemWithLink.customerId && itemWithLink.name) {
                             const response = new GuidResolverResponse(
-                                item.customerId,
-                                item.name,
+                                itemWithLink.customerId,
+                                itemWithLink.name,
                                 'Azure Log Analytics Workspace Customer Id',
-                                item,
+                                itemWithLink,
                                 new Date()
                             );
 

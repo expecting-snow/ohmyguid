@@ -27,12 +27,17 @@ export class GuidResolverAzureApplicationInsightsInstrumentationKey {
                     const result = await this.client.resources({ query, subscriptions: [] }, { abortSignal: abortController.signal });
 
                     for (const item of result.data) {
-                        if (item.instrumentationKey && item.name) {
+                        const itemWithLink : any = item.id && item.tenantId ? { _linkAzurePortal: `https://portal.azure.com/#@${item.tenantId}/resource${item.id}/overview` } : {};
+
+                        Object.assign(itemWithLink, item);
+
+                        if (itemWithLink.instrumentationKey && itemWithLink.name) {
+
                             const response = new GuidResolverResponse(
-                                item.instrumentationKey,
-                                item.name,
+                                itemWithLink.instrumentationKey,
+                                itemWithLink.name,
                                 'Azure Application Insights Instrumentation Key',
-                                item,
+                                itemWithLink,
                                 new Date()
                             );
 
