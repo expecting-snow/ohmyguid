@@ -26,12 +26,12 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
 
     async resolve(guid: string, abortController: AbortController): Promise<GuidResolverResponse | undefined> {
         try {
-            const servicePrincipal   = await this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, new AbortController())
-                                    ?? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, new AbortController());
-            const appRoleAssignments = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, new AbortController());
-            const appRoleAssignedTo  = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, this.mapToTypeApproleAssignedTo, this.onToBeResolved, this.onProgressUpdate, new AbortController());
-            const ownedObjects       = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
-            const owners             = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const servicePrincipal       = await this.guidResolverMicrosoftEntraIdServicePrincipal        .resolve(guid, new AbortController())
+                                        ?? await this.guidResolverMicrosoftEntraIdServicePrincipalClientId.resolve(guid, new AbortController());
+            const appRoleAssignments     = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignments`, this.onResponse, this.mapToTypeApproleAssignment, this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const appRoleAssignedTo      = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, this.mapToTypeApproleAssignedTo, this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const ownedObjects           = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const servicePrinicpalOwners = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 
             if (servicePrincipal && servicePrincipal.displayName) {
 
@@ -40,6 +40,9 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                 const appRegistration = servicePrincipal.object?.appId
                                       ? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(servicePrincipal.object.appId, new AbortController())
                                       : undefined;
+
+                const appRegistrationOwners        = appRegistration?.object?.id ? await this.resolveAll(`/applications/${appRegistration.object.id}/owners`                      , this.onResponse, _ => _                                                              , this.onToBeResolved, this.onProgressUpdate, new AbortController()) : null;
+                const federatedIdentityCredentials = appRegistration?.object?.id ? await this.resolveAll(`/applications/${appRegistration.object.id}/federatedIdentityCredentials`, this.onResponse, _ => this.mapToTypeApplicationFederatedIdentityCredentials(guid, _) , this.onToBeResolved, this.onProgressUpdate, new AbortController()) : null;
 
                 if (appRegistration) {
                     this.onResponse(appRegistration);
@@ -58,12 +61,14 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                                                'servicePrincipal.id'                     : servicePrincipal.object?.id,
                                                'servicePrincipal.appOwnerOrganizationId' : servicePrincipal.object?.appOwnerOrganizationId,
                                             },
-                        owners             : (owners             as any[])?.map(this.mapIdDisplayName    ).sort(),
-                        servicePrincipal   : servicePrincipal.object,
-                        appRoleAssignments : (appRoleAssignments as any[])?.map(this.mapAppRoleAssignment).sort(),
-                        ownedObjects       : (ownedObjects       as any[])?.map(this.mapIdDisplayName    ).sort(),
-                        appRoleAssignedTo  : appRoleAssignedTo,
-                        appRegistration
+                        appRegistrationOwners  : (appRegistrationOwners  as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        servicePrincipalOwners : (servicePrinicpalOwners as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        servicePrincipal       : servicePrincipal.object                                                 ,
+                        appRoleAssignments     : (appRoleAssignments     as any[])?.map(this.mapAppRoleAssignment).sort(),
+                        ownedObjects           : (ownedObjects           as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        appRoleAssignedTo      : appRoleAssignedTo,
+                        appRegistration,
+                        federatedIdentityCredentials
                     },
                     new Date()
                 );

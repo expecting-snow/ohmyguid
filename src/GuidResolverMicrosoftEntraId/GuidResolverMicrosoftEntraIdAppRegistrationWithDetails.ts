@@ -27,7 +27,7 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
         try {
             const application                  = await this.guidResolverMicrosoftEntraIdAppRegistration        .resolve(guid, new AbortController())
                                               ?? await this.guidResolverMicrosoftEntraIdAppRegistrationClientId.resolve(guid, new AbortController());
-            const owners                       = await this.resolveAll(`/applications/${guid}/owners`                      , this.onResponse, _ => _                                                              , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const applictionOwners             = await this.resolveAll(`/applications/${guid}/owners`                      , this.onResponse, _ => _                                                              , this.onToBeResolved, this.onProgressUpdate, new AbortController());
             const federatedIdentityCredentials = await this.resolveAll(`/applications/${guid}/federatedIdentityCredentials`, this.onResponse, _ => this.mapToTypeApplicationFederatedIdentityCredentials(guid, _) , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 
             if (application && application.displayName) {
@@ -46,6 +46,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                     this.onResponse(servicePrincipal);
                 }
 
+                const servicePrinicpalOwners = servicePrincipal?.object?.id ? await this.resolveAll(`/servicePrincipals/${servicePrincipal.object.id}/owners`, this.onResponse, _ => _, this.onToBeResolved, this.onProgressUpdate, new AbortController()) : null;
+
                 return new GuidResolverResponse(
                     guid,
                     application.displayName,
@@ -59,7 +61,8 @@ export class GuidResolverMicrosoftEntraIdAppRegistrationWithDetails extends Guid
                                                'servicePrincipal.id'                     : servicePrincipal?.object?.id,
                                                'servicePrincipal.appOwnerOrganizationId' : servicePrincipal?.object?.appOwnerOrganizationId,
                                             },
-                        owners            : (owners as any[])?.map(this.mapIdDisplayName).sort(),
+                        appRegistrationOwners  : (applictionOwners       as any[])?.map(this.mapIdDisplayName).sort(),
+                        servicePrincipalOwners : (servicePrinicpalOwners as any[])?.map(this.mapIdDisplayName).sort(),
                         appRegistration   : application.object,
                         federatedIdentityCredentials,
                         servicePrincipal,
