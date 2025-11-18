@@ -100,7 +100,7 @@
     "@azure/arm-policy": "6.0.0",
     "@azure/arm-resourcegraph": "4.2.1",
     "@azure/arm-resources": "7.0.0",
-    "@azure/arm-subscriptions": "5.1.0",
+    "@azure/arm-subscriptions": "5.1.1",
     "@azure/identity": "4.13.0",
     "@microsoft/microsoft-graph-client": "3.0.7",
     "@microsoft/microsoft-graph-types": "2.43.1",
