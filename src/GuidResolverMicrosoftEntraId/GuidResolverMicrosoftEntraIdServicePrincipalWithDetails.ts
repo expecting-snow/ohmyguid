@@ -32,6 +32,8 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
             const appRoleAssignedTo      = await this.resolveAll(`/servicePrincipals/${guid}/appRoleAssignedTo` , this.onResponse, this.mapToTypeApproleAssignedTo, this.onToBeResolved, this.onProgressUpdate, new AbortController());
             const ownedObjects           = await this.resolveAll(`/servicePrincipals/${guid}/ownedObjects`      , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
             const servicePrinicpalOwners = await this.resolveAll(`/servicePrincipals/${guid}/owners`            , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const memberOf               = await this.resolveAll(`/servicePrincipals/${guid}/memberOf`          , this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
+            const transitiveMemberOf     = await this.resolveAll(`/servicePrincipals/${guid}/transitiveMemberOf`, this.onResponse, _ => _                         , this.onToBeResolved, this.onProgressUpdate, new AbortController());
 
             if (servicePrincipal && servicePrincipal.displayName) {
 
@@ -68,7 +70,9 @@ export class GuidResolverMicrosoftEntraIdServicePrincipalWithDetails extends Gui
                         ownedObjects           : (ownedObjects           as any[])?.map(this.mapIdDisplayName    ).sort(),
                         appRoleAssignedTo      : appRoleAssignedTo,
                         appRegistration,
-                        federatedIdentityCredentials
+                        federatedIdentityCredentials,
+                        memberOf               : (memberOf               as any[])?.map(this.mapIdDisplayName    ).sort(),
+                        transitiveMemberOf     : (transitiveMemberOf     as any[])?.map(this.mapIdDisplayName    ).sort(),
                     },
                     new Date()
                 );
