@@ -11,7 +11,11 @@ jobs:
   job:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - run: |
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git .
+          git switch ${{ github.event.pull_request.head.ref || github.ref_name }}
+          echo "SHA $(git rev-parse HEAD)"
       - run: npm install
       - run: npm audit
       - run: npm run compile
+      - run: npm run lint
