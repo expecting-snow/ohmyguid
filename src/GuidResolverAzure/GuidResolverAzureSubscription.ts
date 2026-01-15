@@ -1,7 +1,7 @@
-import { AbortController      } from "@azure/abort-controller"       ;
-import { GuidResolverResponse } from "../Models/GuidResolverResponse";
-import { SubscriptionClient   } from "@azure/arm-subscriptions"      ;
-import { TokenCredential      } from "@azure/identity"               ;
+import { AbortController      } from "@azure/abort-controller"           ;
+import { GuidResolverResponse } from "../Models/GuidResolverResponse"    ;
+import { SubscriptionClient   } from "@azure/arm-resources-subscriptions";
+import { TokenCredential      } from "@azure/identity"                   ;
 
 export class GuidResolverAzureSubscription {
     private readonly client: SubscriptionClient;
