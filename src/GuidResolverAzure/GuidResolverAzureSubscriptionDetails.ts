@@ -1,9 +1,9 @@
-import { AbortController                         } from "@azure/abort-controller"       ;
-import { GuidResolverResponse                    } from "../Models/GuidResolverResponse";
-import { ResourceGraphClient                     } from "@azure/arm-resourcegraph"      ;
-import { ResourceGroup, ResourceManagementClient } from "@azure/arm-resources"          ;
-import { SubscriptionClient                      } from "@azure/arm-subscriptions"      ;
-import { TokenCredential                         } from "@azure/identity"               ;
+import { AbortController                         } from "@azure/abort-controller"           ;
+import { GuidResolverResponse                    } from "../Models/GuidResolverResponse"    ;
+import { ResourceGraphClient                     } from "@azure/arm-resourcegraph"          ;
+import { ResourceGroup, ResourceManagementClient } from "@azure/arm-resources"              ;
+import { SubscriptionClient                      } from "@azure/arm-resources-subscriptions";
+import { TokenCredential                         } from "@azure/identity"                   ;
 
 
 export class GuidResolverAzureSubscriptionDetails {

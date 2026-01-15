@@ -1,9 +1,9 @@
-import { AbortController                  } from "@azure/abort-controller"       ;
-import { IGuidBatchResolverAzure          } from "../GuidResolver"               ;
-import { GuidResolverResponse             } from "../Models/GuidResolverResponse";
-import { Mutex                            } from 'async-mutex'                   ;
-import { Subscription, SubscriptionClient } from "@azure/arm-subscriptions"      ;
-import { TokenCredential                  } from "@azure/identity"               ;
+import { AbortController                  } from "@azure/abort-controller"           ;
+import { IGuidBatchResolverAzure          } from "../GuidResolver"                   ;
+import { GuidResolverResponse             } from "../Models/GuidResolverResponse"    ;
+import { Mutex                            } from 'async-mutex'                       ;
+import { Subscription, SubscriptionClient } from "@azure/arm-resources-subscriptions";
+import { TokenCredential                  } from "@azure/identity"                   ;
 
 export class GuidResolverAzureSubscriptions implements IGuidBatchResolverAzure {
     private readonly client: SubscriptionClient;
